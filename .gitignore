@@ -1,0 +1,11 @@
+# Dossier des fichiers compilés
+bin/
+
+# Fichiers compilés
+*.class
+
+# Documentation générée par javadoc
+doc/
+
+# Fichiers de configuration de macOS
+*.DS_Store
