@@ -3,11 +3,15 @@ import java.awt.*;
 
 public class Fenetre extends JFrame{
 
-	public Fenetre(int x){
+	public Fenetre(){
 		// on configure la fenetre
-	    setSize(600, 400);
-	    setLocation(20, 20);
-	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    setLocationRelativeTo(null);
+	    setTitle("AtoZ Carner");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); // Centre la fenêtre sur l'écran
+
+        setLayout(new BorderLayout());
+        PanneauGauche panneauGauche = new PanneauGauche();
+        add(panneauGauche, BorderLayout.WEST);
 	}
 }
