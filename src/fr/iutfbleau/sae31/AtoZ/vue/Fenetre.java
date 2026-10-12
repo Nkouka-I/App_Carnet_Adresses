@@ -13,5 +13,7 @@ public class Fenetre extends JFrame{
         setLayout(new BorderLayout());
         PanneauGauche panneauGauche = new PanneauGauche();
         add(panneauGauche, BorderLayout.WEST);
+        PanneauCentral panneauCentral = new PanneauCentral();
+        add(panneauCentral, BorderLayout.CENTER);
 	}
 }

@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class PanneauGauche extends JPanel {
+public class PanneauGauche extends JPanel{
 
     private JButton btnNouveauContact;
     private JList<String> listeEtiquettes;
@@ -12,16 +12,17 @@ public class PanneauGauche extends JPanel {
     private JLabel lblEtiquettes;
     private JLabel lblListesDiffusion;
 
-    public PanneauGauche() {
-        // Définition du layout du panneau
+    public PanneauGauche(){
+
         setLayout(new GridBagLayout());
-        setPreferredSize(new Dimension(250, 0)); // Limité en largeur
+        setPreferredSize(new Dimension(250, 0)); // Limité a une largeur fixe
         setBackground(new Color(245, 245, 245));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10); // Marges
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0; // Une seule colonne
+        
         int ligne = 0;
 
         // Titre
