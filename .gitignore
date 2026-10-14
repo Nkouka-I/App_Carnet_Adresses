@@ -9,3 +9,6 @@ doc/
 
 # Fichiers de configuration de macOS
 *.DS_Store
+
+# Fichiers de configuration
+*.Identifier

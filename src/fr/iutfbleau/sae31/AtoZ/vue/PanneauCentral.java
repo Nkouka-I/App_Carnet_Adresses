@@ -50,6 +50,7 @@ public class PanneauCentral extends JPanel{
         gbcContacts.weightx = 1.0;
 
         int ligne = 0;
+        
         gbcContacts.gridy = ligne++;
         panelContactsList.add(creerLigneContact("Jean Dupont", "jean.dupont@mail.com", "Client" + " " + "VIP"+ " " + "Projet"), gbcContacts);
         gbcContacts.gridy = ligne++;
