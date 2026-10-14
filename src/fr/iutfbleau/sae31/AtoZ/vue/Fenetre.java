@@ -1,7 +1,10 @@
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
-public class Fenetre extends JFrame{
+public class Fenetre extends JFrame implements NavigationListener{
+
+    private final PanneauCentral panneauCentral;
+    private final PanneauGauche panneauGauche;
 
 	public Fenetre(){
 		// on configure la fenetre
@@ -11,9 +14,23 @@ public class Fenetre extends JFrame{
         setLocationRelativeTo(null); // Centre la fenêtre sur l'écran
 
         setLayout(new BorderLayout());
-        PanneauGauche panneauGauche = new PanneauGauche();
+
+        panneauGauche = new PanneauGauche(this);
         add(panneauGauche, BorderLayout.WEST);
-        PanneauCentral panneauCentral = new PanneauCentral();
+
+        panneauCentral = new PanneauCentral();
         add(panneauCentral, BorderLayout.CENTER);
 	}
+
+    // --- Implémentation des méthodes du contrat NavigationListener
+
+    @Override
+    public void clicRepertoire() {
+        panneauCentral.afficherRepertoire();
+    }
+
+    @Override
+    public void clicListeDiffusion(String nomListe) {
+        panneauCentral.afficherListeDiffusion(nomListe);
+    }
 }

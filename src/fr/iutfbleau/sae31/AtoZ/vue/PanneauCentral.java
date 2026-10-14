@@ -1,6 +1,5 @@
-import javax.swing.*;
 import java.awt.*;
-import java.util.List;
+import javax.swing.*;
 
 public class PanneauCentral extends JPanel{
 
@@ -96,7 +95,7 @@ public class PanneauCentral extends JPanel{
         return ligne;
     }
 
-    /*public void afficherListeDiffusion(String nomListe) {
+    public void afficherListeDiffusion(String nomListe) {
         removeAll(); // Efface tout
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -141,7 +140,7 @@ public class PanneauCentral extends JPanel{
         // Rafraîchit l'affichage
         revalidate();
         repaint();
-    }*/
+    }
 
     
 }
