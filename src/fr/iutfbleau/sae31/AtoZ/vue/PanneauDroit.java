@@ -58,6 +58,31 @@ public class PanneauDroit extends JPanel{
         gbc.insets = new Insets(5, 10, 10, 10);
         btnSupprimer = new JButton("Supprimer");
         btnSupprimer.setForeground(Color.RED);
+        btnSupprimer.addActionListener(e -> {
+            // Le pop-up bloquant
+            int reponse = JOptionPane.showConfirmDialog(
+                this, // Fenêtre parent
+                "Voulez-vous vraiment supprimer ce contact ?", 
+                "Confirmation de suppression", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.WARNING_MESSAGE
+            );
+            
+            if (reponse == JOptionPane.YES_OPTION) {
+                // TODO: Code pour supprimer contact de la base de données
+                System.out.println("Contact supprimé !");
+
+                // pop up de confirmation de suppression
+                JOptionPane.showMessageDialog(
+                    this, 
+                    "Le contact a bien été supprimé !", 
+                    "Succès", 
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                
+                afficherVide();
+            }
+        });
         add(btnSupprimer, gbc);
 
         revalidate();
@@ -96,9 +121,34 @@ public class PanneauDroit extends JPanel{
         // Bouton Supprimer
         gbc.gridy = ligne++;
         gbc.insets = new Insets(20, 10, 10, 10);
-        JButton btnSupprEtiquette = new JButton("Supprimer l'étiquette");
-        btnSupprEtiquette.setForeground(Color.RED);
-        add(btnSupprEtiquette, gbc);
+        btnSupprimer = new JButton("Supprimer l'Etiquette du contact");
+        btnSupprimer.setForeground(Color.RED);
+        btnSupprimer.addActionListener(e -> {
+            // Le pop-up bloquant
+            int reponse = JOptionPane.showConfirmDialog(
+                this, // Fenêtre parent
+                "Voulez-vous vraiment supprimer cette etiquette a ce contact ?", 
+                "Confirmation de suppression", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.WARNING_MESSAGE
+            );
+            
+            if (reponse == JOptionPane.YES_OPTION) {
+                // TODO: Code pour supprimer ettiquette de la base de données
+                System.out.println("Ettiquette supprimé !");
+
+                // pop up de confirmation de suppression
+                JOptionPane.showMessageDialog(
+                    this, 
+                    "Le contact a bien été supprimé !", 
+                    "Succès", 
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                
+                afficherVide();
+            }
+        });
+        add(btnSupprimer, gbc);
 
         revalidate();
         repaint();
@@ -137,9 +187,34 @@ public class PanneauDroit extends JPanel{
         // Bouton Supprimer
         gbc.gridy = ligne++;
         gbc.insets = new Insets(20, 10, 10, 10);
-        JButton btnSupprEtiquette = new JButton("Supprimer la liste");
-        btnSupprEtiquette.setForeground(Color.RED);
-        add(btnSupprEtiquette, gbc);
+        btnSupprimer = new JButton("Supprimer la Liste de diffusion");
+        btnSupprimer.setForeground(Color.RED);
+        btnSupprimer.addActionListener(e -> {
+            // Le pop-up bloquant
+            int reponse = JOptionPane.showConfirmDialog(
+                this, // Fenêtre parent
+                "Voulez-vous vraiment supprimer cette liste ?", 
+                "Confirmation de suppression", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.WARNING_MESSAGE
+            );
+            
+            if (reponse == JOptionPane.YES_OPTION) {
+                // TODO: Code pour supprimer la lsite de la base de données
+                System.out.println("Contact supprimé !");
+
+                // pop up de confirmation de suppression
+                JOptionPane.showMessageDialog(
+                    this, 
+                    "Le contact a bien été supprimé !", 
+                    "Succès", 
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                
+                afficherVide();
+            }
+        });
+        add(btnSupprimer, gbc);
 
         revalidate();
         repaint();
