@@ -60,8 +60,8 @@ public class Contact{
      */
     public Contact(int id , String nom , String email) throws ModeleExeption{
         this.id = id;
-        setnom(nom);
-        setemail(email);
+        setNom(nom);
+        setEmail(email);
     }
 
     /**
