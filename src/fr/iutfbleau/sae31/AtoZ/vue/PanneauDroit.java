@@ -1,11 +1,12 @@
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
+import java.awt.event.ActionListener;
 
 public class PanneauDroit extends JPanel{
 
-    private JButton btnModifier;
-    private JButton btnSupprimer;
+    private JButton btnSupprimer = new JButton("Supprimer");
+    private JButton btnModifier = new JButton("Modifier");
 
     public PanneauDroit(){
         setLayout(new GridBagLayout());
@@ -54,36 +55,17 @@ public class PanneauDroit extends JPanel{
         add(btnModifier, gbc);
 
         // Bouton Supprimer
-        gbc.gridy = ligne++;
-        gbc.insets = new Insets(5, 10, 10, 10);
-        btnSupprimer = new JButton("Supprimer");
-        btnSupprimer.setForeground(Color.RED);
-        btnSupprimer.addActionListener(e -> {
-            // Le pop-up bloquant
-            int reponse = JOptionPane.showConfirmDialog(
-                this, // Fenêtre parent
-                "Voulez-vous vraiment supprimer ce contact ?", 
-                "Confirmation de suppression", 
-                JOptionPane.YES_NO_OPTION, 
-                JOptionPane.WARNING_MESSAGE
-            );
-            
-            if (reponse == JOptionPane.YES_OPTION) {
-                // TODO: Code pour supprimer contact de la base de données
-                System.out.println("Contact supprimé !");
-
-                // pop up de confirmation de suppression
-                JOptionPane.showMessageDialog(
-                    this, 
-                    "Le contact a bien été supprimé !", 
-                    "Succès", 
-                    JOptionPane.INFORMATION_MESSAGE
-                );
-                
-                afficherVide();
+        ajouterBoutonSuppression(
+            gbc, 
+            ligne++,
+            "Supprimer le contact",
+            "Voulez-vous vraiment supprimer le contact de ?",
+            "Le contact a bien été supprimé !",
+            () -> {
+                // TODO: Appeler le contrôleur pour supprimer le contact
+                System.out.println("le contact a bien été supprimé");
             }
-        });
-        add(btnSupprimer, gbc);
+        );
 
         revalidate();
         repaint();
@@ -116,39 +98,20 @@ public class PanneauDroit extends JPanel{
         lblTitre.setFont(new Font("Arial", Font.BOLD, 14));
         add(lblTitre, gbc);
 
-        /*Boucle que ajoute les differents noms de listes*/
+        /*TODO Boucle que ajoute les differents noms de listes*/
 
         // Bouton Supprimer
-        gbc.gridy = ligne++;
-        gbc.insets = new Insets(20, 10, 10, 10);
-        btnSupprimer = new JButton("Supprimer l'Etiquette du contact");
-        btnSupprimer.setForeground(Color.RED);
-        btnSupprimer.addActionListener(e -> {
-            // Le pop-up bloquant
-            int reponse = JOptionPane.showConfirmDialog(
-                this, // Fenêtre parent
-                "Voulez-vous vraiment supprimer cette etiquette a ce contact ?", 
-                "Confirmation de suppression", 
-                JOptionPane.YES_NO_OPTION, 
-                JOptionPane.WARNING_MESSAGE
-            );
-            
-            if (reponse == JOptionPane.YES_OPTION) {
-                // TODO: Code pour supprimer ettiquette de la base de données
-                System.out.println("Ettiquette supprimé !");
-
-                // pop up de confirmation de suppression
-                JOptionPane.showMessageDialog(
-                    this, 
-                    "Le contact a bien été supprimé !", 
-                    "Succès", 
-                    JOptionPane.INFORMATION_MESSAGE
-                );
-                
-                afficherVide();
+        ajouterBoutonSuppression(
+            gbc, 
+            ligne++,
+            "Supprimer l'étiquette",
+            "Voulez-vous vraiment supprimer l'étiquette \"" + nomEtiquette + "\" ?",
+            "L'étiquette a bien été supprimée !",
+            () -> {
+                // TODO: Appeler le contrôleur pour supprimer l'étiquette
+                System.out.println("l'étiquette a bien été supprimé...");
             }
-        });
-        add(btnSupprimer, gbc);
+        );
 
         revalidate();
         repaint();
@@ -182,41 +145,70 @@ public class PanneauDroit extends JPanel{
         lblTitre.setFont(new Font("Arial", Font.BOLD, 14));
         add(lblTitre, gbc);
 
-        /*Boucle que ajoute les differents noms de critere*/
+        /*TODO Boucle que ajoute les differents noms de critere*/
         
         // Bouton Supprimer
-        gbc.gridy = ligne++;
-        gbc.insets = new Insets(20, 10, 10, 10);
-        btnSupprimer = new JButton("Supprimer la Liste de diffusion");
+        ajouterBoutonSuppression(
+            gbc, 
+            ligne++,
+            "Supprimer la liste de diffusion",
+            "Voulez-vous vraiment supprimer la liste de diffusion \"" + nomListe + "\" ?",
+            "La liste de diffusion a bien été supprimé !",
+            () -> {
+                // TODO: Appeler le contrôleur
+                System.out.println("La liste de diffusion a bien été supprimé");
+            }
+        );
+
+        revalidate();
+        repaint();
+    }
+
+    public void ajouterBoutonSuppression(GridBagConstraints gbc, int ligne, String texteBouton, String messageConfirmation, String messageSucces, Runnable actionAEffectuer) {
+
+        btnSupprimer.setText(texteBouton);
         btnSupprimer.setForeground(Color.RED);
+
+        // On enleve les anciens écouteurs
+        for (ActionListener al : btnSupprimer.getActionListeners()) {
+            btnSupprimer.removeActionListener(al);
+        }
+
+        // On ajoute le nouveau comportement
         btnSupprimer.addActionListener(e -> {
+
+            Window fenetreParente = SwingUtilities.getWindowAncestor(this);
+
             // Le pop-up bloquant
             int reponse = JOptionPane.showConfirmDialog(
-                this, // Fenêtre parent
-                "Voulez-vous vraiment supprimer cette liste ?", 
+                fenetreParente, 
+                messageConfirmation, 
                 "Confirmation de suppression", 
                 JOptionPane.YES_NO_OPTION, 
                 JOptionPane.WARNING_MESSAGE
             );
             
             if (reponse == JOptionPane.YES_OPTION) {
-                // TODO: Code pour supprimer la lsite de la base de données
-                System.out.println("Contact supprimé !");
+                
+                // TODO: Code pour supprimer de la base de données
+                if (actionAEffectuer != null) {
+                    actionAEffectuer.run();
+                }
 
-                // pop up de confirmation de suppression
+                // pop-up de confirmation
                 JOptionPane.showMessageDialog(
-                    this, 
-                    "Le contact a bien été supprimé !", 
+                    fenetreParente, 
+                    messageSucces, 
                     "Succès", 
                     JOptionPane.INFORMATION_MESSAGE
                 );
                 
+                // Remise à zéro de l'affichage
                 afficherVide();
             }
         });
+        gbc.gridy = ligne;
+        gbc.insets = new Insets(20, 10, 10, 10);
         add(btnSupprimer, gbc);
-
-        revalidate();
-        repaint();
     }
 }
