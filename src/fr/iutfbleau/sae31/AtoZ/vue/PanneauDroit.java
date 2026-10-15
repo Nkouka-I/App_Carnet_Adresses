@@ -1,3 +1,4 @@
+package fr.iutfbleau.sae31.AtoZ.vue;
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
@@ -34,9 +35,21 @@ public class PanneauDroit extends JPanel{
     }
 
     /**
+     * Méthode générique pour ouvrir un formulaire et traiter sa validation via une interface.
+     */
+    private <T extends FenetreDialogueAbstraite> void ouvrirFormulaire(T formulaire, FormulaireListener<T> listener) {
+        formulaire.setVisible(true);
+        
+        if (formulaire.isValide()) {
+            listener.onValider(formulaire);
+        }
+    }
+
+    /**
      * 2. Vue dédiée lorsqu'un CONTACT est sélectionné
      */
-    public void afficherOperationsContact() {
+    public void afficherOperationsContact(String nomActuel, String emailActuel, 
+                                        List<String> toutesLesEtiquettes, List<String> etiquettesActuelles) {
         removeAll();
         setLayout(new GridBagLayout());
 
@@ -48,10 +61,36 @@ public class PanneauDroit extends JPanel{
 
         int ligne = 0;
 
-        // Boutons d'action (Modifier / Supprimer)
+        // Boutons Modifier
         gbc.gridy = ligne++;
         gbc.insets = new Insets(20, 10, 5, 10);
         btnModifier = new JButton("Modifier");
+
+        btnModifier.addActionListener(e -> {
+            Frame fenetreParente = (Frame) SwingUtilities.getWindowAncestor(this);
+
+            FenetreFormulaireContact form = new FenetreFormulaireContact(
+                fenetreParente, 
+                "Modifier le contact", 
+                nomActuel, 
+                emailActuel, 
+                toutesLesEtiquettes, 
+                etiquettesActuelles
+            );
+
+            ouvrirFormulaire(form, f -> {
+                String nouveauNom = f.getNomSaisi();
+                String nouvelEmail = f.getEmailSaisi();
+                List<String> nouvellesEtiquettes = f.getEtiquettesSelectionnees();
+
+                // TODO: Appeler le contrôleur / BDD pour mettre à jour
+                System.out.println("Contact mis à jour : " + nouveauNom + " / " + nouvelEmail);
+
+                // Rafraîchir l'affichage
+                afficherOperationsContact(nouveauNom, nouvelEmail, toutesLesEtiquettes, nouvellesEtiquettes);
+            });
+        });
+
         add(btnModifier, gbc);
 
         // Bouton Supprimer
@@ -90,6 +129,27 @@ public class PanneauDroit extends JPanel{
         gbc.gridy = ligne++;
         gbc.insets = new Insets(20, 10, 5, 10);
         btnModifier = new JButton("Modifier l'étiquette");
+
+        btnModifier.addActionListener(e -> {
+            Frame fenetreParente = (Frame) SwingUtilities.getWindowAncestor(this);
+
+            FenetreFormulaireEtiquette form = new FenetreFormulaireEtiquette(
+                fenetreParente, 
+                "Modifier l'étiquette", 
+                nomEtiquette
+            );
+
+            ouvrirFormulaire(form, f -> {
+                String nouveauLibelle = f.getLibelleSaisi();
+                
+                // TODO: Appeler le contrôleur 
+                System.out.println("Étiquette mise à jour : " + nouveauLibelle);
+                
+                // Rafraîchir l'affichage
+                afficherOperationsEtiquette(nouveauLibelle);
+            });
+        });
+
         add(btnModifier, gbc);
         
         // Titre explicatif Etiquette
@@ -120,7 +180,7 @@ public class PanneauDroit extends JPanel{
     /**
      * 4. Vue dédiée lorsqu'une LISTE DE DIFFUSION est sélectionnée
      */
-    public void afficherOperationsListeDiffusion(String nomListe) {
+    public void afficherOperationsListeDiffusion(String nomListe, List<String> toutesLesEtiquettes, List<FenetreFormulaireListeDiffusion.CritereData> criteresActuels) {
         removeAll();
         setLayout(new GridBagLayout());
 
@@ -136,6 +196,30 @@ public class PanneauDroit extends JPanel{
         gbc.gridy = ligne++;
         gbc.insets = new Insets(20, 10, 5, 10);
         btnModifier = new JButton("Modifier la liste");
+
+        btnModifier.addActionListener(e -> {
+            Frame fenetreParente = (Frame) SwingUtilities.getWindowAncestor(this);
+
+            FenetreFormulaireListeDiffusion form = new FenetreFormulaireListeDiffusion(
+                fenetreParente, 
+                "Modifier la liste de diffusion", 
+                nomListe, 
+                toutesLesEtiquettes, 
+                criteresActuels
+            );
+
+            ouvrirFormulaire(form, f -> {
+                String nouveauNomListe = f.getNomListeSaisi();
+                List<FenetreFormulaireListeDiffusion.CritereData> nouveauxCriteres = f.getCriteresList();
+
+                // TODO: Appeler le contrôleur / BDD pour mettre à jour
+                System.out.println("Liste mise à jour : " + nouveauNomListe);
+
+                // Rafraîchir l'affichage
+                afficherOperationsListeDiffusion(nouveauNomListe, toutesLesEtiquettes, nouveauxCriteres);
+            });
+        });
+
         add(btnModifier, gbc);
 
         // Titre des critères

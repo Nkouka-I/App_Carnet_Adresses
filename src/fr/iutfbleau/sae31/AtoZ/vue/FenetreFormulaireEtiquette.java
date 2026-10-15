@@ -1,0 +1,49 @@
+package fr.iutfbleau.sae31.AtoZ.vue;
+import javax.swing.*;
+import java.awt.Frame;
+
+/**
+ * FenetreFormulaireEtiquette
+ */
+public class FenetreFormulaireEtiquette extends FenetreDialogueAbstraite {
+
+    private JTextField txtLibelle;
+
+    public FenetreFormulaireEtiquette(Frame parent, String titre, String libelleInitial) {
+        super(parent, titre, 320, 180);
+
+        int ligne = 0;
+
+        // Libellé de l'étiquette
+        gbc.gridy = ligne++;
+        add(new JLabel("Nom de l'étiquette :"), gbc);
+        
+        gbc.gridy = ligne++;
+        txtLibelle = new JTextField(libelleInitial, 20);
+        add(txtLibelle, gbc);
+
+        // Boutons de validation
+        ajouterBoutonsValidation(ligne);
+    }
+
+    @Override
+    protected void validerFormulaire() {
+        String libelle = txtLibelle.getText().trim();
+
+        if (libelle.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Erreur : Le nom de l'étiquette ne peut pas être vide.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (libelle.length() > 100) {
+            JOptionPane.showMessageDialog(this, "Erreur : Le nom de l'étiquette ne peut pas dépasser 100 caractères.", "Nom trop long", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        valide = true;
+        dispose();
+    }
+
+    public String getLibelleSaisi() {
+        return txtLibelle.getText().trim();
+    }
+}

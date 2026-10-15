@@ -1,3 +1,5 @@
+package fr.iutfbleau.sae31.AtoZ.vue;
+
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
@@ -74,10 +76,11 @@ public class PanneauGauche extends JPanel{
                 gbc.gridy = ligne++;
                 JButton btn = new JButton(nom);
                 
+                String nomEtiquette = nom;
                 // Clic sur une étiquette spécifique
                 btn.addActionListener(e -> {
                     if (listener != null) {
-                        listener.clicRepertoire(nom); 
+                        listener.clicContactEtiquette(nomEtiquette); 
                     }
                 });
                 

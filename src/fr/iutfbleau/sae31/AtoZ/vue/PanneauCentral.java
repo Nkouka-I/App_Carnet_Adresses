@@ -1,9 +1,17 @@
+package fr.iutfbleau.sae31.AtoZ.vue;
+
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
 import javax.swing.*;
 
 public class PanneauCentral extends JPanel{
 
-	public PanneauCentral() {
+    private final NavigationListener listener;
+
+	public PanneauCentral(NavigationListener listener) {
+        this.listener = listener;
 
         setLayout(new GridBagLayout());
         setBackground(Color.WHITE);
@@ -77,6 +85,16 @@ public class PanneauCentral extends JPanel{
             BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 230, 230)),
             BorderFactory.createEmptyBorder(8, 8, 8, 8)
         ));
+
+        ligne.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        ligne.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (listener != null) {
+                    listener.clicContact(nom, email, List.of(etiquette.split(" ")));
+                }
+            }
+        });
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(0, 5, 0, 5);
