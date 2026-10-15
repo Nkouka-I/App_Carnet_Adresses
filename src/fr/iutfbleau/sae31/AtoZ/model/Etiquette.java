@@ -86,7 +86,7 @@ public class Etiquette{
             throw new ModeleException("Le libéllé de l'étiquette ne doit pas etre vide");
         }
         if (libelle.length > LIBELLE_MAX){
-            throw ModeleException("La taille du libelle ne doit pas dépasser"+ LIBELLE_MAX +"caractères");
+            throw new ModeleException("La taille du libelle ne doit pas dépasser"+ LIBELLE_MAX +"caractères");
         }
         this.libelle = libelle.trim();
     }
