@@ -1,8 +1,9 @@
-package fr.iutfbleau.sae31.Atoz.model;
+package fr.iutfbleau.sae31.AtoZ.model;
 
 import java.sql.*;
 import java.util.ArrayList;
-import org.mariadb.jdbc.*;
+import java.util.List;
+
 
 /**
  * La classe <code>Contact</code> représente un contact du carnet d'adresses : un nom,
@@ -35,7 +36,7 @@ public class Contact{
     /**
      * Liste des étiquettes associées au contact (zéro, une ou plusieurs).
      */
-    private final List<Etiquettes> etiquettes = new ArrayList<>();
+    private final ArrayList<Etiquettes> etiquettes = new ArrayList<>();
 
     /**
      * Constructeur destiné à la création d'un nouveau contact, pas encore enregistré en base :
@@ -45,7 +46,7 @@ public class Contact{
      * @param email l'adresse mail du contact
      * @throws ModeleExeption si le nom ou l'adresse mail est invalide
      */
-    public Contact(String nom , String email) throws ModeleExeption{
+    public Contact(String nom , String email) throws ModeleException{
         this(0,nom,email); // Constructeur simplifiéé c'est la BD qui donnera l'id
     }
 
@@ -58,7 +59,7 @@ public class Contact{
      * @param email l'adresse mail du contact
      * @throws ModeleExeption si le nom ou l'adresse mail est invalide
      */
-    public Contact(int id , String nom , String email) throws ModeleExeption{
+    public Contact(int id , String nom , String email) throws ModeleException{
         this.id = id;
         setNom(nom);
         setEmail(email);
@@ -100,12 +101,12 @@ public class Contact{
      * @param nom le nouveau nom
      * @throws ModeleExeption si le nom ne respecte pas ces règles
      */
-    public void setNom(String nom) throws ModeleExeption{
+    public void setNom(String nom) throws ModeleException{
         if (nom == null || nom.isEmpty()){
-            throw new ModeleExeption("Le nom ne doit pas etre vide");
+            throw new ModeleException("Le nom ne doit pas etre vide");
         }
         if (nom.indexOf('\n')>=0 || nom.indexOf('\r') >= 0){
-            throw new ModeleExeption("Le nom ne doit pas contenir de saut de ligne");
+            throw new ModeleException("Le nom ne doit pas contenir de saut de ligne");
         }
         boolean alphanumerique = false;
         for (int i = 0; i < nom.length() && !alphanumerique; i++) {
@@ -122,7 +123,7 @@ public class Contact{
      *
      * @return l'adresse mail du contact
      */
-    public String email(){
+    public String getEmail(){
         return this.email;
     }
     

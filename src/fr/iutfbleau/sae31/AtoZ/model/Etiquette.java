@@ -1,4 +1,4 @@
-package fr.iutfbleau.sae31.Atoz.model;
+package fr.iutfbleau.sae31.AtoZ.model;
 
 /**
  * La classe <code>Etiquette</code> représente une étiquette (un qualificatif) que l'on peut
@@ -30,7 +30,7 @@ public class Etiquette{
      * @throws ModeleException si le libellé est invalide
      */
     public Etiquette(String libelle) throws ModeleException{
-        return this(0,libelle);
+        this(0,libelle);
 
     }
 
