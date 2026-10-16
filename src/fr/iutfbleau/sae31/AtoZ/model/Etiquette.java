@@ -1,3 +1,5 @@
+package fr.iutfbleau.sae31.Atoz.model;
+
 /**
  * La classe <code>Etiquette</code> représente une étiquette (un qualificatif) que l'on peut
  * associer à un contact, par exemple « client » ou « 2023 ».
