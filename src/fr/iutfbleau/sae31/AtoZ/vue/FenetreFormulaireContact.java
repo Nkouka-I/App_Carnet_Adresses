@@ -31,6 +31,54 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
     private List<JCheckBox> listeCheckBoxEtiquettes;
 
     /**
+     * Vérifie la saisie du formulaire. Le nom ne doit pas être vide, ni contenir de saut
+     * de ligne, et doit comporter au moins une lettre ou un chiffre. L'email ne doit pas
+     * être vide, doit contenir un '@', aucun caractère blanc, et ne pas dépasser 254 octets.
+     * En cas d'erreur, un message est affiché et le formulaire reste ouvert.
+     */
+    @Override
+    protected void validerFormulaire() {
+        String nom = txtNom.getText().trim();
+        String email = txtEmail.getText().trim();
+
+        // Validation du Nom
+        if (nom.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Erreur : Le nom ne peut pas être vide.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (nom.contains("\n") || nom.contains("\r")) {
+            JOptionPane.showMessageDialog(this, "Erreur : Le nom ne peut pas contenir de saut de ligne.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        boolean contientCaractereValide = nom.chars().anyMatch(Character::isLetterOrDigit);
+        if (!contientCaractereValide) {
+            JOptionPane.showMessageDialog(this, "Erreur : Le nom doit contenir au moins une lettre ou un chiffre.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Validation de l'Email
+        if (email.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Erreur : L'email ne peut pas être vide.", "Email invalide", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!email.contains("@")) {
+            JOptionPane.showMessageDialog(this, "Erreur : L'adresse email doit contenir un '@'.", "Email invalide", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (email.chars().anyMatch(Character::isWhitespace)) {
+            JOptionPane.showMessageDialog(this, "Erreur : L'adresse email ne peut pas contenir de caractères blancs.", "Email invalide", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (email.getBytes(StandardCharsets.UTF_8).length > 254) {
+            JOptionPane.showMessageDialog(this, "Erreur : L'adresse email ne doit pas dépasser 254 octets.", "Email invalide", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        valide = true;
+        dispose();
+    }
+
+    /**
      * Construit le formulaire et pré-remplit ses champs.
      *
      * @param parent la fenêtre parente
@@ -85,54 +133,6 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
 
         // Boutons de validation de base
         ajouterBoutonsValidation(ligne);
-    }
-
-    /**
-     * Vérifie la saisie du formulaire. Le nom ne doit pas être vide, ni contenir de saut
-     * de ligne, et doit comporter au moins une lettre ou un chiffre. L'email ne doit pas
-     * être vide, doit contenir un '@', aucun caractère blanc, et ne pas dépasser 254 octets.
-     * En cas d'erreur, un message est affiché et le formulaire reste ouvert.
-     */
-    @Override
-    protected void validerFormulaire() {
-        String nom = txtNom.getText().trim();
-        String email = txtEmail.getText().trim();
-
-        // Validation du Nom
-        if (nom.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Erreur : Le nom ne peut pas être vide.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (nom.contains("\n") || nom.contains("\r")) {
-            JOptionPane.showMessageDialog(this, "Erreur : Le nom ne peut pas contenir de saut de ligne.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        boolean contientCaractereValide = nom.chars().anyMatch(Character::isLetterOrDigit);
-        if (!contientCaractereValide) {
-            JOptionPane.showMessageDialog(this, "Erreur : Le nom doit contenir au moins une lettre ou un chiffre.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Validation de l'Email
-        if (email.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Erreur : L'email ne peut pas être vide.", "Email invalide", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (!email.contains("@")) {
-            JOptionPane.showMessageDialog(this, "Erreur : L'adresse email doit contenir un '@'.", "Email invalide", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (email.chars().anyMatch(Character::isWhitespace)) {
-            JOptionPane.showMessageDialog(this, "Erreur : L'adresse email ne peut pas contenir de caractères blancs.", "Email invalide", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (email.getBytes(StandardCharsets.UTF_8).length > 254) {
-            JOptionPane.showMessageDialog(this, "Erreur : L'adresse email ne doit pas dépasser 254 octets.", "Email invalide", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        valide = true;
-        dispose();
     }
 
     /**

@@ -37,7 +37,15 @@ public class Fenetre extends JFrame implements NavigationListener{
 		// on configure la fenetre
 	    setTitle("AtoZ Carner");
         setSize(1150, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Empeche fermeture automatique
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                 confirmerFermeture();
+            }
+        }); 
+
         setLocationRelativeTo(null); // Centre la fenêtre sur l'écran
 
         setLayout(new BorderLayout());
@@ -56,7 +64,7 @@ public class Fenetre extends JFrame implements NavigationListener{
 
     /**
      * Réagit au clic sur un contact : affiche le répertoire au centre et les
-     * opérations possibles sur ce contact (modifier, supprimer) à droite.
+     * opérations possibles sur ce contact (modifier, supprimer).
      *
      * @param nom le nom du contact sélectionné
      * @param email l'adresse email du contact sélectionné
@@ -89,6 +97,12 @@ public class Fenetre extends JFrame implements NavigationListener{
         //TODO Selectionné uniquement contact avec étiquette
         panneauCentral.afficherRepertoire();
 
+        // Mis à jour du panneau Droit, on affiche rien si on clic sur bouton acordeon
+        if (nomEtiquette == null){
+            panneauDroit.afficherVide();
+            return;
+        }
+
         // Mis à jour du panneau Droit, on affiche les opérations liée aux étiquetteq
         panneauDroit.afficherOperationsEtiquette(nomEtiquette);
     }
@@ -111,7 +125,33 @@ public class Fenetre extends JFrame implements NavigationListener{
             new FenetreFormulaireListeDiffusion.CritereData("Client", true)
         );
 
+        // Mis à jour du panneau Droit, on affiche rien si on clic sur bouton acordeon
+        if (nomListe == null){
+            panneauCentral.afficherListeDiffusion(null);
+            panneauDroit.afficherVide();
+            return;
+        }
+
         // Mis à jour du panneau Droit, on affiche les opérations liée aux Lists de diffusions
         panneauDroit.afficherOperationsListeDiffusion(nomListe, toutesLesEtiquettes, criteresActuels);
+    }
+
+    /**
+     * Affiche un pop-up de confirmation avant de quitter l'application.
+     */
+    private void confirmerFermeture() {
+        int reponse = JOptionPane.showConfirmDialog(
+            this, 
+            "Voulez-vous vraiment quitter l'application ?", 
+            "Confirmation de fermeture", 
+            JOptionPane.YES_NO_OPTION, 
+            JOptionPane.WARNING_MESSAGE
+        );
+
+        // Si clique sur "Oui"
+        if (reponse == JOptionPane.YES_OPTION) {
+            dispose(); // Destruction de la fenêtre
+            System.exit(0); // Quitte l'application au cas ou
+        }
     }
 }

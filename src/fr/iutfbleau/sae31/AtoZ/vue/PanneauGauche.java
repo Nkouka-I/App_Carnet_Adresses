@@ -69,7 +69,7 @@ public class PanneauGauche extends JPanel{
         titreApp = new JLabel("AtoZ Carnet", JLabel.CENTER);
         btnNewContact = new JButton("+ new Contact");
         btnNewEtiquette = new JButton("+ new Etiquette");
-        btnNewListesDiffusion = new JButton("+ Listes de Diffusion");
+        btnNewListesDiffusion = new JButton("+ new Listes de Diffusion");
 
         btnEtiquettes = new JButton();
         btnEtiquettes.addActionListener(e -> {
@@ -114,12 +114,18 @@ public class PanneauGauche extends JPanel{
         gbc.gridy = ligne++;
         add(btnNewEtiquette, gbc);
 
-        btnEtiquettes.setText(etiquettesVisibles ? "▼ Étiquettes :" : "▶ Étiquettes :");
+        btnEtiquettes.setText(etiquettesVisibles ? "▼ Étiquettes récent :" : "▶ Étiquettes récent:");
         gbc.gridy = ligne++;
         add(btnEtiquettes, gbc);
 
         // Fausse données - Étiquettes (affichées uniquement si visibles)
         if (etiquettesVisibles) {
+            btnEtiquettes.addActionListener(e -> {
+                if (!etiquettesVisibles && listener != null) {
+                    listener.clicContactEtiquette(null); 
+                }
+            });
+
             List<String> nomsEtiquettes = List.of("Client", "Famille", "Travail", "VIP");
             for (String nom : nomsEtiquettes) {
                 gbc.gridy = ligne++;
@@ -141,11 +147,17 @@ public class PanneauGauche extends JPanel{
         gbc.gridy = ligne++;
         add(btnNewListesDiffusion, gbc);
 
-        btnListesDiffusion.setText(listesDiffusionVisibles ? "▼ Listes de Diffusion :" : "▶ Listes de Diffusion :");
+        btnListesDiffusion.setText(listesDiffusionVisibles ? "▼ Listes de Diffusion récent :" : "▶ Listes de Diffusion récent :");
         gbc.gridy = ligne++;
         add(btnListesDiffusion, gbc);
 
         if (listesDiffusionVisibles) {
+            btnListesDiffusion.addActionListener(e -> {
+                if (!listesDiffusionVisibles && listener != null) {
+                    listener.clicListeDiffusion(null); 
+                }
+            });
+
             List<String> nomsListes = List.of("Projet", "News");
             for (String nom : nomsListes) {
                 gbc.gridy = ligne++;

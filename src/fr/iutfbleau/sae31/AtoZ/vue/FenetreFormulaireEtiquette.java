@@ -17,6 +17,28 @@ public class FenetreFormulaireEtiquette extends FenetreDialogueAbstraite {
     private JTextField txtLibelle;
 
     /**
+     * Vérifie la saisie du formulaire. Le libellé ne doit pas être vide et ne doit pas
+     * dépasser 100 caractères. En cas d'erreur, un message est affiché et le formulaire
+     * reste ouvert.
+     */
+    @Override
+    protected void validerFormulaire() {
+        String libelle = txtLibelle.getText().trim();
+
+        if (libelle.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Erreur : Le nom de l'étiquette ne peut pas être vide.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (libelle.length() > 100) {
+            JOptionPane.showMessageDialog(this, "Erreur : Le nom de l'étiquette ne peut pas dépasser 100 caractères.", "Nom trop long", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        valide = true;
+        dispose();
+    }
+
+    /**
      * Construit le formulaire et pré-remplit le libellé.
      *
      * @param parent la fenêtre parente
@@ -38,28 +60,6 @@ public class FenetreFormulaireEtiquette extends FenetreDialogueAbstraite {
 
         // Boutons de validation
         ajouterBoutonsValidation(ligne);
-    }
-
-    /**
-     * Vérifie la saisie du formulaire. Le libellé ne doit pas être vide et ne doit pas
-     * dépasser 100 caractères. En cas d'erreur, un message est affiché et le formulaire
-     * reste ouvert.
-     */
-    @Override
-    protected void validerFormulaire() {
-        String libelle = txtLibelle.getText().trim();
-
-        if (libelle.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Erreur : Le nom de l'étiquette ne peut pas être vide.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (libelle.length() > 100) {
-            JOptionPane.showMessageDialog(this, "Erreur : Le nom de l'étiquette ne peut pas dépasser 100 caractères.", "Nom trop long", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        valide = true;
-        dispose();
     }
 
     /**

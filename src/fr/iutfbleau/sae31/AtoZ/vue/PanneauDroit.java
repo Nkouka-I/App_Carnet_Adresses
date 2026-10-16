@@ -57,6 +57,66 @@ public class PanneauDroit extends JPanel{
     }
 
     /**
+     * Ajoute au panneau le bouton de suppression, configuré avec le comportement voulu.
+     * Un clic ouvre une confirmation ; si l'utilisateur accepte, l'action est exécutée,
+     * un message de succès est affiché et le panneau revient à la vue vide.
+     *
+     * @param gbc les contraintes de placement à utiliser
+     * @param ligne l'indice de la ligne de la grille où placer le bouton
+     * @param texteBouton le texte affiché sur le bouton
+     * @param messageConfirmation le message de la boîte de confirmation
+     * @param messageSucces le message affiché après la suppression
+     * @param actionAEffectuer l'action à exécuter en cas de confirmation (peut être <code>null</code>)
+     */
+    public void ajouterBoutonSuppression(GridBagConstraints gbc, int ligne, String texteBouton, String messageConfirmation, String messageSucces, Runnable actionAEffectuer) {
+
+        btnSupprimer.setText(texteBouton);
+        btnSupprimer.setForeground(Color.RED);
+
+        // On enleve les anciens écouteurs
+        for (ActionListener al : btnSupprimer.getActionListeners()) {
+            btnSupprimer.removeActionListener(al);
+        }
+
+        // On ajoute le nouveau comportement
+        btnSupprimer.addActionListener(e -> {
+
+            Window fenetreParente = SwingUtilities.getWindowAncestor(this);
+
+            // Le pop-up bloquant
+            int reponse = JOptionPane.showConfirmDialog(
+                fenetreParente, 
+                messageConfirmation, 
+                "Confirmation de suppression", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.WARNING_MESSAGE
+            );
+            
+            if (reponse == JOptionPane.YES_OPTION) {
+                
+                // TODO: Code pour supprimer de la base de données
+                if (actionAEffectuer != null) {
+                    actionAEffectuer.run();
+                }
+
+                // pop-up de confirmation
+                JOptionPane.showMessageDialog(
+                    fenetreParente, 
+                    messageSucces, 
+                    "Succès", 
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                
+                // Remise à zéro de l'affichage
+                afficherVide();
+            }
+        });
+        gbc.gridy = ligne;
+        gbc.insets = new Insets(20, 10, 10, 10);
+        add(btnSupprimer, gbc);
+    }
+
+    /**
      * Méthode générique pour ouvrir un formulaire et traiter sa validation via une interface.
      * Le formulaire est modal : l'appel est bloquant jusqu'à sa fermeture. L'écouteur
      * n'est appelé que si le formulaire a été validé.
@@ -289,65 +349,5 @@ public class PanneauDroit extends JPanel{
 
         revalidate();
         repaint();
-    }
-
-    /**
-     * Ajoute au panneau le bouton de suppression, configuré avec le comportement voulu.
-     * Un clic ouvre une confirmation ; si l'utilisateur accepte, l'action est exécutée,
-     * un message de succès est affiché et le panneau revient à la vue vide.
-     *
-     * @param gbc les contraintes de placement à utiliser
-     * @param ligne l'indice de la ligne de la grille où placer le bouton
-     * @param texteBouton le texte affiché sur le bouton
-     * @param messageConfirmation le message de la boîte de confirmation
-     * @param messageSucces le message affiché après la suppression
-     * @param actionAEffectuer l'action à exécuter en cas de confirmation (peut être <code>null</code>)
-     */
-    public void ajouterBoutonSuppression(GridBagConstraints gbc, int ligne, String texteBouton, String messageConfirmation, String messageSucces, Runnable actionAEffectuer) {
-
-        btnSupprimer.setText(texteBouton);
-        btnSupprimer.setForeground(Color.RED);
-
-        // On enleve les anciens écouteurs
-        for (ActionListener al : btnSupprimer.getActionListeners()) {
-            btnSupprimer.removeActionListener(al);
-        }
-
-        // On ajoute le nouveau comportement
-        btnSupprimer.addActionListener(e -> {
-
-            Window fenetreParente = SwingUtilities.getWindowAncestor(this);
-
-            // Le pop-up bloquant
-            int reponse = JOptionPane.showConfirmDialog(
-                fenetreParente, 
-                messageConfirmation, 
-                "Confirmation de suppression", 
-                JOptionPane.YES_NO_OPTION, 
-                JOptionPane.WARNING_MESSAGE
-            );
-            
-            if (reponse == JOptionPane.YES_OPTION) {
-                
-                // TODO: Code pour supprimer de la base de données
-                if (actionAEffectuer != null) {
-                    actionAEffectuer.run();
-                }
-
-                // pop-up de confirmation
-                JOptionPane.showMessageDialog(
-                    fenetreParente, 
-                    messageSucces, 
-                    "Succès", 
-                    JOptionPane.INFORMATION_MESSAGE
-                );
-                
-                // Remise à zéro de l'affichage
-                afficherVide();
-            }
-        });
-        gbc.gridy = ligne;
-        gbc.insets = new Insets(20, 10, 10, 10);
-        add(btnSupprimer, gbc);
     }
 }

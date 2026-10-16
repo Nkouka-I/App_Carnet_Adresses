@@ -75,6 +75,32 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
     }
 
     /**
+     * Vérifie la saisie du formulaire. Le nom ne doit pas être vide ni dépasser 50
+     * caractères, et la liste doit comporter au moins un critère. En cas d'erreur, un
+     * message est affiché et le formulaire reste ouvert.
+     */
+    @Override
+    protected void validerFormulaire() {
+        String nom = txtNomListe.getText().trim();
+
+        if (nom.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Erreur : Le nom de la liste ne peut pas être vide.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (nom.length() > 50) {
+            JOptionPane.showMessageDialog(this, "Erreur : Le nom de la liste ne peut pas dépasser 50 caractères.", "Nom trop long", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (criteresList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Erreur : Une liste de diffusion doit contenir au moins un critère.", "Critères manquants", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        valide = true;
+        dispose();
+    }
+
+    /**
      * Construit le formulaire et pré-remplit ses champs.
      *
      * @param parent la fenêtre parente
@@ -150,32 +176,6 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
 
         // Boutons de validation de base
         ajouterBoutonsValidation(ligne);
-    }
-
-    /**
-     * Vérifie la saisie du formulaire. Le nom ne doit pas être vide ni dépasser 50
-     * caractères, et la liste doit comporter au moins un critère. En cas d'erreur, un
-     * message est affiché et le formulaire reste ouvert.
-     */
-    @Override
-    protected void validerFormulaire() {
-        String nom = txtNomListe.getText().trim();
-
-        if (nom.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Erreur : Le nom de la liste ne peut pas être vide.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (nom.length() > 50) {
-            JOptionPane.showMessageDialog(this, "Erreur : Le nom de la liste ne peut pas dépasser 50 caractères.", "Nom trop long", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (criteresList.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Erreur : Une liste de diffusion doit contenir au moins un critère.", "Critères manquants", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        valide = true;
-        dispose();
     }
 
     /**
