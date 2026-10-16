@@ -4,19 +4,62 @@ import java.awt.*;
 import java.util.List;
 import javax.swing.*;
 
+/**
+ * La classe <code>PanneauGauche</code> est le panneau de navigation de gauche de la
+ * fenêtre principale. Il propose les boutons de création (contact, étiquette, liste de
+ * diffusion) ainsi que deux menus déroulants (accordéons) listant les étiquettes et
+ * les listes de diffusion.
+ *
+ * @version 1.0
+ * @author Nkouka Ildevert
+ */
 public class PanneauGauche extends JPanel{
 
+    /**
+     * Bouton de création d'un nouveau contact.
+     */
     private final JButton btnNewContact;
+
+    /**
+     * Bouton de création d'une nouvelle étiquette.
+     */
     private final JButton btnNewEtiquette;
+
+    /**
+     * Bouton de création d'une nouvelle liste de diffusion.
+     */
     private final JButton btnNewListesDiffusion;
 
+    /**
+     * Titre de l'application affiché en haut du panneau.
+     */
     private final JLabel titreApp;
+
+    /**
+     * Bouton qui déplie ou replie la liste des étiquettes.
+     */
     private final JButton btnEtiquettes;
+
+    /**
+     * Bouton qui déplie ou replie la liste des listes de diffusion.
+     */
     private final JButton btnListesDiffusion;
 
+    /**
+     * Indique si la liste des étiquettes est actuellement dépliée.
+     */
     private boolean etiquettesVisibles = false;
+
+    /**
+     * Indique si la liste des listes de diffusion est actuellement dépliée.
+     */
     private boolean listesDiffusionVisibles = false;
 
+    /**
+     * Construit le panneau de gauche, crée ses boutons et affiche l'interface.
+     *
+     * @param listener l'écouteur à notifier lors d'un clic sur une étiquette ou une liste de diffusion
+     */
     public PanneauGauche(NavigationListener listener){
 
         setLayout(new GridBagLayout());
@@ -43,6 +86,12 @@ public class PanneauGauche extends JPanel{
         rafraichirInterface(listener);
     }
 
+    /**
+     * Reconstruit entièrement le contenu du panneau selon l'état des menus déroulants.
+     * Les étiquettes et les listes de diffusion ne sont affichées que si leur menu est déplié.
+     *
+     * @param listener l'écouteur à notifier lors d'un clic sur une étiquette ou une liste de diffusion
+     */
     public void rafraichirInterface(NavigationListener listener) {
         removeAll();
 

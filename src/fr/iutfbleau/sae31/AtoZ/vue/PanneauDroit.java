@@ -4,11 +4,29 @@ import java.util.List;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
+/**
+ * La classe <code>PanneauDroit</code> est le panneau de droite de la fenêtre principale.
+ * Il affiche les opérations disponibles (modifier, supprimer) sur l'élément
+ * sélectionné : un contact, une étiquette ou une liste de diffusion.
+ *
+ * @version 1.0
+ * @author Nkouka Ildevert
+ */
 public class PanneauDroit extends JPanel{
 
+    /**
+     * Bouton de suppression de l'élément sélectionné.
+     */
     private JButton btnSupprimer = new JButton("Supprimer");
+
+    /**
+     * Bouton de modification de l'élément sélectionné.
+     */
     private JButton btnModifier = new JButton("Modifier");
 
+    /**
+     * Construit le panneau de droite avec une largeur fixe et affiche la vue vide.
+     */
     public PanneauDroit(){
         setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(250, 0)); // Limité à une largeur fixe
@@ -17,6 +35,10 @@ public class PanneauDroit extends JPanel{
         afficherVide();
     }
 
+    /**
+     * Affiche la vue par défaut, invitant l'utilisateur à sélectionner un élément.
+     * Le contenu précédent du panneau est effacé.
+     */
     public void afficherVide() {
         removeAll();
         setLayout(new GridBagLayout());
@@ -36,6 +58,12 @@ public class PanneauDroit extends JPanel{
 
     /**
      * Méthode générique pour ouvrir un formulaire et traiter sa validation via une interface.
+     * Le formulaire est modal : l'appel est bloquant jusqu'à sa fermeture. L'écouteur
+     * n'est appelé que si le formulaire a été validé.
+     *
+     * @param <T> le type de formulaire ouvert
+     * @param formulaire le formulaire à afficher
+     * @param listener l'écouteur appelé si le formulaire est validé
      */
     private <T extends FenetreDialogueAbstraite> void ouvrirFormulaire(T formulaire, FormulaireListener<T> listener) {
         formulaire.setVisible(true);
@@ -46,7 +74,13 @@ public class PanneauDroit extends JPanel{
     }
 
     /**
-     * 2. Vue dédiée lorsqu'un CONTACT est sélectionné
+     * Vue dédiée lorsqu'un CONTACT est sélectionné : affiche les boutons pour modifier
+     * et supprimer le contact.
+     *
+     * @param nomActuel le nom actuel du contact
+     * @param emailActuel l'email actuel du contact
+     * @param toutesLesEtiquettes toutes les étiquettes disponibles
+     * @param etiquettesActuelles les étiquettes actuellement associées au contact
      */
     public void afficherOperationsContact(String nomActuel, String emailActuel, 
                                         List<String> toutesLesEtiquettes, List<String> etiquettesActuelles) {
@@ -111,7 +145,11 @@ public class PanneauDroit extends JPanel{
     }
 
     /**
-     * 3. Vue dédiée lorsqu'une ÉTIQUETTE est sélectionnée
+     * Vue dédiée lorsqu'une ÉTIQUETTE est sélectionnée : affiche les boutons pour
+     * modifier et supprimer l'étiquette, ainsi que le titre introduisant les listes
+     * où elle apparaît.
+     *
+     * @param nomEtiquette le libellé de l'étiquette sélectionnée
      */
     public void afficherOperationsEtiquette(String nomEtiquette) {
         removeAll();
@@ -178,7 +216,12 @@ public class PanneauDroit extends JPanel{
     }
 
     /**
-     * 4. Vue dédiée lorsqu'une LISTE DE DIFFUSION est sélectionnée
+     * Vue dédiée lorsqu'une LISTE DE DIFFUSION est sélectionnée : affiche les boutons
+     * pour modifier et supprimer la liste, ainsi que le titre introduisant ses critères.
+     *
+     * @param nomListe le nom de la liste de diffusion sélectionnée
+     * @param toutesLesEtiquettes toutes les étiquettes disponibles pour définir un critère
+     * @param criteresActuels les critères actuellement définis pour la liste
      */
     public void afficherOperationsListeDiffusion(String nomListe, List<String> toutesLesEtiquettes, List<FenetreFormulaireListeDiffusion.CritereData> criteresActuels) {
         removeAll();
@@ -248,6 +291,18 @@ public class PanneauDroit extends JPanel{
         repaint();
     }
 
+    /**
+     * Ajoute au panneau le bouton de suppression, configuré avec le comportement voulu.
+     * Un clic ouvre une confirmation ; si l'utilisateur accepte, l'action est exécutée,
+     * un message de succès est affiché et le panneau revient à la vue vide.
+     *
+     * @param gbc les contraintes de placement à utiliser
+     * @param ligne l'indice de la ligne de la grille où placer le bouton
+     * @param texteBouton le texte affiché sur le bouton
+     * @param messageConfirmation le message de la boîte de confirmation
+     * @param messageSucces le message affiché après la suppression
+     * @param actionAEffectuer l'action à exécuter en cas de confirmation (peut être <code>null</code>)
+     */
     public void ajouterBoutonSuppression(GridBagConstraints gbc, int ligne, String texteBouton, String messageConfirmation, String messageSucces, Runnable actionAEffectuer) {
 
         btnSupprimer.setText(texteBouton);

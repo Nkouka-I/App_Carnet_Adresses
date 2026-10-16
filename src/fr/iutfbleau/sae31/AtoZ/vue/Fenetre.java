@@ -3,12 +3,36 @@ import java.awt.*;
 import javax.swing.*;
 import java.util.List;
 
+/**
+ * La classe <code>Fenetre</code> est la fenêtre principale de l'application AtoZ Carnet.
+ * Elle assemble les trois panneaux de l'interface (gauche, central et droit) et
+ * coordonne leur mise à jour en réagissant aux événements de navigation.
+ *
+ * @version 1.0
+ * @author Nkouka Ildevert
+ */
 public class Fenetre extends JFrame implements NavigationListener{
 
+    /**
+     * Panneau central affichant le répertoire de contacts ou une liste de diffusion.
+     */
     private final PanneauCentral panneauCentral;
+
+    /**
+     * Panneau de gauche contenant les boutons de création et le menu de navigation.
+     */
     private final PanneauGauche panneauGauche;
+
+    /**
+     * Panneau de droite affichant les opérations disponibles sur l'élément sélectionné.
+     */
     private final PanneauDroit panneauDroit;
 
+    /**
+     * Construit la fenêtre principale : configure le titre, la taille, le
+     * comportement de fermeture, puis place les trois panneaux dans un
+     * <code>BorderLayout</code>.
+     */
 	public Fenetre(){
 		// on configure la fenetre
 	    setTitle("AtoZ Carner");
@@ -29,8 +53,15 @@ public class Fenetre extends JFrame implements NavigationListener{
 	}
 
     // méthodes du contrat NavigationListener
-    /** (non-Javadoc)
-     * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicContactEtiquette(java.lang.String)
+
+    /**
+     * Réagit au clic sur un contact : affiche le répertoire au centre et les
+     * opérations possibles sur ce contact (modifier, supprimer) à droite.
+     *
+     * @param nom le nom du contact sélectionné
+     * @param email l'adresse email du contact sélectionné
+     * @param etiquettes les étiquettes actuellement associées au contact
+     * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicContact(java.lang.String, java.lang.String, java.util.List)
      */
     @Override
     public void clicContact(String nom, String email, List<String> etiquettes) {
@@ -45,7 +76,11 @@ public class Fenetre extends JFrame implements NavigationListener{
         panneauDroit.afficherOperationsContact(nom ,email ,toutesLesEtiquettes, etiquettes);
     }
 
-    /** (non-Javadoc)
+    /**
+     * Réagit au clic sur une étiquette : affiche le répertoire au centre et les
+     * opérations possibles sur cette étiquette à droite.
+     *
+     * @param nomEtiquette le libellé de l'étiquette sélectionnée
      * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicContactEtiquette(java.lang.String)
      */
     @Override
@@ -58,7 +93,11 @@ public class Fenetre extends JFrame implements NavigationListener{
         panneauDroit.afficherOperationsEtiquette(nomEtiquette);
     }
 
-    /** (non-Javadoc)
+    /**
+     * Réagit au clic sur une liste de diffusion : affiche la page dédiée à la
+     * liste au centre et les opérations possibles sur cette liste à droite.
+     *
+     * @param nomListe le nom de la liste de diffusion sélectionnée
      * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicListeDiffusion(java.lang.String)
      */
     @Override

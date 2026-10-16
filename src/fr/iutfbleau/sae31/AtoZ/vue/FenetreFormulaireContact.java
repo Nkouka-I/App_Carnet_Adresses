@@ -5,12 +5,41 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * La classe <code>FenetreFormulaireContact</code> est le formulaire de création et de
+ * modification d'un contact. Il permet de saisir un nom, une adresse email et de
+ * cocher les étiquettes associées au contact.
+ *
+ * @version 1.0
+ * @author Nkouka Ildevert
+ */
 public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
-    
+
+    /**
+     * Champ de saisie du nom du contact.
+     */
     private JTextField txtNom;
+
+    /**
+     * Champ de saisie de l'adresse email du contact.
+     */
     private JTextField txtEmail;
+
+    /**
+     * Cases à cocher correspondant à chacune des étiquettes disponibles.
+     */
     private List<JCheckBox> listeCheckBoxEtiquettes;
 
+    /**
+     * Construit le formulaire et pré-remplit ses champs.
+     *
+     * @param parent la fenêtre parente
+     * @param titre le titre de la boîte de dialogue
+     * @param nomInitial le nom à afficher au départ (vide pour une création)
+     * @param emailInitial l'email à afficher au départ (vide pour une création)
+     * @param toutesLesEtiquettes toutes les étiquettes proposées à la sélection
+     * @param etiquettesDuContact les étiquettes à cocher au départ
+     */
     public FenetreFormulaireContact(Frame parent, String titre, String nomInitial, String emailInitial, 
                                   List<String> toutesLesEtiquettes, List<String> etiquettesDuContact) {
         super(parent, titre, 400, 360);
@@ -58,6 +87,12 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
         ajouterBoutonsValidation(ligne);
     }
 
+    /**
+     * Vérifie la saisie du formulaire. Le nom ne doit pas être vide, ni contenir de saut
+     * de ligne, et doit comporter au moins une lettre ou un chiffre. L'email ne doit pas
+     * être vide, doit contenir un '@', aucun caractère blanc, et ne pas dépasser 254 octets.
+     * En cas d'erreur, un message est affiché et le formulaire reste ouvert.
+     */
     @Override
     protected void validerFormulaire() {
         String nom = txtNom.getText().trim();
@@ -100,9 +135,25 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
         dispose();
     }
 
+    /**
+     * Renvoie le nom saisi, sans les espaces en début et fin de chaîne.
+     *
+     * @return le nom du contact
+     */
     public String getNomSaisi() { return txtNom.getText().trim(); }
+
+    /**
+     * Renvoie l'adresse email saisie, sans les espaces en début et fin de chaîne.
+     *
+     * @return l'email du contact
+     */
     public String getEmailSaisi() { return txtEmail.getText().trim(); }
-    
+
+    /**
+     * Renvoie la liste des étiquettes cochées dans le formulaire.
+     *
+     * @return les libellés des étiquettes sélectionnées
+     */
     public List<String> getEtiquettesSelectionnees() {
         List<String> selection = new ArrayList<>();
         for (JCheckBox cb : listeCheckBoxEtiquettes) {

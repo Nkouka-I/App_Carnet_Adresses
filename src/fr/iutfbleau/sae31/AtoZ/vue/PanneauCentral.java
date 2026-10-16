@@ -6,10 +6,26 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.*;
 
+/**
+ * La classe <code>PanneauCentral</code> est le panneau central de la fenêtre principale.
+ * Il affiche soit le répertoire de contacts (avec barre de recherche), soit la page
+ * dédiée à une liste de diffusion (tableau de ses contacts).
+ *
+ * @version 1.0
+ * @author Nkouka Ildevert
+ */
 public class PanneauCentral extends JPanel{
 
+    /**
+     * Écouteur notifié lorsque l'utilisateur clique sur un contact.
+     */
     private final NavigationListener listener;
 
+    /**
+     * Construit le panneau central et affiche par défaut la vue répertoire.
+     *
+     * @param listener l'écouteur à notifier lors des clics sur les contacts
+     */
 	public PanneauCentral(NavigationListener listener) {
         this.listener = listener;
 
@@ -21,6 +37,10 @@ public class PanneauCentral extends JPanel{
         afficherRepertoire();
     }
 
+    /**
+     * Affiche la vue répertoire : une barre de recherche, un bouton de tri et la liste
+     * des contacts. Le contenu précédent du panneau est effacé.
+     */
 	public void afficherRepertoire() {
         removeAll();
 
@@ -78,6 +98,15 @@ public class PanneauCentral extends JPanel{
         repaint();
     }
 
+    /**
+     * Crée la ligne graphique représentant un contact dans le répertoire. Un clic sur la
+     * ligne notifie l'écouteur de navigation.
+     *
+     * @param nom le nom du contact
+     * @param email l'adresse email du contact
+     * @param etiquette les étiquettes du contact, séparées par des espaces
+     * @return le panneau représentant le contact
+     */
     private JPanel creerLigneContact(String nom, String email, String etiquette) {
         JPanel ligne = new JPanel(new GridBagLayout());
         ligne.setBackground(new Color(250, 250, 250));
@@ -114,6 +143,13 @@ public class PanneauCentral extends JPanel{
         return ligne;
     }
 
+    /**
+     * Affiche la page dédiée à une liste de diffusion : son titre, un tableau de ses
+     * contacts et un bouton pour copier tous les contacts. Le contenu précédent du
+     * panneau est effacé.
+     *
+     * @param nomListe le nom de la liste de diffusion à afficher
+     */
     public void afficherListeDiffusion(String nomListe) {
         removeAll(); // Efface tout
 
