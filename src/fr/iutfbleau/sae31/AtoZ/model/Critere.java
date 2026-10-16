@@ -1,4 +1,4 @@
-package fr.iutfbleau.sae31.Atoz.model;
+package fr.iutfbleau.sae31.AtoZ.model;
 
 public class Critere{
     private final Etiquette etiquette ;
