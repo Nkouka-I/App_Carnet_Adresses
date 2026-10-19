@@ -65,5 +65,39 @@ public class EtiquetteDAO {
         return resultat;
     }
 
-    
+    /**
+     * Met à jour le libellé d'une étiquette existante.
+     *
+     * @param e étiquette à modifier
+     * @throws ModeleException en cas d'erreur ou si l'étiquette n'existe plus
+     */
+    public void modifier(Etiquette e) throws ModeleException {
+        try (PreparedStatement ps = cx.prepareStatement(
+                "UPDATE Etiquette SET libelle = ? WHERE id = ?")) {
+            ps.setString(1, e.getLibelle());
+            ps.setInt(2, e.getId());
+            if (ps.executeUpdate() == 0) {
+                throw new ModeleException("Cette étiquette n'existe plus.");
+            }
+        } catch (SQLException ex) {
+            throw ModeleException.depuis("Modification de l'étiquette", ex);
+        }
+    }
+
+    /**
+     * Supprime une étiquette. Elle disparaît des contacts qui l'avaient et des critères
+     * des listes de diffusion qui l'utilisaient (suppression en cascade) : une liste peut
+     * donc se retrouver sans aucun critère.
+     *
+     * @param id identifiant de l'étiquette
+     * @throws ModeleException en cas d'erreur d'accès
+     */
+    public void supprimer(int id) throws ModeleException {
+        try (PreparedStatement ps = cx.prepareStatement("DELETE FROM Etiquette WHERE id = ?")) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            throw ModeleException.depuis("Suppression de l'étiquette", ex);
+        }
+    }
 }
