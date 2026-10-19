@@ -121,8 +121,8 @@ public class Fenetre extends JFrame implements NavigationListener{
 
         // Donnée fake
         List<String> toutesLesEtiquettes = List.of("Client", "Famille", "Travail", "VIP");
-        List<FenetreFormulaireListeDiffusion.CritereData> criteresActuels = List.of(
-            new FenetreFormulaireListeDiffusion.CritereData("Client", true)
+        List<CritereData> criteresActuels = List.of(
+            new CritereData("Client", true)
         );
 
         // Mis à jour du panneau Droit, on affiche rien si on clic sur bouton acordeon

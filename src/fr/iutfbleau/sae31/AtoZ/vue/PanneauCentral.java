@@ -1,8 +1,6 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.*;
 
@@ -38,51 +36,6 @@ public class PanneauCentral extends JPanel{
     }
 
     /**
-     * Crée la ligne graphique représentant un contact dans le répertoire. Un clic sur la
-     * ligne notifie l'écouteur de navigation.
-     *
-     * @param nom le nom du contact
-     * @param email l'adresse email du contact
-     * @param etiquette les étiquettes du contact, séparées par des espaces
-     * @return le panneau représentant le contact
-     */
-    private JPanel creerLigneContact(String nom, String email, String etiquette) {
-        JPanel ligne = new JPanel(new GridBagLayout());
-        ligne.setBackground(new Color(250, 250, 250));
-        ligne.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 230, 230)),
-            BorderFactory.createEmptyBorder(8, 8, 8, 8)
-        ));
-
-        ligne.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        ligne.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (listener != null) {
-                    listener.clicContact(nom, email, List.of(etiquette.split(" ")));
-                }
-            }
-        });
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0, 5, 0, 5);
-        gbc.gridy = 0;
-
-        gbc.gridx = 0; gbc.weightx = 0.3; gbc.fill = GridBagConstraints.HORIZONTAL;
-        ligne.add(new JLabel(nom), gbc);
-
-        gbc.gridx = 1; gbc.weightx = 0.4; gbc.fill = GridBagConstraints.HORIZONTAL;
-        ligne.add(new JLabel(email), gbc);
-
-        gbc.gridx = 3; gbc.weightx = 0.1; gbc.fill = GridBagConstraints.NONE;
-        ligne.add(new JButton("Copier"), gbc);
-
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
-        ligne.add(new JLabel("[" + etiquette + "]"), gbc);
-        return ligne;
-    }
-
-    /**
      * Affiche la vue répertoire : une barre de recherche, un bouton de tri et la liste
      * des contacts. Le contenu précédent du panneau est effacé.
      */
@@ -100,7 +53,7 @@ public class PanneauCentral extends JPanel{
         panelHaut.setBackground(Color.WHITE);
         GridBagConstraints gbcHaut = new GridBagConstraints();
         gbcHaut.insets = new Insets(0, 0, 10, 5);
-        
+
         gbcHaut.gridx = 0; gbcHaut.weightx = 1.0; gbcHaut.fill = GridBagConstraints.HORIZONTAL;
         panelHaut.add(new JTextField("Chercher un nom, étiquette..."), gbcHaut);
 
@@ -123,11 +76,11 @@ public class PanneauCentral extends JPanel{
         gbcContacts.weightx = 1.0;
 
         int ligne = 0;
-        
+
         gbcContacts.gridy = ligne++;
-        panelContactsList.add(creerLigneContact("Jean Dupont", "jean.dupont@mail.com", "Client" + " " + "VIP"+ " " + "Projet"), gbcContacts);
+        panelContactsList.add(new LigneContact("Jean Dupont", "jean.dupont@mail.com", List.of("Client", "VIP", "Projet"), listener), gbcContacts);
         gbcContacts.gridy = ligne++;
-        panelContactsList.add(creerLigneContact("Marie Curie", "marie.curie@mail.com", "Client" + " " + "VIP"+ " " + "Projet"), gbcContacts);
+        panelContactsList.add(new LigneContact("Marie Curie", "marie.curie@mail.com", List.of("Client", "VIP", "Projet"), listener), gbcContacts);
 
         // Ressort
         gbcContacts.gridy = ligne;
@@ -149,6 +102,7 @@ public class PanneauCentral extends JPanel{
      * panneau est effacé.
      *
      * @param nomListe le nom de la liste de diffusion à afficher
+     *                 (<code>null</code> pour afficher le message d'accueil des listes)
      */
     public void afficherListeDiffusion(String nomListe) {
         removeAll(); // Efface tout
@@ -187,7 +141,7 @@ public class PanneauCentral extends JPanel{
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        
+
         String[] colonnes = {"Nom", "Prénom", "Adresse mail"};
         Object[][] donnees = {
             {"Dupont", "Jean", "jean.dupont@mail.com"},
@@ -202,7 +156,7 @@ public class PanneauCentral extends JPanel{
         gbc.weighty = 0.0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.EAST;
-        
+
         JButton btnCopierTout = new JButton("[ Copier tout ]");
         btnCopierTout.setBackground(new Color(70, 130, 180));
         btnCopierTout.setForeground(Color.WHITE);
@@ -212,6 +166,4 @@ public class PanneauCentral extends JPanel{
         revalidate();
         repaint();
     }
-
-    
 }

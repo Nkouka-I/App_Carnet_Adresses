@@ -96,7 +96,7 @@ public class PanneauDroit extends JPanel{
      * @param toutesLesEtiquettes toutes les étiquettes disponibles pour définir un critère
      * @param criteresActuels les critères actuellement définis pour la liste
      */
-    public void afficherOperationsListeDiffusion(String nomListe, List<String> toutesLesEtiquettes, List<FenetreFormulaireListeDiffusion.CritereData> criteresActuels) {
+    public void afficherOperationsListeDiffusion(String nomListe, List<String> toutesLesEtiquettes, List<CritereData> criteresActuels) {
         afficher(new PanneauOperationsListeDiffusion(
             this::afficherVide, nomListe, toutesLesEtiquettes, criteresActuels
         ));

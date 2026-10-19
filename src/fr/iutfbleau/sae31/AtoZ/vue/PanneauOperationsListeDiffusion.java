@@ -26,7 +26,7 @@ public class PanneauOperationsListeDiffusion extends PanneauOperationsAbstrait {
     /**
      * Critères actuellement définis pour la liste.
      */
-    private List<FenetreFormulaireListeDiffusion.CritereData> criteresActuels;
+    private List<CritereData> criteresActuels;
 
     /**
      * Construit le panneau et affiche ses éléments.
@@ -38,7 +38,7 @@ public class PanneauOperationsListeDiffusion extends PanneauOperationsAbstrait {
      */
     public PanneauOperationsListeDiffusion(Runnable apresSuppression, String nomListe,
                                            List<String> toutesLesEtiquettes,
-                                           List<FenetreFormulaireListeDiffusion.CritereData> criteresActuels) {
+                                           List<CritereData> criteresActuels) {
         super(apresSuppression);
         this.nomListe = nomListe;
         this.toutesLesEtiquettes = toutesLesEtiquettes;
