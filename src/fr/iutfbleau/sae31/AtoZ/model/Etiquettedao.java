@@ -1,0 +1,69 @@
+package fr.iutfbleau.sae31.AtoZ.model;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Accès à la table {@code Etiquette} (opérations CRUD).
+ */
+public class EtiquetteDAO {
+
+    private final Connection cx;
+
+    /**
+     * Crée un accès aux étiquettes.
+     *
+     * @param cx connexion ouverte vers la base
+     */
+    public EtiquetteDAO(Connection cx) {
+        this.cx = cx;
+    }
+
+    /**
+     * Enregistre une nouvelle étiquette et renseigne son identifiant.
+     *
+     * @param e étiquette à créer
+     * @throws ModeleException en cas d'erreur (ex. libellé déjà existant)
+     */
+    public void creer(Etiquette e) throws ModeleException {
+        try (PreparedStatement ps = cx.prepareStatement(
+                "INSERT INTO Etiquette (libelle) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, e.getLibelle());
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    e.setId(rs.getInt(1));
+                }
+            }
+        } catch (SQLException ex) {
+            throw ModeleException.depuis("Création de l'étiquette", ex);
+        }
+    }
+
+    /**
+     * Retourne toutes les étiquettes, triées par libellé.
+     *
+     * @return les étiquettes
+     * @throws ModeleException en cas d'erreur d'accès
+     */
+    public List<Etiquette> trouverToutes() throws ModeleException {
+        List<Etiquette> resultat = new ArrayList<>();
+        try (PreparedStatement ps = cx.prepareStatement(
+                "SELECT id, libelle FROM Etiquette ORDER BY libelle");
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resultat.add(new Etiquette(rs.getInt(1), rs.getString(2)));
+            }
+        } catch (SQLException ex) {
+            throw ModeleException.depuis("Lecture des étiquettes", ex);
+        }
+        return resultat;
+    }
+
+    
+}
