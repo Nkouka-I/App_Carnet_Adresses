@@ -79,6 +79,65 @@ public class Contactdao {
             Transactions.restaurer(cx, auto);
         }
     }
+    /**
+     * Supprime un contact (ses liens avec les étiquettes disparaissent avec lui).
+     *
+     * @param id identifiant du contact
+     * @throws ModeleException en cas d'erreur d'accès
+     */
+    public void supprimer(int id) throws ModeleException {
+        try (PreparedStatement ps = cx.prepareStatement("DELETE FROM Contact WHERE id = ?")) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw ModeleException.depuis("Suppression du contact", e);
+        }
+    }
+ 
+    /**
+     * Enregistre les liens entre un contact et ses étiquettes.
+     *
+     * @param c contact dont l'identifiant est connu
+     * @throws SQLException en cas d'erreur SQL
+     */
+    private void insererLiaisons(Contact c) throws SQLException {
+        try (PreparedStatement ps = cx.prepareStatement(
+                "INSERT INTO Contact_etiquette (contact_id, etiquette_id) VALUES (?, ?)")) {
+            for (Etiquette e : c.getEtiquettes()) {
+                ps.setInt(1, c.getId());
+                ps.setInt(2, e.getId());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+    }
+ 
+    /**
+     * Renseigne les étiquettes des contacts donnés, avec une seule requête.
+     *
+     * @param contacts contacts déjà lus en base
+     * @throws SQLException    en cas d'erreur SQL
+     * @throws ModeleException si une étiquette en base est invalide
+     */
+    void chargerEtiquettes(List<Contact> contacts) throws SQLException, ModeleException {
+        Map<Integer, Contact> parId = new HashMap<>();
+        for (Contact c : contacts) {
+            parId.put(c.getId(), c);
+        }
+        try (PreparedStatement ps = cx.prepareStatement(
+                "SELECT ce.contact_id, e.id, e.libelle "
+                + "FROM Contact_etiquette ce JOIN Etiquette e ON e.id = ce.etiquette_id "
+                + "ORDER BY e.libelle");
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Contact c = parId.get(rs.getInt(1));
+                if (c != null) {
+                    c.ajouterEtiquette(new Etiquette(rs.getInt(2), rs.getString(3)));
+                }
+            }
+        }
+    }
+
 
 
 
