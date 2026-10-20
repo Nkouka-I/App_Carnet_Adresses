@@ -39,7 +39,6 @@ public class EtiquetteDAO {
             if (rs.next()) {
                 e.setId(rs.getInt(1));
             }
-            }
         } catch (SQLException ex) {
             throw ModeleException.depuis("Création de l'étiquette", ex);
         }
