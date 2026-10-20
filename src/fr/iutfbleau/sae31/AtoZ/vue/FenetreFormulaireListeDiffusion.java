@@ -1,6 +1,16 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTextField;
+import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import java.awt.Frame;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,6 +26,11 @@ import java.util.List;
 public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
 
     /**
+     * Nombre maximal de caractères du nom d'une liste de diffusion.
+     */
+    private static final int LONGUEUR_MAX_NOM = 50;
+
+    /**
      * Champ de saisie du nom de la liste de diffusion.
      */
     private JTextField txtNomListe;
@@ -25,11 +40,6 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
      * la liste graphique l'affiche et {@link #getCriteresList()} le relit.
      */
     private DefaultListModel<CritereData> modelCriteres;
-
-    /**
-     * Composant graphique affichant les critères de la liste.
-     */
-    private JList<CritereData> listCriteres;
 
     /**
      * Construit le formulaire et pré-remplit ses champs.
@@ -44,18 +54,13 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
                                            List<String> toutesLesEtiquettes, List<CritereData> criteresInitiaux) {
         super(parent, titre, 450, 420);
 
-        int ligne = 0;
-
         // Nom de la liste
-        gbc.gridy = ligne++;
-        add(new JLabel("Nom de la liste de diffusion (max 50 car.) :"), gbc);
-        gbc.gridy = ligne++;
+        ajouter(new JLabel("Nom de la liste de diffusion (max " + LONGUEUR_MAX_NOM + " car.) :"));
         txtNomListe = new JTextField(nomInitial, 20);
-        add(txtNomListe, gbc);
+        ajouter(txtNomListe);
 
         // Liste des critères existants
-        gbc.gridy = ligne++;
-        add(new JLabel("Critères dynamiques :"), gbc);
+        ajouter(new JLabel("Critères dynamiques :"));
 
         modelCriteres = new DefaultListModel<>();
         if (criteresInitiaux != null) {
@@ -64,37 +69,35 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
                 modelCriteres.addElement(new CritereData(c));
             }
         }
-        listCriteres = new JList<>(modelCriteres);
+        JList<CritereData> listCriteres = new JList<>(modelCriteres);
         JScrollPane scrollPane = new JScrollPane(listCriteres);
         scrollPane.setPreferredSize(new Dimension(400, 90));
-        gbc.gridy = ligne++;
-        add(scrollPane, gbc);
+        ajouter(scrollPane);
 
-        // Panneau d'ajout critère
-        JPanel panelAjoutCritere = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // Panneaux d'ajout, de modification et de suppression des critères
         JComboBox<String> comboEtiquettes = new JComboBox<>(toutesLesEtiquettes != null ? toutesLesEtiquettes.toArray(new String[0]) : new String[0]);
         JCheckBox chkInclus = new JCheckBox("Inclus (doit l'avoir)", true);
         JButton btnAjouterCritere = new JButton("Ajouter");
         JButton btnModifierCritere = new JButton("Modifier sélectionné");
         JButton btnSupprimerCritere = new JButton("Supprimer sélectionné");
 
+        JPanel panelAjoutCritere = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelAjoutCritere.add(comboEtiquettes);
         panelAjoutCritere.add(chkInclus);
         panelAjoutCritere.add(btnAjouterCritere);
+        ajouter(panelAjoutCritere);
 
-        gbc.gridy = ligne++;
-        add(panelAjoutCritere, gbc);
-
-        gbc.gridy = ligne++;
         JPanel panelSuppr = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelSuppr.add(btnModifierCritere);
         panelSuppr.add(btnSupprimerCritere);
-        add(panelSuppr, gbc);
+        ajouter(panelSuppr);
 
         btnAjouterCritere.addActionListener(e -> {
             String etiquetteChoisie = (String) comboEtiquettes.getSelectedItem();
-            if (etiquetteChoisie != null) {
-                modelCriteres.addElement(new CritereData(etiquetteChoisie, chkInclus.isSelected()));
+            boolean estInclus = chkInclus.isSelected();
+
+            if (etiquetteChoisie != null && critereAcceptable(etiquetteChoisie, estInclus, -1)) {
+                modelCriteres.addElement(new CritereData(etiquetteChoisie, estInclus));
             }
         });
 
@@ -111,10 +114,12 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
         btnModifierCritere.addActionListener(e -> {
             int index = listCriteres.getSelectedIndex();
             String etiquetteChoisie = (String) comboEtiquettes.getSelectedItem();
-            if (index != -1 && etiquetteChoisie != null) {
+            boolean estInclus = chkInclus.isSelected();
+
+            if (index != -1 && etiquetteChoisie != null && critereAcceptable(etiquetteChoisie, estInclus, index)) {
                 CritereData critere = modelCriteres.get(index);
                 critere.setEtiquette(etiquetteChoisie);
-                critere.setInclus(chkInclus.isSelected());
+                critere.setInclus(estInclus);
                 modelCriteres.set(index, critere); // déclenche le rafraîchissement de l'affichage
             }
         });
@@ -126,8 +131,32 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
             }
         });
 
-        // Boutons de validation de base
-        ajouterBoutonsValidation(ligne);
+        // Boutons de validation
+        ajouterBoutonsValidation();
+    }
+
+    /**
+     * Vérifie qu'un critère n'est ni en double ni contradictoire avec ceux déjà définis.
+     * En cas de problème, un message d'erreur est affiché.
+     *
+     * @param etiquette le libellé de l'étiquette du critère
+     * @param inclus <code>true</code> si l'étiquette est requise, <code>false</code> si elle est interdite
+     * @param indexIgnore l'indice d'un critère à ignorer (celui que l'on modifie), ou -1 pour tous les comparer
+     * @return <code>true</code> si le critère peut être ajouté ou modifié
+     */
+    private boolean critereAcceptable(String etiquette, boolean inclus, int indexIgnore) {
+        for (int i = 0; i < modelCriteres.size(); i++) {
+            CritereData c = modelCriteres.get(i);
+            if (i != indexIgnore && c.getEtiquette().equals(etiquette)) {
+                if (c.isInclus() == inclus) {
+                    afficherErreur("Critère en double", "Un critère identique existe déjà pour cette étiquette.");
+                } else {
+                    afficherErreur("Critère contradictoire", "Un critère contradictoire (Inclus/Exclu) existe déjà pour cette étiquette.");
+                }
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -137,23 +166,22 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
      */
     @Override
     protected void validerFormulaire() {
-        String nom = txtNomListe.getText().trim();
+        String nom = getNomListeSaisi();
 
         if (nom.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Erreur : Le nom de la liste ne peut pas être vide.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
+            afficherErreur("Nom invalide", "Le nom de la liste ne peut pas être vide.");
             return;
         }
-        if (nom.length() > 50) {
-            JOptionPane.showMessageDialog(this, "Erreur : Le nom de la liste ne peut pas dépasser 50 caractères.", "Nom trop long", JOptionPane.ERROR_MESSAGE);
+        if (nom.length() > LONGUEUR_MAX_NOM) {
+            afficherErreur("Nom trop long", "Le nom de la liste ne peut pas dépasser " + LONGUEUR_MAX_NOM + " caractères.");
             return;
         }
         if (modelCriteres.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Erreur : Une liste de diffusion doit contenir au moins un critère.", "Critères manquants", JOptionPane.ERROR_MESSAGE);
+            afficherErreur("Critères manquants", "Une liste de diffusion doit contenir au moins un critère.");
             return;
         }
 
-        valide = true;
-        dispose();
+        validerEtFermer();
     }
 
     /**

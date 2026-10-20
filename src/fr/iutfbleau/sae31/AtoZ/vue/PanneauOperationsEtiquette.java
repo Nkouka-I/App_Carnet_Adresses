@@ -40,9 +40,15 @@ public class PanneauOperationsEtiquette extends PanneauOperationsAbstrait {
         ajouterBoutonModifier("Modifier l'étiquette", e -> modifier());
 
         ajouterTitre(
-            "<html><b>L'étiquette &quot;" + nomEtiquette + "&quot; apparaît dans les listes :</b></html>",
-            JLabel.LEADING,
-            new Insets(20, 10, 5, 10)
+            "L'étiquette \"" + nomEtiquette + "\"",
+            JLabel.CENTER,
+            new Insets(20, 10, 2, 10)
+        );
+
+        ajouterTitre(
+            "apparaît dans les listes :",
+            JLabel.CENTER,
+            new Insets(0, 10, 5, 10)
         );
 
         /*TODO Boucle que ajoute les differents noms de listes*/
@@ -66,15 +72,15 @@ public class PanneauOperationsEtiquette extends PanneauOperationsAbstrait {
      */
     private void modifier() {
         FenetreFormulaireEtiquette form = new FenetreFormulaireEtiquette(
-            getFenetreParente(), 
-            "Modifier l'étiquette", 
+            getFenetreParente(),
+            "Modifier l'étiquette",
             nomEtiquette
         );
 
-        ouvrirFormulaire(form, f -> {
+        FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
             nomEtiquette = f.getLibelleSaisi();
 
-            // TODO: Appeler le contrôleur 
+            // TODO: Appeler le contrôleur
             System.out.println("Étiquette mise à jour : " + nomEtiquette);
 
             // Rafraîchir l'affichage

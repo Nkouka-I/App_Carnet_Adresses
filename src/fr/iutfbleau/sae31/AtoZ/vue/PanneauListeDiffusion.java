@@ -1,11 +1,15 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  * La classe <code>PanneauListeDiffusion</code> est la vue dédiée à une liste de
- * diffusion : son titre, un tableau de ses contacts et un bouton pour copier tous
+ * diffusion : son titre, la liste de ses contacts et un bouton pour copier tous
  * les contacts. Sans liste sélectionnée, elle affiche un message d'accueil.
  *
  * @version 1.0
@@ -18,7 +22,8 @@ public class PanneauListeDiffusion extends JPanel {
      */
     public PanneauListeDiffusion() {
         setLayout(new GridBagLayout());
-        setBackground(Color.WHITE);
+        setBackground(Style.FOND_CONTENU);
+        setBorder(Style.BORDURE_CONTENU);
     }
 
     /**
@@ -30,63 +35,118 @@ public class PanneauListeDiffusion extends JPanel {
     public void afficher(String nomListe) {
         removeAll(); // Efface tout
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5); 		// 5 pixels de marge tout autour de chaque élément
-        gbc.gridx = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        int l = 0;
-
-        // Si on clique sur le bouton global de l'accordéon (nomListe == null)
         if (nomListe == null) {
-            gbc.gridy = l++;
-            JLabel lblTitre = new JLabel("Gestion des Listes de Diffusion");
-            lblTitre.setFont(new Font("Arial", Font.BOLD, 16));
-            add(lblTitre, gbc);
-
-            gbc.gridy = l++;
-            JLabel lblInfo = new JLabel("Sélectionnez une liste de diffusion dans le menu de gauche pour afficher ses détails.");
-            add(lblInfo, gbc);
-
-            revalidate();
-            repaint();
-            return;
+            afficherAccueil();
+        } else {
+            afficherDetails(nomListe);
         }
-
-        // Titre de la liste
-        gbc.gridy = l++;
-        JLabel lblTitre = new JLabel("Liste : " + nomListe);
-        lblTitre.setFont(new Font("Arial", Font.BOLD, 14));
-        add(lblTitre, gbc);
-
-        // Tableau des contacts de la liste
-        gbc.gridy = l++;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-
-        String[] colonnes = {"Nom", "Prénom", "Adresse mail"};
-        Object[][] donnees = {
-            {"Dupont", "Jean", "jean.dupont@mail.com"},
-            {"Curie", "Marie", "marie.curie@mail.com"}
-        };
-        JTable table = new JTable(donnees, colonnes);
-        add(new JScrollPane(table), gbc);
-
-        // Bouton "[ Copier tout ]" en bas à droite
-        gbc.gridy = l++;
-        gbc.weightx = 0.0;
-        gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.EAST;
-
-        JButton btnCopierTout = new JButton("[ Copier tout ]");
-        btnCopierTout.setBackground(new Color(70, 130, 180));
-        btnCopierTout.setForeground(Color.WHITE);
-        add(btnCopierTout, gbc);
 
         // Rafraîchit l'affichage
         revalidate();
         repaint();
+    }
+
+    /**
+     * Crée les contraintes de placement communes aux deux vues.
+     *
+     * @return les contraintes : une colonne, remplissage horizontal, marges d'élément
+     */
+    private GridBagConstraints creerContraintes() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = Style.MARGE_ELEMENT;
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        return gbc;
+    }
+
+    /**
+     * Affiche le message d'accueil, lorsqu'aucune liste n'est sélectionnée.
+     */
+    private void afficherAccueil() {
+        GridBagConstraints gbc = creerContraintes();
+
+        JLabel lblTitre = new JLabel("Gestion des Listes de Diffusion");
+        lblTitre.setFont(Style.POLICE_GRAND_TITRE);
+        gbc.gridy = 0;
+        add(lblTitre, gbc);
+
+        gbc.gridy = 1;
+        add(new JLabel("Sélectionnez une liste de diffusion dans le menu de gauche pour afficher ses détails."), gbc);
+    }
+
+    /**
+     * Affiche la page d'une liste précise : titre, contacts et bouton "Copier tout".
+     *
+     * @param nomListe le nom de la liste de diffusion à afficher
+     */
+    private void afficherDetails(String nomListe) {
+        GridBagConstraints gbc = creerContraintes();
+
+        // Titre de la liste spécifique
+        JLabel lblTitre = new JLabel("Liste : " + nomListe);
+        lblTitre.setFont(Style.POLICE_TITRE);
+        gbc.gridy = 0;
+        add(lblTitre, gbc);
+
+        // Liste des contacts
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        add(new JScrollPane(creerListeContacts()), gbc);
+
+        // Bouton "[ Copier tout ]" en bas à droite
+        gbc.gridy = 2;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.EAST;
+        add(creerBoutonCopierTout(), gbc);
+    }
+
+    /**
+     * Crée le conteneur listant les contacts de la liste de diffusion.
+     *
+     * @return le panneau contenant une {@link LigneListeDiffusion} par contact
+     */
+    private JPanel creerListeContacts() {
+        JPanel panelContactsList = new JPanel(new GridBagLayout());
+        panelContactsList.setBackground(Style.FOND_CONTENU);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+
+        int ligne = 0;
+
+        for (DonneesTest.ContactTest contact : DonneesTest.contacts()) {
+            gbc.gridy = ligne++;
+            panelContactsList.add(new LigneListeDiffusion(contact.getNom(), contact.getEmail()), gbc);
+        }
+
+        // Ressort vertical pour éviter l'étirement des lignes
+        gbc.gridy = ligne;
+        gbc.weighty = 1.0;
+        panelContactsList.add(Style.ressort(), gbc);
+
+        return panelContactsList;
+    }
+
+    /**
+     * Crée le bouton qui copie les adresses de toute la liste.
+     *
+     * @return le bouton "[ Copier tout ]"
+     */
+    private JButton creerBoutonCopierTout() {
+        JButton btnCopierTout = new JButton("[ Copier tout ]");
+        Style.styliserBoutonPrincipal(btnCopierTout);
+
+        btnCopierTout.addActionListener(e -> {
+            // TODO: Copier toutes les adresses séparées par des virgules dans le presse-papier
+            System.out.println("Toutes les adresses de la liste ont été copiées !");
+        });
+
+        return btnCopierTout;
     }
 }

@@ -1,13 +1,21 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * La classe <code>PanneauOperationsAbstrait</code> est la base commune des panneaux
  * d'opérations affichés à droite de la fenêtre principale (contact, étiquette, liste
  * de diffusion). Elle regroupe le code partagé : préparation de la grille, bouton
- * "Modifier", titre, bouton "Supprimer" avec confirmation, et ouverture d'un formulaire.
+ * "Modifier", titre et bouton "Supprimer" avec confirmation.
  *
  * @version 1.0
  * @author Nkouka Ildevert
@@ -83,16 +91,16 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
     /**
      * Ajoute un titre en gras sur la ligne suivante.
      *
-     * @param texteHtml le texte du titre (le format HTML de Swing est accepté)
+     * @param texte le texte du titre
      * @param alignement l'alignement horizontal (par exemple <code>JLabel.CENTER</code>)
      * @param marges les marges autour du titre
      */
-    protected void ajouterTitre(String texteHtml, int alignement, Insets marges) {
+    protected void ajouterTitre(String texte, int alignement, Insets marges) {
         gbc.gridy = ligne++;
         gbc.insets = marges;
 
-        JLabel lblTitre = new JLabel(texteHtml, alignement);
-        lblTitre.setFont(new Font("Arial", Font.BOLD, 14));
+        JLabel lblTitre = new JLabel(texte, alignement);
+        lblTitre.setFont(Style.POLICE_TITRE);
         add(lblTitre, gbc);
     }
 
@@ -109,7 +117,7 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
     protected void ajouterBoutonSuppression(String texteBouton, String messageConfirmation,
                                             String messageSucces, Runnable actionAEffectuer) {
         JButton btnSupprimer = new JButton(texteBouton);
-        btnSupprimer.setForeground(Color.RED);
+        Style.styliserBoutonDanger(btnSupprimer);
 
         btnSupprimer.addActionListener(e -> {
 
@@ -117,25 +125,24 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
 
             // Le pop-up bloquant
             int reponse = JOptionPane.showConfirmDialog(
-                fenetreParente, 
-                messageConfirmation, 
-                "Confirmation de suppression", 
-                JOptionPane.YES_NO_OPTION, 
+                fenetreParente,
+                messageConfirmation,
+                "Confirmation de suppression",
+                JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE
             );
 
             if (reponse == JOptionPane.YES_OPTION) {
 
-                // TODO: Code pour supprimer de la base de données
                 if (actionAEffectuer != null) {
                     actionAEffectuer.run();
                 }
 
                 // pop-up de confirmation
                 JOptionPane.showMessageDialog(
-                    fenetreParente, 
-                    messageSucces, 
-                    "Succès", 
+                    fenetreParente,
+                    messageSucces,
+                    "Succès",
                     JOptionPane.INFORMATION_MESSAGE
                 );
 
@@ -155,23 +162,6 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
      * @return la fenêtre parente
      */
     protected Frame getFenetreParente() {
-        return (Frame) SwingUtilities.getWindowAncestor(this);
-    }
-
-    /**
-     * Méthode générique pour ouvrir un formulaire et traiter sa validation via une interface.
-     * Le formulaire est modal : l'appel est bloquant jusqu'à sa fermeture. L'écouteur
-     * n'est appelé que si le formulaire a été validé.
-     *
-     * @param <T> le type de formulaire ouvert
-     * @param formulaire le formulaire à afficher
-     * @param listener l'écouteur appelé si le formulaire est validé
-     */
-    protected <T extends FenetreDialogueAbstraite> void ouvrirFormulaire(T formulaire, FormulaireListener<T> listener) {
-        formulaire.setVisible(true);
-
-        if (formulaire.isValide()) {
-            listener.onValider(formulaire);
-        }
+        return FenetreDialogueAbstraite.fenetreDe(this);
     }
 }

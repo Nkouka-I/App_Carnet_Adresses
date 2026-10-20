@@ -1,7 +1,10 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import java.awt.*;
+import java.awt.GridBagLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
 
 /**
  * La classe <code>PanneauDroit</code> est le panneau de droite de la fenêtre principale.
@@ -20,8 +23,8 @@ public class PanneauDroit extends JPanel{
      */
     public PanneauDroit(){
         setLayout(new GridBagLayout());
-        setPreferredSize(new Dimension(250, 0)); // Limité à une largeur fixe
-        setBackground(new Color(245, 245, 245));
+        setPreferredSize(new Dimension(Style.LARGEUR_PANNEAU_DROIT, 0)); // Limité à une largeur fixe
+        setBackground(Style.FOND_PANNEAU_LATERAL);
 
         afficherVide();
     }
@@ -36,10 +39,10 @@ public class PanneauDroit extends JPanel{
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(10, 10, 10, 10);
-        
+        gbc.insets = Style.MARGE_PANNEAU;
+
         JLabel lblInfo = new JLabel("<html><center>Sélectionnez un élément<br>pour afficher ses détails</center></html>");
-        lblInfo.setForeground(new Color(120, 120, 120));
+        lblInfo.setForeground(Style.TEXTE_DISCRET);
         add(lblInfo, gbc);
 
         revalidate();
@@ -73,7 +76,7 @@ public class PanneauDroit extends JPanel{
      * @param toutesLesEtiquettes toutes les étiquettes disponibles
      * @param etiquettesActuelles les étiquettes actuellement associées au contact
      */
-    public void afficherOperationsContact(String nomActuel, String emailActuel, 
+    public void afficherOperationsContact(String nomActuel, String emailActuel,
                                         List<String> toutesLesEtiquettes, List<String> etiquettesActuelles) {
         afficher(new PanneauOperationsContact(
             this::afficherVide, nomActuel, emailActuel, toutesLesEtiquettes, etiquettesActuelles

@@ -1,5 +1,6 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import javax.swing.*;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  * La classe <code>Main</code> contient le point d'entrée de l'application AtoZ Carnet.

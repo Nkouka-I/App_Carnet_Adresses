@@ -1,7 +1,7 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.CardLayout;
+import javax.swing.JPanel;
 
 /**
  * La classe <code>PanneauCentral</code> est le panneau central de la fenêtre principale.
@@ -46,8 +46,8 @@ public class PanneauCentral extends JPanel{
      */
 	public PanneauCentral(NavigationListener listener) {
         setLayout(cartes);
-        setBackground(Color.WHITE);
-        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        setBackground(Style.FOND_CONTENU);
+        setBorder(Style.BORDURE_CONTENU);
 
         panneauRepertoire = new PanneauRepertoire(listener);
         panneauListeDiffusion = new PanneauListeDiffusion();

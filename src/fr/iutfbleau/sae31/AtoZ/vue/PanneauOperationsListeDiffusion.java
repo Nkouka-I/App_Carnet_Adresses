@@ -57,9 +57,15 @@ public class PanneauOperationsListeDiffusion extends PanneauOperationsAbstrait {
         ajouterBoutonModifier("Modifier la liste", e -> modifier());
 
         ajouterTitre(
-            "<html><b>Critères de la liste " + nomListe + " :</b><br></html>",
+            "Critères de la liste ",
             JLabel.CENTER,
             new Insets(10, 10, 5, 10)
+        );
+
+        ajouterTitre(
+            nomListe + " :",
+            JLabel.CENTER,
+            new Insets(0, 10, 5, 10)  // Moins de marge en haut
         );
 
         /*TODO Boucle que ajoute les differents noms de critere*/
@@ -67,10 +73,10 @@ public class PanneauOperationsListeDiffusion extends PanneauOperationsAbstrait {
         ajouterBoutonSuppression(
             "Supprimer la liste de diffusion",
             "Voulez-vous vraiment supprimer la liste de diffusion \"" + nomListe + "\" ?",
-            "La liste de diffusion a bien été supprimé !",
+            "La liste de diffusion a bien été supprimée !",
             () -> {
                 // TODO: Appeler le contrôleur
-                System.out.println("La liste de diffusion a bien été supprimé");
+                System.out.println("La liste de diffusion a bien été supprimée");
             }
         );
 
@@ -83,14 +89,14 @@ public class PanneauOperationsListeDiffusion extends PanneauOperationsAbstrait {
      */
     private void modifier() {
         FenetreFormulaireListeDiffusion form = new FenetreFormulaireListeDiffusion(
-            getFenetreParente(), 
-            "Modifier la liste de diffusion", 
-            nomListe, 
-            toutesLesEtiquettes, 
+            getFenetreParente(),
+            "Modifier la liste de diffusion",
+            nomListe,
+            toutesLesEtiquettes,
             criteresActuels
         );
 
-        ouvrirFormulaire(form, f -> {
+        FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
             nomListe = f.getNomListeSaisi();
             criteresActuels = f.getCriteresList();
 

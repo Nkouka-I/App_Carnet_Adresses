@@ -1,10 +1,13 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.GridBagLayout;
+import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JButton;
 
 /**
  * La classe <code>LigneContact</code> est la ligne graphique représentant un contact
@@ -45,21 +48,11 @@ public class LigneContact extends JPanel {
         this.etiquettes = List.copyOf(etiquettes);
 
         setLayout(new GridBagLayout());
-        setBackground(new Color(250, 250, 250));
-        setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 230, 230)),
-            BorderFactory.createEmptyBorder(8, 8, 8, 8)
-        ));
+        setBackground(Style.FOND_LIGNE);
+        setBorder(Style.BORDURE_LIGNE);
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (listener != null) {
-                    listener.clicContact(LigneContact.this.nom, LigneContact.this.email, LigneContact.this.etiquettes);
-                }
-            }
-        });
+        addMouseListener(new EcouteurClicLigne(this, listener));
 
         construire();
     }

@@ -77,15 +77,15 @@ public class PanneauOperationsContact extends PanneauOperationsAbstrait {
      */
     private void modifier() {
         FenetreFormulaireContact form = new FenetreFormulaireContact(
-            getFenetreParente(), 
-            "Modifier le contact", 
-            nom, 
-            email, 
-            toutesLesEtiquettes, 
+            getFenetreParente(),
+            "Modifier le contact",
+            nom,
+            email,
+            toutesLesEtiquettes,
             etiquettesActuelles
         );
 
-        ouvrirFormulaire(form, f -> {
+        FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
             nom = f.getNomSaisi();
             email = f.getEmailSaisi();
             etiquettesActuelles = f.getEtiquettesSelectionnees();

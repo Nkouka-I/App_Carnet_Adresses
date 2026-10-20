@@ -1,7 +1,11 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JButton;
 
 /**
  * La classe <code>LigneListeDiffusion</code> représente graphiquement une ligne de contact
@@ -21,39 +25,36 @@ public class LigneListeDiffusion extends JPanel {
      */
     public LigneListeDiffusion(String nom, String email) {
         setLayout(new GridBagLayout());
-        setBackground(new Color(250, 250, 250));
-        setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 230, 230)),
-            BorderFactory.createEmptyBorder(8, 8, 8, 8)
-        ));
+        setBackground(Style.FOND_LIGNE);
+        setBorder(Style.BORDURE_LIGNE);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(0, 5, 0, 5);
         gbc.gridy = 0;
 
         // Nom du contact
-        gbc.gridx = 0; 
-        gbc.weightx = 0.4; 
+        gbc.gridx = 0;
+        gbc.weightx = 0.4;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(new JLabel(nom), gbc);
 
         // Adresse email
-        gbc.gridx = 1; 
-        gbc.weightx = 0.5; 
+        gbc.gridx = 1;
+        gbc.weightx = 0.5;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(new JLabel(email), gbc);
 
         // Bouton de copie individuel
-        gbc.gridx = 2; 
-        gbc.weightx = 0.1; 
+        gbc.gridx = 2;
+        gbc.weightx = 0.1;
         gbc.fill = GridBagConstraints.NONE;
         JButton btnCopierContact = new JButton("Copier");
-        
+
         btnCopierContact.addActionListener(e -> {
             // TODO: Gérer la copie de l'email individuel dans le presse-papier
             System.out.println("Email copié : " + email);
         });
-        
+
         add(btnCopierContact, gbc);
     }
 }

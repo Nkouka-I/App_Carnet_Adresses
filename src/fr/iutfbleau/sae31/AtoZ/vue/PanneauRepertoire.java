@@ -1,8 +1,12 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.*;
-import java.util.List;
-import javax.swing.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 /**
  * La classe <code>PanneauRepertoire</code> est la vue du répertoire de contacts :
@@ -28,25 +32,25 @@ public class PanneauRepertoire extends JPanel {
         this.listener = listener;
 
         setLayout(new GridBagLayout());
-        setBackground(Color.WHITE);
+        setBackground(Style.FOND_CONTENU);
 
-        Repertoire();
+        construire();
     }
 
     /**
      * Construit le contenu du panneau : barre de recherche et de tri en haut, liste
      * des contacts en dessous.
      */
-    private void Repertoire() {
+    private void construire() {
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5); // 5 pixels de marge tout autour de chaque élément
+        gbc.insets = Style.MARGE_ELEMENT;
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Barre de recherche et Trier
         JPanel panelHaut = new JPanel(new GridBagLayout());
-        panelHaut.setBackground(Color.WHITE);
+        panelHaut.setBackground(Style.FOND_CONTENU);
         GridBagConstraints gbcHaut = new GridBagConstraints();
         gbcHaut.insets = new Insets(0, 0, 10, 5);
 
@@ -63,29 +67,35 @@ public class PanneauRepertoire extends JPanel {
         gbc.weightx = 1.0;	/*occupe toute largeur possible*/
         gbc.weighty = 1.0;	/*occupe toute hauteur possible*/
         gbc.fill = GridBagConstraints.BOTH;
+        add(new JScrollPane(creerListeContacts()), gbc);
+    }
 
+    /**
+     * Crée le conteneur listant les contacts du répertoire.
+     *
+     * @return le panneau contenant une {@link LigneContact} par contact
+     */
+    private JPanel creerListeContacts() {
         JPanel panelContactsList = new JPanel(new GridBagLayout());
-        panelContactsList.setBackground(Color.WHITE);
-        GridBagConstraints gbcContacts = new GridBagConstraints();
-        gbcContacts.gridx = 0;
-        gbcContacts.fill = GridBagConstraints.HORIZONTAL;
-        gbcContacts.weightx = 1.0;
+        panelContactsList.setBackground(Style.FOND_CONTENU);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
 
         int ligne = 0;
 
-        // Données fake
-        gbcContacts.gridy = ligne++;
-        panelContactsList.add(new LigneContact("Jean Dupont", "jean.dupont@mail.com", List.of("Client", "VIP", "Projet"), listener), gbcContacts);
-        gbcContacts.gridy = ligne++;
-        panelContactsList.add(new LigneContact("Marie Curie", "marie.curie@mail.com", List.of("Client", "VIP", "Projet"), listener), gbcContacts);
+        for (DonneesTest.ContactTest contact : DonneesTest.contacts()) {
+            gbc.gridy = ligne++;
+            panelContactsList.add(new LigneContact(contact.getNom(), contact.getEmail(), contact.getEtiquettes(), listener), gbc);
+        }
 
         // Ressort
-        gbcContacts.gridy = ligne;
-        gbcContacts.weighty = 1.0;
-        JPanel filler = new JPanel();
-        filler.setOpaque(false);
-        panelContactsList.add(filler, gbcContacts);
+        gbc.gridy = ligne;
+        gbc.weighty = 1.0;
+        panelContactsList.add(Style.ressort(), gbc);
 
-        add(new JScrollPane(panelContactsList), gbc);
+        return panelContactsList;
     }
 }

@@ -1,5 +1,6 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 import java.awt.Frame;
 
 /**
@@ -12,31 +13,14 @@ import java.awt.Frame;
 public class FenetreFormulaireEtiquette extends FenetreDialogueAbstraite {
 
     /**
+     * Nombre maximal de caractères du libellé d'une étiquette.
+     */
+    private static final int LONGUEUR_MAX_LIBELLE = 100;
+
+    /**
      * Champ de saisie du libellé de l'étiquette.
      */
     private JTextField txtLibelle;
-
-    /**
-     * Vérifie la saisie du formulaire. Le libellé ne doit pas être vide et ne doit pas
-     * dépasser 100 caractères. En cas d'erreur, un message est affiché et le formulaire
-     * reste ouvert.
-     */
-    @Override
-    protected void validerFormulaire() {
-        String libelle = txtLibelle.getText().trim();
-
-        if (libelle.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Erreur : Le nom de l'étiquette ne peut pas être vide.", "Nom invalide", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (libelle.length() > 100) {
-            JOptionPane.showMessageDialog(this, "Erreur : Le nom de l'étiquette ne peut pas dépasser 100 caractères.", "Nom trop long", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        valide = true;
-        dispose();
-    }
 
     /**
      * Construit le formulaire et pré-remplit le libellé.
@@ -48,18 +32,34 @@ public class FenetreFormulaireEtiquette extends FenetreDialogueAbstraite {
     public FenetreFormulaireEtiquette(Frame parent, String titre, String libelleInitial) {
         super(parent, titre, 320, 180);
 
-        int ligne = 0;
-
         // Libellé de l'étiquette
-        gbc.gridy = ligne++;
-        add(new JLabel("Nom de l'étiquette :"), gbc);
-        
-        gbc.gridy = ligne++;
+        ajouter(new JLabel("Nom de l'étiquette :"));
         txtLibelle = new JTextField(libelleInitial, 20);
-        add(txtLibelle, gbc);
+        ajouter(txtLibelle);
 
         // Boutons de validation
-        ajouterBoutonsValidation(ligne);
+        ajouterBoutonsValidation();
+    }
+
+    /**
+     * Vérifie la saisie du formulaire. Le libellé ne doit pas être vide et ne doit pas
+     * dépasser 100 caractères. En cas d'erreur, un message est affiché et le formulaire
+     * reste ouvert.
+     */
+    @Override
+    protected void validerFormulaire() {
+        String libelle = getLibelleSaisi();
+
+        if (libelle.isBlank()) {
+            afficherErreur("Nom invalide", "Le nom de l'étiquette ne peut pas être vide.");
+            return;
+        }
+        if (libelle.length() > LONGUEUR_MAX_LIBELLE) {
+            afficherErreur("Nom trop long", "Le nom de l'étiquette ne peut pas dépasser " + LONGUEUR_MAX_LIBELLE + " caractères.");
+            return;
+        }
+
+        validerEtFermer();
     }
 
     /**

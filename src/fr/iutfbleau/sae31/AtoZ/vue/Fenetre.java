@@ -1,6 +1,7 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class Fenetre extends JFrame implements NavigationListener{
      */
 	public Fenetre(){
 		// on configure la fenetre
-	    setTitle("AtoZ Carner");
+	    setTitle("AtoZ Carnet");
         setSize(1150, 700);
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Empeche fermeture automatique
@@ -61,7 +62,7 @@ public class Fenetre extends JFrame implements NavigationListener{
      * Réagit au clic sur un contact : affiche le répertoire au centre et les
      * opérations possibles sur ce contact (modifier, supprimer).
      *
-     * @param nom le nom du contact sélectionné
+     * @param nom le nom du contact sélectionné (<code>null</code> pour "Tous les contacts")
      * @param email l'adresse email du contact sélectionné
      * @param etiquettes les étiquettes actuellement associées au contact
      * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicContact(java.lang.String, java.lang.String, java.util.List)
@@ -71,40 +72,36 @@ public class Fenetre extends JFrame implements NavigationListener{
         // Mis à jour du panneau central, on affiche les contacts
         panneauCentral.afficherRepertoire();
 
-        // Mis à jour du panneau Droit, on affiche rien si on clic sur bouton acordeon
+        // Aucun contact sélectionné (bouton "Tous les contacts") : panneau droit vide
         if (nom == null){
             panneauDroit.afficherVide();
             return;
         }
 
-        //Donnée fake
-        //TODO oeoe
-        List<String> toutesLesEtiquettes = List.of("Client", "Famille", "Travail", "VIP");
-
-        // Mis à jour du panneau Droit, on affiche les opérations liée aux contacts
-        panneauDroit.afficherOperationsContact(nom ,email ,toutesLesEtiquettes, etiquettes);
+        // Mis à jour du panneau Droit, on affiche les opérations liées aux contacts
+        panneauDroit.afficherOperationsContact(nom, email, DonneesTest.etiquettes(), etiquettes);
     }
 
     /**
      * Réagit au clic sur une étiquette : affiche le répertoire au centre et les
      * opérations possibles sur cette étiquette à droite.
      *
-     * @param nomEtiquette le libellé de l'étiquette sélectionnée
+     * @param nomEtiquette le libellé de l'étiquette sélectionnée (<code>null</code> pour le bouton accordéon)
      * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicContactEtiquette(java.lang.String)
      */
     @Override
     public void clicContactEtiquette(String nomEtiquette) {
         // Mis à jour du panneau central, on affiche les contacts possédant l'étiquette au centre
-        //TODO Selectionné uniquement contact avec étiquette
+        //TODO Sélectionner uniquement les contacts avec l'étiquette
         panneauCentral.afficherRepertoire();
 
-        // Mis à jour du panneau Droit, on affiche rien si on clic sur bouton acordeon
+        // Bouton accordéon : panneau droit vide
         if (nomEtiquette == null){
             panneauDroit.afficherVide();
             return;
         }
 
-        // Mis à jour du panneau Droit, on affiche les opérations liée aux étiquetteq
+        // Mis à jour du panneau Droit, on affiche les opérations liées à l'étiquette
         panneauDroit.afficherOperationsEtiquette(nomEtiquette);
     }
 
@@ -112,29 +109,22 @@ public class Fenetre extends JFrame implements NavigationListener{
      * Réagit au clic sur une liste de diffusion : affiche la page dédiée à la
      * liste au centre et les opérations possibles sur cette liste à droite.
      *
-     * @param nomListe le nom de la liste de diffusion sélectionnée
+     * @param nomListe le nom de la liste de diffusion sélectionnée (<code>null</code> pour le bouton accordéon)
      * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicListeDiffusion(java.lang.String)
      */
     @Override
     public void clicListeDiffusion(String nomListe) {
-        // Mis à jour du panneau central, on affiche la page central dedié a la liste au centre
+        // Mis à jour du panneau central, on affiche la page dédiée à la liste (ou l'accueil si null)
         panneauCentral.afficherListeDiffusion(nomListe);
 
-        // Donnée fake
-        List<String> toutesLesEtiquettes = List.of("Client", "Famille", "Travail", "VIP");
-        List<CritereData> criteresActuels = List.of(
-            new CritereData("Client", true)
-        );
-
-        // Mis à jour du panneau Droit, on affiche rien si on clic sur bouton acordeon
+        // Bouton accordéon : panneau droit vide
         if (nomListe == null){
-            panneauCentral.afficherListeDiffusion(null);
             panneauDroit.afficherVide();
             return;
         }
 
-        // Mis à jour du panneau Droit, on affiche les opérations liée aux Lists de diffusions
-        panneauDroit.afficherOperationsListeDiffusion(nomListe, toutesLesEtiquettes, criteresActuels);
+        // Mis à jour du panneau Droit, on affiche les opérations liées aux listes de diffusion
+        panneauDroit.afficherOperationsListeDiffusion(nomListe, DonneesTest.etiquettes(), DonneesTest.criteres());
     }
 
     /**
@@ -142,10 +132,10 @@ public class Fenetre extends JFrame implements NavigationListener{
      */
     protected void confirmerFermeture() {
         int reponse = JOptionPane.showConfirmDialog(
-            this, 
-            "Voulez-vous vraiment quitter l'application ?", 
-            "Confirmation de fermeture", 
-            JOptionPane.YES_NO_OPTION, 
+            this,
+            "Voulez-vous vraiment quitter l'application ?",
+            "Confirmation de fermeture",
+            JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE
         );
 
