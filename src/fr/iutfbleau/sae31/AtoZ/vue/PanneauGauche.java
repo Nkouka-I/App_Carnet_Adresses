@@ -36,6 +36,11 @@ public class PanneauGauche extends JPanel {
     private final JLabel titreApp;
 
     /**
+     * Bouton pour afficher tout les contacts.
+     */
+    private final JButton btnToutContacts;
+
+    /**
      * Bouton qui déplie ou replie la liste des étiquettes.
      */
     private final JButton btnEtiquettes;
@@ -69,7 +74,7 @@ public class PanneauGauche extends JPanel {
 
         titreApp = new JLabel("AtoZ Carnet", JLabel.CENTER);
 
-        btnNewContact = new JButton("+ new Contact");
+        btnNewContact = new JButton("+ Contact");
         btnNewContact.addActionListener(e -> {
             Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
             List<String> toutesLesEtiquettes = List.of("Client", "Famille", "Travail", "VIP");
@@ -90,7 +95,7 @@ public class PanneauGauche extends JPanel {
             });
         });
 
-        btnNewEtiquette = new JButton("+ new Etiquette");
+        btnNewEtiquette = new JButton("+ Etiquette");
         btnNewEtiquette.addActionListener(e -> {
             Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
 
@@ -121,6 +126,15 @@ public class PanneauGauche extends JPanel {
                 System.out.println("Nouvelle liste créée : " + nomListe);
                 rafraichirInterface(listener);
             });
+        });
+
+        // Initialisation boutons tout les contactes
+        btnToutContacts = new JButton();
+        btnToutContacts.addActionListener(e -> {
+            // on notifie le listener avec null a l'appuie
+            listener.clicContact(null, null, null);
+            
+            rafraichirInterface(listener);
         });
 
         // Initialisation de l'accordéon Étiquettes
@@ -188,6 +202,10 @@ public class PanneauGauche extends JPanel {
         // 1-Bouton "+ new Contact" en premier
         gbc.gridy = ligne++;
         add(btnNewContact, gbc);
+
+        gbc.gridy = ligne++;
+        add(btnToutContacts, gbc);
+        btnToutContacts.setText("Tout les contacts");
 
         // 2-Bouton "+ new Etiquette" avec texte dynamique selon l'état
         gbc.gridy = ligne++;

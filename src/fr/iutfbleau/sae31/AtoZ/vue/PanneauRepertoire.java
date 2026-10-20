@@ -30,14 +30,14 @@ public class PanneauRepertoire extends JPanel {
         setLayout(new GridBagLayout());
         setBackground(Color.WHITE);
 
-        construire();
+        Repertoire();
     }
 
     /**
      * Construit le contenu du panneau : barre de recherche et de tri en haut, liste
      * des contacts en dessous.
      */
-    private void construire() {
+    private void Repertoire() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5); // 5 pixels de marge tout autour de chaque élément
         gbc.gridx = 0;

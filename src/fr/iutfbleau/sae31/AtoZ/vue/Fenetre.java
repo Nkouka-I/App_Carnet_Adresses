@@ -39,12 +39,7 @@ public class Fenetre extends JFrame implements NavigationListener{
         setSize(1150, 700);
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Empeche fermeture automatique
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent e) {
-                 confirmerFermeture();
-            }
-        }); 
+        addWindowListener(new EcouteurFermeture(this));
 
         setLocationRelativeTo(null); // Centre la fenêtre sur l'écran
 
@@ -75,6 +70,12 @@ public class Fenetre extends JFrame implements NavigationListener{
     public void clicContact(String nom, String email, List<String> etiquettes) {
         // Mis à jour du panneau central, on affiche les contacts
         panneauCentral.afficherRepertoire();
+
+        // Mis à jour du panneau Droit, on affiche rien si on clic sur bouton acordeon
+        if (nom == null){
+            panneauDroit.afficherVide();
+            return;
+        }
 
         //Donnée fake
         //TODO oeoe
@@ -139,7 +140,7 @@ public class Fenetre extends JFrame implements NavigationListener{
     /**
      * Affiche un pop-up de confirmation avant de quitter l'application.
      */
-    private void confirmerFermeture() {
+    protected void confirmerFermeture() {
         int reponse = JOptionPane.showConfirmDialog(
             this, 
             "Voulez-vous vraiment quitter l'application ?", 
