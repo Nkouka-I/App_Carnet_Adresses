@@ -13,20 +13,20 @@ import java.util.Map;
 
 import fr.iutfbleau.sae31.AtoZ.model.ModeleException;
 
-public class Contactdao {
-    private final Connexion cnx;
+public class ContactDAO {
+    private final Connection cx;
 
-    public Contactdao(Connexion cnx){
-        this.cnx = cnx;
+    public ContactDAO(Connection cx){
+        this.cx = cx;
     }
 
     public void creer(Contact c) throws ModeleException{
         boolean auto = true;
         try {
-            auto = cnx.getAutoCommit();
-            cnx.setAutoCommit(false);
+            auto = cx.getAutoCommit();
+            cx.setAutoCommit(false);
 
-            try (PreparedStatement ps = cnx.prepareStatement("INSERT INTO Contact (nom, email) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)){
+            try (PreparedStatement ps = cx.prepareStatement("INSERT INTO Contact (nom, email) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)){
                 ps.setString(1, c.getNom());
                 ps.setString(2, c.getEmail());
                 ps.executeUpdate();
@@ -37,13 +37,13 @@ public class Contactdao {
                 }
             }
             insererLiaisons(c);
-            cnx.commit();
+            cx.commit();
         }catch (SQLException e){
-            Transactions.annuler(cnx);
+            Transactions.annuler(cx);
             c.setId(0);
             throw ModeleException.depuis("Création du contact" , e);
         }finally{
-            Transactions.restaurer(cnx, auto);
+            Transactions.restaurer(cx, auto);
         }
 
     }
@@ -103,7 +103,7 @@ public class Contactdao {
     private void insererLiaisons(Contact c) throws SQLException {
         try (PreparedStatement ps = cx.prepareStatement(
                 "INSERT INTO Contact_etiquette (contact_id, etiquette_id) VALUES (?, ?)")) {
-            for (Etiquette e : c.getEtiquettes()) {
+            for (Etiquette e : c.getEtiquette()) {
                 ps.setInt(1, c.getId());
                 ps.setInt(2, e.getId());
                 ps.addBatch();
