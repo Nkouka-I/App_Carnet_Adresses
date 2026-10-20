@@ -62,7 +62,7 @@ public class Etiquette{
      *
      * @param id le nouvel identifiant
      */
-    public setId(int id){
+    public int setId(int id){
         this.id = id;
     }
 
