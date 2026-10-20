@@ -17,10 +17,13 @@ public class Main {
             ContactDAO contactDAO = new ContactDAO(cx);
             ListeDiffusionDAO listeDAO = new ListeDiffusionDAO(cx);
 
+            // Génération d'un suffixe unique pour éviter les doublons (Duplicate entry) si on relance le main
+            String suffixe = "_" + System.currentTimeMillis();
+
             // 2. Test des Étiquettes
             System.out.println("\n--- Test des Étiquettes ---");
-            Etiquette e1 = new Etiquette("VIP");
-            Etiquette e2 = new Etiquette("Travail");
+            Etiquette e1 = new Etiquette("VIP" + suffixe);
+            Etiquette e2 = new Etiquette("Travail" + suffixe);
 
             etiquetteDAO.creer(e1);
             etiquetteDAO.creer(e2);
@@ -28,8 +31,8 @@ public class Main {
 
             // 3. Test des Contacts
             System.out.println("\n--- Test des Contacts ---");
-            Contact c1 = new Contact("Alice Dupont", "alice@exemple.fr");
-            Contact c2 = new Contact("Bob Martin", "bob@exemple.fr");
+            Contact c1 = new Contact("Alice Dupont", "alice" + suffixe + "@exemple.fr");
+            Contact c2 = new Contact("Bob Martin", "bob" + suffixe + "@exemple.fr");
 
             c1.ajouterEtiquette(e1);
             c2.ajouterEtiquette(e2);
@@ -40,7 +43,7 @@ public class Main {
 
             // 4. Test des Listes de diffusion
             System.out.println("\n--- Test des Listes de diffusion ---");
-            ListeDiffusion liste = new ListeDiffusion("Projets Pro");
+            ListeDiffusion liste = new ListeDiffusion("Projets Pro" + suffixe);
             liste.ajouterCritere(new Critere(e2, true)); // Avec l'étiquette 'Travail'
 
             listeDAO.creer(liste);
@@ -53,17 +56,8 @@ public class Main {
                 System.out.println(" - " + m);
             }
 
-            // Nettoyage optionnel (suppression des éléments de test pour garder la base propre)
-            System.out.println("\n--- Nettoyage ---");
-            contactDAO.supprimer(c1.getId());
-            contactDAO.supprimer(c2.getId());
-            etiquetteDAO.supprimer(e1.getId());
-            etiquetteDAO.supprimer(e2.getId());
-            listeDAO.supprimer(liste.getId());
-            System.out.println("[OK] Données de test supprimées de la base.");
-
             cx.close();
-            System.out.println("\n=== Fin des tests avec succès ===");
+            System.out.println("\n=== Fin des tests avec succès (sans suppression) ===");
 
         } catch (ModeleException e) {
             System.err.println("[ERREUR MODÈLE] : " + e.getMessage());
