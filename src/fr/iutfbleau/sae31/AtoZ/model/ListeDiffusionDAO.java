@@ -44,11 +44,10 @@ public class ListeDiffusionDAO {
                     Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, l.getNom());
                 ps.executeUpdate();
-                try (ResultSet rs = ps.getGeneratedKeys()) {
+                ResultSet rs = ps.getGeneratedKeys();
                     if (rs.next()) {
                         l.setId(rs.getInt(1));
                     }
-                }
             }
             insererCriteres(l);
             cx.commit();

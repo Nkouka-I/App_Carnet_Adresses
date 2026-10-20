@@ -30,11 +30,11 @@ public class ContactDAO {
                 ps.setString(1, c.getNom());
                 ps.setString(2, c.getEmail());
                 ps.executeUpdate();
-                try (ResultSet rs = ps.getGeneratedKeys()){
-                    if (rs.next()){
-                        c.setId(rs.getInt(1));
-                    }
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()){
+                    c.setId(rs.getInt(1));
                 }
+                
             }
             insererLiaisons(c);
             cx.commit();

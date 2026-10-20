@@ -35,15 +35,14 @@ public class EtiquetteDAO {
                 "INSERT INTO Etiquette (libelle) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, e.getLibelle());
             ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    e.setId(rs.getInt(1));
-                }
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                e.setId(rs.getInt(1));
+            }
             }
         } catch (SQLException ex) {
             throw ModeleException.depuis("Création de l'étiquette", ex);
         }
-    }
 
     /**
      * Retourne toutes les étiquettes, triées par libellé.
