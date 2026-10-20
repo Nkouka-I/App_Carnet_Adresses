@@ -42,6 +42,7 @@ public class EtiquetteDAO {
         } catch (SQLException ex) {
             throw ModeleException.depuis("Création de l'étiquette", ex);
         }
+    }
 
     /**
      * Retourne toutes les étiquettes, triées par libellé.
