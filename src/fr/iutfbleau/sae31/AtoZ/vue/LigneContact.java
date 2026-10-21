@@ -1,13 +1,10 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.GridBagLayout;
-import java.awt.Cursor;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.util.List;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JButton;
+import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
+import java.awt.*;
+import java.util.stream.Collectors;
+import javax.swing.*;
 
 /**
  * La classe <code>LigneContact</code> est la ligne graphique représentant un contact
@@ -20,32 +17,18 @@ import javax.swing.JButton;
 public class LigneContact extends JPanel {
 
     /**
-     * Nom du contact affiché sur la ligne.
+     * Contact représenté par la ligne.
      */
-    private final String nom;
-
-    /**
-     * Adresse email du contact affichée sur la ligne.
-     */
-    private final String email;
-
-    /**
-     * Étiquettes associées au contact.
-     */
-    private final List<String> etiquettes;
+    private final ContactVue contact;
 
     /**
      * Construit la ligne d'un contact et la rend cliquable.
      *
-     * @param nom le nom du contact
-     * @param email l'adresse email du contact
-     * @param etiquettes les étiquettes associées au contact
+     * @param contact le contact à afficher
      * @param listener l'écouteur à notifier lors d'un clic sur la ligne (peut être <code>null</code>)
      */
-    public LigneContact(String nom, String email, List<String> etiquettes, NavigationListener listener) {
-        this.nom = nom;
-        this.email = email;
-        this.etiquettes = List.copyOf(etiquettes);
+    public LigneContact(ContactVue contact, NavigationListener listener) {
+        this.contact = contact;
 
         setLayout(new GridBagLayout());
         setBackground(Style.FOND_LIGNE);
@@ -59,7 +42,7 @@ public class LigneContact extends JPanel {
 
     /**
      * Place les composants de la ligne : nom, email et bouton "Copier" sur la première
-     * rangée, étiquettes sur la seconde.
+     * rangée, étiquettes sur la seconde (si le contact en a).
      */
     private void construire() {
         GridBagConstraints gbc = new GridBagConstraints();
@@ -67,36 +50,28 @@ public class LigneContact extends JPanel {
         gbc.gridy = 0;
 
         gbc.gridx = 0; gbc.weightx = 0.3; gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(new JLabel(nom), gbc);
+        add(new JLabel(contact.getNom()), gbc);
 
         gbc.gridx = 1; gbc.weightx = 0.4; gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(new JLabel(email), gbc);
+        add(new JLabel(contact.getEmail()), gbc);
 
         gbc.gridx = 3; gbc.weightx = 0.1; gbc.fill = GridBagConstraints.NONE;
         add(new JButton("Copier"), gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(new JLabel("[" + String.join(" ", etiquettes) + "]"), gbc);
+        if (!contact.getEtiquettes().isEmpty()) {
+            String etiquettes = contact.getEtiquettes().stream()
+                .map(EtiquetteVue::getNom)
+                .collect(Collectors.joining(" "));
+
+            gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
+            add(new JLabel("[" + etiquettes + "]"), gbc);
+        }
     }
 
     /**
-     * Renvoie le nom du contact affiché sur la ligne.
+     * Renvoie le contact représenté par la ligne.
      *
-     * @return le nom du contact
+     * @return le contact de la ligne
      */
-    public String getNom() { return nom; }
-
-    /**
-     * Renvoie l'adresse email du contact affichée sur la ligne.
-     *
-     * @return l'email du contact
-     */
-    public String getEmail() { return email; }
-
-    /**
-     * Renvoie les étiquettes associées au contact.
-     *
-     * @return la liste (non modifiable) des étiquettes du contact
-     */
-    public List<String> getEtiquettes() { return etiquettes; }
+    public ContactVue getContact() { return contact; }
 }

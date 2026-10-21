@@ -1,12 +1,14 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
+import fr.iutfbleau.sae31.AtoZ.controleur.CritereVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
 import java.awt.Insets;
-import java.util.List;
 import javax.swing.JLabel;
 
 /**
  * La classe <code>PanneauOperationsListeDiffusion</code> est le panneau d'opérations
  * affiché lorsqu'une LISTE DE DIFFUSION est sélectionnée : il propose de la modifier ou
- * de la supprimer et introduit la liste de ses critères.
+ * de la supprimer et liste ses critères.
  *
  * @version 1.0
  * @author Nkouka Ildevert
@@ -14,41 +16,25 @@ import javax.swing.JLabel;
 public class PanneauOperationsListeDiffusion extends PanneauOperationsAbstrait {
 
     /**
-     * Nom actuel de la liste de diffusion.
+     * Liste de diffusion sélectionnée.
      */
-    private String nomListe;
-
-    /**
-     * Toutes les étiquettes disponibles pour définir un critère.
-     */
-    private final List<String> toutesLesEtiquettes;
-
-    /**
-     * Critères actuellement définis pour la liste.
-     */
-    private List<CritereData> criteresActuels;
+    private final ListeDiffusionVue liste;
 
     /**
      * Construit le panneau et affiche ses éléments.
      *
-     * @param apresSuppression l'action à exécuter après une suppression réussie
-     * @param nomListe le nom de la liste de diffusion sélectionnée
-     * @param toutesLesEtiquettes toutes les étiquettes disponibles pour définir un critère
-     * @param criteresActuels les critères actuellement définis pour la liste
+     * @param controleur le contrôleur auquel les opérations sont demandées
+     * @param liste la liste de diffusion sélectionnée
      */
-    public PanneauOperationsListeDiffusion(Runnable apresSuppression, String nomListe,
-                                           List<String> toutesLesEtiquettes,
-                                           List<CritereData> criteresActuels) {
-        super(apresSuppression);
-        this.nomListe = nomListe;
-        this.toutesLesEtiquettes = toutesLesEtiquettes;
-        this.criteresActuels = criteresActuels;
+    public PanneauOperationsListeDiffusion(Controleur controleur, ListeDiffusionVue liste) {
+        super(controleur);
+        this.liste = liste;
 
         construire();
     }
 
     /**
-     * Construit (ou reconstruit) le contenu du panneau : bouton "Modifier", titre des
+     * Construit le contenu du panneau : bouton "Modifier", titre et liste des
      * critères, puis bouton "Supprimer".
      */
     private void construire() {
@@ -63,48 +49,40 @@ public class PanneauOperationsListeDiffusion extends PanneauOperationsAbstrait {
         );
 
         ajouterTitre(
-            nomListe + " :",
+            liste.getNom() + " :",
             JLabel.CENTER,
             new Insets(0, 10, 5, 10)  // Moins de marge en haut
         );
 
-        /*TODO Boucle que ajoute les differents noms de critere*/
+        for (CritereVue critere : liste.getCriteres()) {
+            ajouterTexte("• " + critere, new Insets(0, 20, 2, 10));
+        }
 
         ajouterBoutonSuppression(
             "Supprimer la liste de diffusion",
-            "Voulez-vous vraiment supprimer la liste de diffusion \"" + nomListe + "\" ?",
+            "Voulez-vous vraiment supprimer la liste de diffusion \"" + liste.getNom() + "\" ?",
             "La liste de diffusion a bien été supprimée !",
-            () -> {
-                // TODO: Appeler le contrôleur
-                System.out.println("La liste de diffusion a bien été supprimée");
-            }
+            () -> getControleur().supprimerListeDiffusion(liste)
         );
 
         terminer();
     }
 
     /**
-     * Ouvre le formulaire de modification de la liste et, s'il est validé, met à jour
-     * le nom et les critères affichés.
+     * Ouvre le formulaire de modification de la liste et, s'il est validé, demande la
+     * modification au contrôleur.
      */
     private void modifier() {
         FenetreFormulaireListeDiffusion form = new FenetreFormulaireListeDiffusion(
             getFenetreParente(),
             "Modifier la liste de diffusion",
-            nomListe,
-            toutesLesEtiquettes,
-            criteresActuels
+            liste.getNom(),
+            getControleur().getEtiquettes(),
+            liste.getCriteres()
         );
 
-        FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
-            nomListe = f.getNomListeSaisi();
-            criteresActuels = f.getCriteresList();
-
-            // TODO: Appeler le contrôleur / BDD pour mettre à jour
-            System.out.println("Liste mise à jour : " + nomListe);
-
-            // Rafraîchir l'affichage
-            construire();
-        });
+        FenetreDialogueAbstraite.ouvrirFormulaire(form, f ->
+            getControleur().modifierListeDiffusion(liste, f.getNomListeSaisi(), f.getCriteresList())
+        );
     }
 }

@@ -1,16 +1,9 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import javax.swing.JTextField;
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import java.awt.Frame;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import fr.iutfbleau.sae31.AtoZ.controleur.CritereVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +44,7 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
      * @param criteresInitiaux les critères déjà définis (peut être <code>null</code> pour une création)
      */
     public FenetreFormulaireListeDiffusion(Frame parent, String titre, String nomInitial,
-                                           List<String> toutesLesEtiquettes, List<CritereData> criteresInitiaux) {
+                                           List<EtiquetteVue> toutesLesEtiquettes, List<CritereVue> criteresInitiaux) {
         super(parent, titre, 450, 420);
 
         // Nom de la liste
@@ -65,7 +58,7 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
         modelCriteres = new DefaultListModel<>();
         if (criteresInitiaux != null) {
             // On travaille sur des copies : annuler le formulaire ne doit pas modifier les originaux
-            for (CritereData c : criteresInitiaux) {
+            for (CritereVue c : criteresInitiaux) {
                 modelCriteres.addElement(new CritereData(c));
             }
         }
@@ -75,7 +68,19 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
         ajouter(scrollPane);
 
         // Panneaux d'ajout, de modification et de suppression des critères
-        JComboBox<String> comboEtiquettes = new JComboBox<>(toutesLesEtiquettes != null ? toutesLesEtiquettes.toArray(new String[0]) : new String[0]);
+        JComboBox<EtiquetteVue> comboEtiquettes = new JComboBox<>(toutesLesEtiquettes != null ? toutesLesEtiquettes.toArray(new EtiquetteVue[0]) : new EtiquetteVue[0]);
+        // Le modèle n'a pas à redéfinir toString() : on affiche le nom de l'étiquette
+        comboEtiquettes.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> liste, Object valeur, int index,
+                                                          boolean selectionne, boolean focus) {
+                super.getListCellRendererComponent(liste, valeur, index, selectionne, focus);
+                if (valeur instanceof EtiquetteVue) {
+                    setText(((EtiquetteVue) valeur).getNom());
+                }
+                return this;
+            }
+        });
         JCheckBox chkInclus = new JCheckBox("Inclus (doit l'avoir)", true);
         JButton btnAjouterCritere = new JButton("Ajouter");
         JButton btnModifierCritere = new JButton("Modifier sélectionné");
@@ -93,7 +98,7 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
         ajouter(panelSuppr);
 
         btnAjouterCritere.addActionListener(e -> {
-            String etiquetteChoisie = (String) comboEtiquettes.getSelectedItem();
+            EtiquetteVue etiquetteChoisie = (EtiquetteVue) comboEtiquettes.getSelectedItem();
             boolean estInclus = chkInclus.isSelected();
 
             if (etiquetteChoisie != null && critereAcceptable(etiquetteChoisie, estInclus, -1)) {
@@ -113,7 +118,7 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
         // Applique l'étiquette et le type choisis au critère sélectionné
         btnModifierCritere.addActionListener(e -> {
             int index = listCriteres.getSelectedIndex();
-            String etiquetteChoisie = (String) comboEtiquettes.getSelectedItem();
+            EtiquetteVue etiquetteChoisie = (EtiquetteVue) comboEtiquettes.getSelectedItem();
             boolean estInclus = chkInclus.isSelected();
 
             if (index != -1 && etiquetteChoisie != null && critereAcceptable(etiquetteChoisie, estInclus, index)) {
@@ -139,15 +144,15 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
      * Vérifie qu'un critère n'est ni en double ni contradictoire avec ceux déjà définis.
      * En cas de problème, un message d'erreur est affiché.
      *
-     * @param etiquette le libellé de l'étiquette du critère
+     * @param etiquette l'étiquette du critère
      * @param inclus <code>true</code> si l'étiquette est requise, <code>false</code> si elle est interdite
      * @param indexIgnore l'indice d'un critère à ignorer (celui que l'on modifie), ou -1 pour tous les comparer
      * @return <code>true</code> si le critère peut être ajouté ou modifié
      */
-    private boolean critereAcceptable(String etiquette, boolean inclus, int indexIgnore) {
+    private boolean critereAcceptable(EtiquetteVue etiquette, boolean inclus, int indexIgnore) {
         for (int i = 0; i < modelCriteres.size(); i++) {
             CritereData c = modelCriteres.get(i);
-            if (i != indexIgnore && c.getEtiquette().equals(etiquette)) {
+            if (i != indexIgnore && c.getEtiquette() == etiquette) {
                 if (c.isInclus() == inclus) {
                     afficherErreur("Critère en double", "Un critère identique existe déjà pour cette étiquette.");
                 } else {
@@ -196,5 +201,5 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
      *
      * @return la liste des critères de la liste de diffusion
      */
-    public List<CritereData> getCriteresList() { return Collections.list(modelCriteres.elements()); }
+    public List<CritereVue> getCriteresList() { return new ArrayList<>(Collections.list(modelCriteres.elements())); }
 }

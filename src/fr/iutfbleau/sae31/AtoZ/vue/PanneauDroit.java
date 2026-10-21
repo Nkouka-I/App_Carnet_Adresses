@@ -1,17 +1,18 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import java.awt.GridBagLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.util.List;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
+import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
+import java.awt.*;
+import javax.swing.*;
 
 /**
  * La classe <code>PanneauDroit</code> est le panneau de droite de la fenêtre principale.
  * Elle se contente d'afficher le bon panneau d'opérations selon l'élément sélectionné
  * (contact, étiquette ou liste de diffusion), ou un message d'invite lorsque rien
  * n'est sélectionné. Le détail de chaque vue est délégué aux classes
- * <code>PanneauOperations...</code>.
+ * <code>PanneauOperations...</code>, qui relisent les données de l'élément à chaque
+ * affichage.
  *
  * @version 1.0
  * @author Nkouka Ildevert
@@ -19,9 +20,18 @@ import javax.swing.JLabel;
 public class PanneauDroit extends JPanel{
 
     /**
-     * Construit le panneau de droite avec une largeur fixe et affiche la vue vide.
+     * Contrôleur transmis aux panneaux d'opérations.
      */
-    public PanneauDroit(){
+    private final Controleur controleur;
+
+    /**
+     * Construit le panneau de droite avec une largeur fixe et affiche la vue vide.
+     *
+     * @param controleur le contrôleur transmis aux panneaux d'opérations
+     */
+    public PanneauDroit(Controleur controleur){
+        this.controleur = controleur;
+
         setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(Style.LARGEUR_PANNEAU_DROIT, 0)); // Limité à une largeur fixe
         setBackground(Style.FOND_PANNEAU_LATERAL);
@@ -71,37 +81,27 @@ public class PanneauDroit extends JPanel{
     /**
      * Vue dédiée lorsqu'un CONTACT est sélectionné.
      *
-     * @param nomActuel le nom actuel du contact
-     * @param emailActuel l'email actuel du contact
-     * @param toutesLesEtiquettes toutes les étiquettes disponibles
-     * @param etiquettesActuelles les étiquettes actuellement associées au contact
+     * @param contact le contact sélectionné
      */
-    public void afficherOperationsContact(String nomActuel, String emailActuel,
-                                        List<String> toutesLesEtiquettes, List<String> etiquettesActuelles) {
-        afficher(new PanneauOperationsContact(
-            this::afficherVide, nomActuel, emailActuel, toutesLesEtiquettes, etiquettesActuelles
-        ));
+    public void afficherOperationsContact(ContactVue contact) {
+        afficher(new PanneauOperationsContact(controleur, contact));
     }
 
     /**
      * Vue dédiée lorsqu'une ÉTIQUETTE est sélectionnée.
      *
-     * @param nomEtiquette le libellé de l'étiquette sélectionnée
+     * @param etiquette l'étiquette sélectionnée
      */
-    public void afficherOperationsEtiquette(String nomEtiquette) {
-        afficher(new PanneauOperationsEtiquette(this::afficherVide, nomEtiquette));
+    public void afficherOperationsEtiquette(EtiquetteVue etiquette) {
+        afficher(new PanneauOperationsEtiquette(controleur, etiquette));
     }
 
     /**
      * Vue dédiée lorsqu'une LISTE DE DIFFUSION est sélectionnée.
      *
-     * @param nomListe le nom de la liste de diffusion sélectionnée
-     * @param toutesLesEtiquettes toutes les étiquettes disponibles pour définir un critère
-     * @param criteresActuels les critères actuellement définis pour la liste
+     * @param liste la liste de diffusion sélectionnée
      */
-    public void afficherOperationsListeDiffusion(String nomListe, List<String> toutesLesEtiquettes, List<CritereData> criteresActuels) {
-        afficher(new PanneauOperationsListeDiffusion(
-            this::afficherVide, nomListe, toutesLesEtiquettes, criteresActuels
-        ));
+    public void afficherOperationsListeDiffusion(ListeDiffusionVue liste) {
+        afficher(new PanneauOperationsListeDiffusion(controleur, liste));
     }
 }

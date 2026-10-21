@@ -1,21 +1,16 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
+import java.awt.*;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 /**
  * La classe <code>PanneauOperationsAbstrait</code> est la base commune des panneaux
  * d'opérations affichés à droite de la fenêtre principale (contact, étiquette, liste
  * de diffusion). Elle regroupe le code partagé : préparation de la grille, bouton
- * "Modifier", titre et bouton "Supprimer" avec confirmation.
+ * "Modifier", titre, texte simple et bouton "Supprimer" avec confirmation. Elle ne
+ * garde aucune donnée : c'est le contrôleur qui modifie le carnet, puis la fenêtre
+ * principale reconstruit le panneau.
  *
  * @version 1.0
  * @author Nkouka Ildevert
@@ -23,10 +18,9 @@ import javax.swing.SwingUtilities;
 public abstract class PanneauOperationsAbstrait extends JPanel {
 
     /**
-     * Action exécutée une fois la suppression confirmée et effectuée
-     * (en général : revenir à la vue vide du panneau de droite).
+     * Contrôleur auquel les opérations sont demandées.
      */
-    private final Runnable apresSuppression;
+    private final Controleur controleur;
 
     /**
      * Contraintes de placement courantes, recréées à chaque appel de {@link #preparer()}.
@@ -41,17 +35,26 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
     /**
      * Construit un panneau d'opérations transparent muni d'un <code>GridBagLayout</code>.
      *
-     * @param apresSuppression l'action à exécuter après une suppression réussie
+     * @param controleur le contrôleur auquel les opérations sont demandées
      */
-    protected PanneauOperationsAbstrait(Runnable apresSuppression) {
-        this.apresSuppression = apresSuppression;
+    protected PanneauOperationsAbstrait(Controleur controleur) {
+        this.controleur = controleur;
         setOpaque(false);
         setLayout(new GridBagLayout());
     }
 
     /**
+     * Renvoie le contrôleur auquel les opérations sont demandées.
+     *
+     * @return le contrôleur
+     */
+    protected Controleur getControleur() {
+        return controleur;
+    }
+
+    /**
      * Vide le panneau et réinitialise la grille. À appeler au début de la construction
-     * (ou de la reconstruction) du contenu.
+     * du contenu.
      */
     protected void preparer() {
         removeAll();
@@ -105,9 +108,23 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
     }
 
     /**
+     * Ajoute une ligne de texte simple sur la ligne suivante.
+     *
+     * @param texte le texte à afficher
+     * @param marges les marges autour du texte
+     */
+    protected void ajouterTexte(String texte, Insets marges) {
+        gbc.gridy = ligne++;
+        gbc.insets = marges;
+
+        add(new JLabel(texte), gbc);
+    }
+
+    /**
      * Ajoute le bouton de suppression sur la ligne suivante. Un clic ouvre une
-     * confirmation ; si l'utilisateur accepte, l'action est exécutée, un message de
-     * succès est affiché, puis l'action <code>apresSuppression</code> est appelée.
+     * confirmation ; si l'utilisateur accepte, l'action est exécutée (elle doit demander
+     * la suppression au contrôleur) puis un message de succès est affiché. Le panneau
+     * est ensuite remplacé par la fenêtre principale, prévenue par le contrôleur.
      *
      * @param texteBouton le texte affiché sur le bouton
      * @param messageConfirmation le message de la boîte de confirmation
@@ -121,6 +138,7 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
 
         btnSupprimer.addActionListener(e -> {
 
+            // Mémorisée avant la suppression : ensuite ce panneau ne sera plus dans la fenêtre
             Window fenetreParente = SwingUtilities.getWindowAncestor(this);
 
             // Le pop-up bloquant
@@ -145,9 +163,6 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
                     "Succès",
                     JOptionPane.INFORMATION_MESSAGE
                 );
-
-                // Remise à zéro de l'affichage
-                apresSuppression.run();
             }
         });
 

@@ -1,5 +1,6 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import java.util.List;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
+import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
 
 /**
  * La classe <code>PanneauOperationsContact</code> est le panneau d'opérations affiché
@@ -11,47 +12,25 @@ import java.util.List;
 public class PanneauOperationsContact extends PanneauOperationsAbstrait {
 
     /**
-     * Nom actuel du contact.
+     * Contact sélectionné.
      */
-    private String nom;
-
-    /**
-     * Adresse email actuelle du contact.
-     */
-    private String email;
-
-    /**
-     * Toutes les étiquettes disponibles.
-     */
-    private final List<String> toutesLesEtiquettes;
-
-    /**
-     * Étiquettes actuellement associées au contact.
-     */
-    private List<String> etiquettesActuelles;
+    private final ContactVue contact;
 
     /**
      * Construit le panneau et affiche ses boutons.
      *
-     * @param apresSuppression l'action à exécuter après une suppression réussie
-     * @param nom le nom actuel du contact
-     * @param email l'email actuel du contact
-     * @param toutesLesEtiquettes toutes les étiquettes disponibles
-     * @param etiquettesActuelles les étiquettes actuellement associées au contact
+     * @param controleur le contrôleur auquel les opérations sont demandées
+     * @param contact le contact sélectionné
      */
-    public PanneauOperationsContact(Runnable apresSuppression, String nom, String email,
-                                    List<String> toutesLesEtiquettes, List<String> etiquettesActuelles) {
-        super(apresSuppression);
-        this.nom = nom;
-        this.email = email;
-        this.toutesLesEtiquettes = toutesLesEtiquettes;
-        this.etiquettesActuelles = etiquettesActuelles;
+    public PanneauOperationsContact(Controleur controleur, ContactVue contact) {
+        super(controleur);
+        this.contact = contact;
 
         construire();
     }
 
     /**
-     * Construit (ou reconstruit) le contenu du panneau : bouton "Modifier" puis bouton "Supprimer".
+     * Construit le contenu du panneau : bouton "Modifier" puis bouton "Supprimer".
      */
     private void construire() {
         preparer();
@@ -60,41 +39,30 @@ public class PanneauOperationsContact extends PanneauOperationsAbstrait {
 
         ajouterBoutonSuppression(
             "Supprimer le contact",
-            "Voulez-vous vraiment supprimer le contact \"" + nom + "\" ?",
+            "Voulez-vous vraiment supprimer le contact \"" + contact.getNom() + "\" ?",
             "Le contact a bien été supprimé !",
-            () -> {
-                // TODO: Appeler le contrôleur pour supprimer le contact
-                System.out.println("le contact a bien été supprimé");
-            }
+            () -> getControleur().supprimerContact(contact)
         );
 
         terminer();
     }
 
     /**
-     * Ouvre le formulaire de modification du contact et, s'il est validé, met à jour
-     * les valeurs affichées.
+     * Ouvre le formulaire de modification du contact et, s'il est validé, demande la
+     * modification au contrôleur.
      */
     private void modifier() {
         FenetreFormulaireContact form = new FenetreFormulaireContact(
             getFenetreParente(),
             "Modifier le contact",
-            nom,
-            email,
-            toutesLesEtiquettes,
-            etiquettesActuelles
+            contact.getNom(),
+            contact.getEmail(),
+            getControleur().getEtiquettes(),
+            contact.getEtiquettes()
         );
 
-        FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
-            nom = f.getNomSaisi();
-            email = f.getEmailSaisi();
-            etiquettesActuelles = f.getEtiquettesSelectionnees();
-
-            // TODO: Appeler le contrôleur / BDD pour mettre à jour
-            System.out.println("Contact mis à jour : " + nom + " / " + email);
-
-            // Rafraîchir l'affichage
-            construire();
-        });
+        FenetreDialogueAbstraite.ouvrirFormulaire(form, f ->
+            getControleur().modifierContact(contact, f.getNomSaisi(), f.getEmailSaisi(), f.getEtiquettesSelectionnees())
+        );
     }
 }

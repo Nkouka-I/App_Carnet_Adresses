@@ -33,14 +33,15 @@ public class EcouteurClicLigne extends MouseAdapter {
         this.listener = listener;
     }
 
+    /**
+     * Déclenché au relâchement du bouton de la souris : sélectionne le contact de la ligne.
+     *
+     * @param e l'événement de souris
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
         if (listener != null) {
-            listener.clicContact(
-                ligneContact.getNom(), 
-                ligneContact.getEmail(), 
-                ligneContact.getEtiquettes()
-            );
+            listener.clicContact(ligneContact.getContact());
         }
     }
 }

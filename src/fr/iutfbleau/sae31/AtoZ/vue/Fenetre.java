@@ -1,18 +1,26 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import java.awt.BorderLayout;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import java.util.List;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
+import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
+import java.awt.*;
+import javax.swing.*;
 
 /**
  * La classe <code>Fenetre</code> est la fenêtre principale de l'application AtoZ Carnet.
- * Elle assemble les trois panneaux de l'interface (gauche, central et droit) et
- * coordonne leur mise à jour en réagissant aux événements de navigation.
+ * Elle assemble les trois panneaux de l'interface (gauche, central et droit), mémorise
+ * ce qui est sélectionné et met les panneaux à jour, soit quand l'utilisateur navigue,
+ * soit quand le carnet est modifié.
  *
  * @version 1.0
  * @author Nkouka Ildevert
  */
 public class Fenetre extends JFrame implements NavigationListener{
+
+    /**
+     * Contrôleur auquel la vue demande les données et les modifications.
+     */
+    private final Controleur controleur;
 
     /**
      * Panneau central affichant le répertoire de contacts ou une liste de diffusion.
@@ -30,11 +38,35 @@ public class Fenetre extends JFrame implements NavigationListener{
     private final PanneauDroit panneauDroit;
 
     /**
-     * Construit la fenêtre principale : configure le titre, la taille, le
-     * comportement de fermeture, puis place les trois panneaux dans un
-     * <code>BorderLayout</code>.
+     * Étiquette qui filtre le répertoire (<code>null</code> : tous les contacts).
      */
-	public Fenetre(){
+    private EtiquetteVue filtreEtiquette;
+
+    /**
+     * Contact sélectionné (<code>null</code> si aucun).
+     */
+    private ContactVue contactSelectionne;
+
+    /**
+     * Étiquette sélectionnée (<code>null</code> si aucune).
+     */
+    private EtiquetteVue etiquetteSelectionnee;
+
+    /**
+     * Liste de diffusion sélectionnée (<code>null</code> si aucune).
+     */
+    private ListeDiffusionVue listeSelectionnee;
+
+    /**
+     * Construit la fenêtre principale : configure le titre, la taille, le
+     * comportement de fermeture, place les trois panneaux dans un
+     * <code>BorderLayout</code> et s'abonne aux modifications du carnet.
+     *
+     * @param controleur le contrôleur auquel la vue demande les données
+     */
+	public Fenetre(Controleur controleur){
+        this.controleur = controleur;
+
 		// on configure la fenetre
 	    setTitle("AtoZ Carnet");
         setSize(1150, 700);
@@ -46,85 +78,155 @@ public class Fenetre extends JFrame implements NavigationListener{
 
         setLayout(new BorderLayout());
 
-        panneauGauche = new PanneauGauche(this);
+        panneauGauche = new PanneauGauche(this, controleur);
         add(panneauGauche, BorderLayout.WEST);
 
-        panneauCentral = new PanneauCentral(this);
+        panneauCentral = new PanneauCentral(this, controleur);
         add(panneauCentral, BorderLayout.CENTER);
 
-        panneauDroit = new PanneauDroit();
+        panneauDroit = new PanneauDroit(controleur);
         add(panneauDroit, BorderLayout.EAST);
+
+        controleur.ajouterEcouteur(this::actualiser);
 	}
 
     // méthodes du contrat NavigationListener
 
     /**
-     * Réagit au clic sur un contact : affiche le répertoire au centre et les
-     * opérations possibles sur ce contact (modifier, supprimer).
+     * Réagit au clic sur "Tous les contacts" : affiche tout le répertoire et vide le
+     * panneau de droite.
      *
-     * @param nom le nom du contact sélectionné (<code>null</code> pour "Tous les contacts")
-     * @param email l'adresse email du contact sélectionné
-     * @param etiquettes les étiquettes actuellement associées au contact
-     * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicContact(java.lang.String, java.lang.String, java.util.List)
+     * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicTousLesContacts()
      */
     @Override
-    public void clicContact(String nom, String email, List<String> etiquettes) {
-        // Mis à jour du panneau central, on affiche les contacts
-        panneauCentral.afficherRepertoire();
-
-        // Aucun contact sélectionné (bouton "Tous les contacts") : panneau droit vide
-        if (nom == null){
-            panneauDroit.afficherVide();
-            return;
-        }
-
-        // Mis à jour du panneau Droit, on affiche les opérations liées aux contacts
-        panneauDroit.afficherOperationsContact(nom, email, DonneesTest.etiquettes(), etiquettes);
+    public void clicTousLesContacts() {
+        afficherTousLesContacts();
     }
 
     /**
-     * Réagit au clic sur une étiquette : affiche le répertoire au centre et les
-     * opérations possibles sur cette étiquette à droite.
+     * Réagit au dépliage du menu des étiquettes : affiche tout le répertoire et vide le
+     * panneau de droite.
      *
-     * @param nomEtiquette le libellé de l'étiquette sélectionnée (<code>null</code> pour le bouton accordéon)
-     * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicContactEtiquette(java.lang.String)
+     * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicMenuEtiquettes()
      */
     @Override
-    public void clicContactEtiquette(String nomEtiquette) {
-        // Mis à jour du panneau central, on affiche les contacts possédant l'étiquette au centre
-        //TODO Sélectionner uniquement les contacts avec l'étiquette
+    public void clicMenuEtiquettes() {
+        afficherTousLesContacts();
+    }
+
+    /**
+     * Réagit au dépliage du menu des listes de diffusion : affiche la page d'accueil des
+     * listes et vide le panneau de droite.
+     *
+     * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicMenuListesDiffusion()
+     */
+    @Override
+    public void clicMenuListesDiffusion() {
+        deselectionner();
+        panneauCentral.afficherListeDiffusion(null);
+        panneauDroit.afficherVide();
+    }
+
+    /**
+     * Réagit au clic sur un contact : affiche le répertoire au centre et les
+     * opérations possibles sur ce contact (modifier, supprimer).
+     *
+     * @param contact le contact sélectionné
+     * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicContact(fr.iutfbleau.sae31.AtoZ.controleur.ContactVue)
+     */
+    @Override
+    public void clicContact(ContactVue contact) {
+        deselectionner();
+        contactSelectionne = contact;
+
         panneauCentral.afficherRepertoire();
+        panneauDroit.afficherOperationsContact(contact);
+    }
 
-        // Bouton accordéon : panneau droit vide
-        if (nomEtiquette == null){
-            panneauDroit.afficherVide();
-            return;
-        }
+    /**
+     * Réagit au clic sur une étiquette : affiche au centre les contacts qui la possèdent
+     * et, à droite, les opérations possibles sur cette étiquette.
+     *
+     * @param etiquette l'étiquette sélectionnée
+     * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicEtiquette(fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue)
+     */
+    @Override
+    public void clicEtiquette(EtiquetteVue etiquette) {
+        deselectionner();
+        etiquetteSelectionnee = etiquette;
+        filtreEtiquette = etiquette;
 
-        // Mis à jour du panneau Droit, on affiche les opérations liées à l'étiquette
-        panneauDroit.afficherOperationsEtiquette(nomEtiquette);
+        panneauCentral.afficherRepertoire(etiquette);
+        panneauDroit.afficherOperationsEtiquette(etiquette);
     }
 
     /**
      * Réagit au clic sur une liste de diffusion : affiche la page dédiée à la
      * liste au centre et les opérations possibles sur cette liste à droite.
      *
-     * @param nomListe le nom de la liste de diffusion sélectionnée (<code>null</code> pour le bouton accordéon)
-     * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicListeDiffusion(java.lang.String)
+     * @param liste la liste de diffusion sélectionnée
+     * @see fr.iutfbleau.sae31.AtoZ.vue.NavigationListener#clicListeDiffusion(fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue)
      */
     @Override
-    public void clicListeDiffusion(String nomListe) {
-        // Mis à jour du panneau central, on affiche la page dédiée à la liste (ou l'accueil si null)
-        panneauCentral.afficherListeDiffusion(nomListe);
+    public void clicListeDiffusion(ListeDiffusionVue liste) {
+        deselectionner();
+        listeSelectionnee = liste;
 
-        // Bouton accordéon : panneau droit vide
-        if (nomListe == null){
-            panneauDroit.afficherVide();
-            return;
+        panneauCentral.afficherListeDiffusion(liste);
+        panneauDroit.afficherOperationsListeDiffusion(liste);
+    }
+
+    /**
+     * Affiche tout le répertoire (sans filtre) et vide le panneau de droite.
+     */
+    private void afficherTousLesContacts() {
+        deselectionner();
+        filtreEtiquette = null;
+
+        panneauCentral.afficherRepertoire(null);
+        panneauDroit.afficherVide();
+    }
+
+    /**
+     * Oublie la sélection courante (le filtre du répertoire n'est pas modifié).
+     */
+    private void deselectionner() {
+        contactSelectionne = null;
+        etiquetteSelectionnee = null;
+        listeSelectionnee = null;
+    }
+
+    /**
+     * Met toute l'interface à jour après une modification du carnet. Les éléments
+     * sélectionnés qui ont été supprimés sont oubliés, puis chaque panneau est
+     * reconstruit à partir des données actuelles.
+     */
+    private void actualiser() {
+        if (filtreEtiquette != null && !controleur.getEtiquettes().contains(filtreEtiquette)) {
+            filtreEtiquette = null;
+        }
+        if (etiquetteSelectionnee != null && !controleur.getEtiquettes().contains(etiquetteSelectionnee)) {
+            etiquetteSelectionnee = null;
+        }
+        if (contactSelectionne != null && !controleur.getContacts().contains(contactSelectionne)) {
+            contactSelectionne = null;
+        }
+        if (listeSelectionnee != null && !controleur.getListesDiffusion().contains(listeSelectionnee)) {
+            listeSelectionnee = null;
         }
 
-        // Mis à jour du panneau Droit, on affiche les opérations liées aux listes de diffusion
-        panneauDroit.afficherOperationsListeDiffusion(nomListe, DonneesTest.etiquettes(), DonneesTest.criteres());
+        panneauGauche.rafraichir();
+        panneauCentral.actualiser(filtreEtiquette, listeSelectionnee);
+
+        if (contactSelectionne != null) {
+            panneauDroit.afficherOperationsContact(contactSelectionne);
+        } else if (etiquetteSelectionnee != null) {
+            panneauDroit.afficherOperationsEtiquette(etiquetteSelectionnee);
+        } else if (listeSelectionnee != null) {
+            panneauDroit.afficherOperationsListeDiffusion(listeSelectionnee);
+        } else {
+            panneauDroit.afficherVide();
+        }
     }
 
     /**

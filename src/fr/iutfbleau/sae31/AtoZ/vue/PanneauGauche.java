@@ -1,20 +1,20 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
+import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
+import java.awt.*;
 import java.util.List;
 import java.util.function.Consumer;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import java.util.function.Function;
+import javax.swing.*;
 
 /**
  * La classe <code>PanneauGauche</code> est le panneau de navigation de gauche de la
  * fenêtre principale. Il propose les boutons de création (contact, étiquette, liste de
  * diffusion) ainsi que deux menus déroulants (accordéons) listant les étiquettes et
- * les listes de diffusion.
+ * les listes de diffusion du carnet.
  *
  * @version 1.0
  * @author Nkouka Ildevert
@@ -72,6 +72,11 @@ public class PanneauGauche extends JPanel {
     private final NavigationListener listener;
 
     /**
+     * Contrôleur fournissant les étiquettes et les listes, et créant les éléments.
+     */
+    private final Controleur controleur;
+
+    /**
      * Contraintes de placement pour la grille de disposition.
      */
     private final GridBagConstraints gbc;
@@ -86,9 +91,11 @@ public class PanneauGauche extends JPanel {
      * une seule fois les écouteurs pour éviter toute fuite ou accumulation.
      *
      * @param listener l'écouteur à notifier lors d'un clic sur une navigation
+     * @param controleur le contrôleur fournissant les données
      */
-    public PanneauGauche(NavigationListener listener) {
+    public PanneauGauche(NavigationListener listener, Controleur controleur) {
         this.listener = listener;
+        this.controleur = controleur;
 
         setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(Style.LARGEUR_PANNEAU_GAUCHE, 0)); // Limité à une largeur fixe
@@ -101,10 +108,10 @@ public class PanneauGauche extends JPanel {
 
         titreApp = new JLabel("AtoZ Carnet", JLabel.CENTER);
 
-        btnNewContact = new JButton("+ Contact");
+        btnNewContact = new JButton("+ ContactVue");
         btnNewContact.addActionListener(e -> creerContact());
 
-        btnNewEtiquette = new JButton("+ Etiquette");
+        btnNewEtiquette = new JButton("+ EtiquetteVue");
         btnNewEtiquette.addActionListener(e -> creerEtiquette());
 
         btnNewListesDiffusion = new JButton("+ Listes de Diffusion");
@@ -112,10 +119,9 @@ public class PanneauGauche extends JPanel {
 
         btnTousContacts = new JButton("Tous les contacts");
         btnTousContacts.addActionListener(e -> {
-            if (listener != null) {
-                listener.clicContact(null, null, null);
+            if (this.listener != null) {
+                this.listener.clicTousLesContacts();
             }
-            rafraichirInterface();
         });
 
         btnEtiquettes = new JButton();
@@ -124,82 +130,72 @@ public class PanneauGauche extends JPanel {
         btnListesDiffusion = new JButton();
         btnListesDiffusion.addActionListener(e -> basculerListesDiffusion());
 
-        rafraichirInterface();
+        rafraichir();
     }
 
     /**
-     * Ouvre le formulaire de création d'un contact.
+     * Ouvre le formulaire de création d'un contact, le crée s'il est validé, puis le
+     * sélectionne.
      */
     private void creerContact() {
         FenetreFormulaireContact form = new FenetreFormulaireContact(
-            FenetreDialogueAbstraite.fenetreDe(this), "Créer un nouveau contact", "", "", DonneesTest.etiquettes(), List.of()
+            FenetreDialogueAbstraite.fenetreDe(this), "Créer un nouveau contact", "", "", controleur.getEtiquettes(), List.of()
         );
 
         FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
-            String nom = f.getNomSaisi();
-            String email = f.getEmailSaisi();
-
-            System.out.println("Nouveau contact créé : " + nom + " <" + email + ">");
+            ContactVue contact = controleur.creerContact(f.getNomSaisi(), f.getEmailSaisi(), f.getEtiquettesSelectionnees());
             if (listener != null) {
-                listener.clicContact(nom, email, f.getEtiquettesSelectionnees());
+                listener.clicContact(contact);
             }
         });
     }
 
     /**
-     * Ouvre le formulaire de création d'une étiquette.
+     * Ouvre le formulaire de création d'une étiquette et la crée s'il est validé.
      */
     private void creerEtiquette() {
         FenetreFormulaireEtiquette form = new FenetreFormulaireEtiquette(
             FenetreDialogueAbstraite.fenetreDe(this), "Créer une nouvelle étiquette", ""
         );
 
-        FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
-            System.out.println("Nouvelle étiquette créée : " + f.getLibelleSaisi());
-            rafraichirInterface();
-        });
+        FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> controleur.creerEtiquette(f.getLibelleSaisi()));
     }
 
     /**
-     * Ouvre le formulaire de création d'une liste de diffusion.
+     * Ouvre le formulaire de création d'une liste de diffusion et la crée s'il est validé.
      */
     private void creerListeDiffusion() {
         FenetreFormulaireListeDiffusion form = new FenetreFormulaireListeDiffusion(
-            FenetreDialogueAbstraite.fenetreDe(this), "Créer une liste de diffusion", "", DonneesTest.etiquettes(), List.of()
+            FenetreDialogueAbstraite.fenetreDe(this), "Créer une liste de diffusion", "", controleur.getEtiquettes(), List.of()
         );
 
-        FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
-            System.out.println("Nouvelle liste créée : " + f.getNomListeSaisi());
-            rafraichirInterface();
-        });
+        FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> controleur.creerListeDiffusion(f.getNomListeSaisi(), f.getCriteresList()));
     }
 
     /**
-     * Déplie ou replie la liste des étiquettes. Au dépliage, le listener est notifié
-     * avec <code>null</code>.
+     * Déplie ou replie la liste des étiquettes. Au dépliage, le listener est notifié.
      */
     private void basculerEtiquettes() {
         etiquettesVisibles = !etiquettesVisibles;
 
         if (etiquettesVisibles && listener != null) {
-            listener.clicContactEtiquette(null);
+            listener.clicMenuEtiquettes();
         }
 
-        rafraichirInterface();
+        rafraichir();
     }
 
     /**
-     * Déplie ou replie la liste des listes de diffusion. Au dépliage, le listener est
-     * notifié avec <code>null</code>.
+     * Déplie ou replie la liste des listes de diffusion. Au dépliage, le listener est notifié.
      */
     private void basculerListesDiffusion() {
         listesDiffusionVisibles = !listesDiffusionVisibles;
 
         if (listesDiffusionVisibles && listener != null) {
-            listener.clicListeDiffusion(null);
+            listener.clicMenuListesDiffusion();
         }
 
-        rafraichirInterface();
+        rafraichir();
     }
 
     /**
@@ -213,23 +209,26 @@ public class PanneauGauche extends JPanel {
     }
 
     /**
-     * Ajoute un bouton par nom, chacun déclenchant l'action donnée avec son nom.
+     * Ajoute un bouton par élément, chacun déclenchant l'action donnée avec son élément.
      *
-     * @param noms les noms à afficher
-     * @param action l'action exécutée au clic, avec le nom du bouton cliqué
+     * @param <T> le type des éléments
+     * @param elements les éléments à afficher
+     * @param libelle la fonction qui donne le texte du bouton d'un élément
+     * @param action l'action exécutée au clic, avec l'élément du bouton cliqué
      */
-    private void ajouterBoutons(List<String> noms, Consumer<String> action) {
-        for (String nom : noms) {
-            JButton btn = new JButton(nom);
-            btn.addActionListener(e -> action.accept(nom));
+    private <T> void ajouterBoutons(List<T> elements, Function<T, String> libelle, Consumer<T> action) {
+        for (T element : elements) {
+            JButton btn = new JButton(libelle.apply(element));
+            btn.addActionListener(e -> action.accept(element));
             ajouter(btn);
         }
     }
 
     /**
-     * Reconstruit entièrement le contenu visuel du panneau selon l'état des accordéons.
+     * Reconstruit entièrement le contenu visuel du panneau selon l'état des accordéons
+     * et les données actuelles du carnet.
      */
-    private void rafraichirInterface() {
+    public void rafraichir() {
         removeAll();
         ligne = 0;
 
@@ -244,9 +243,9 @@ public class PanneauGauche extends JPanel {
         ajouter(btnEtiquettes);
 
         if (etiquettesVisibles) {
-            ajouterBoutons(DonneesTest.etiquettes(), nom -> {
+            ajouterBoutons(controleur.getEtiquettes(), EtiquetteVue::getNom, etiquette -> {
                 if (listener != null) {
-                    listener.clicContactEtiquette(nom);
+                    listener.clicEtiquette(etiquette);
                 }
             });
         }
@@ -258,9 +257,9 @@ public class PanneauGauche extends JPanel {
         ajouter(btnListesDiffusion);
 
         if (listesDiffusionVisibles) {
-            ajouterBoutons(DonneesTest.listesDiffusion(), nom -> {
+            ajouterBoutons(controleur.getListesDiffusion(), ListeDiffusionVue::getNom, liste -> {
                 if (listener != null) {
-                    listener.clicListeDiffusion(nom);
+                    listener.clicListeDiffusion(liste);
                 }
             });
         }

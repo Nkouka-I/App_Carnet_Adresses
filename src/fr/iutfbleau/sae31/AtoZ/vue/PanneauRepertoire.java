@@ -1,17 +1,16 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
+import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
+import java.awt.*;
+import javax.swing.*;
 
 /**
  * La classe <code>PanneauRepertoire</code> est la vue du répertoire de contacts :
  * une barre de recherche, un bouton de tri et la liste des contacts, chacun
- * représenté par une {@link LigneContact}.
+ * représenté par une {@link LigneContact}. Seule la liste est reconstruite quand les
+ * contacts changent : la barre de recherche garde ce que l'utilisateur a saisi.
  *
  * @version 1.0
  * @author Nkouka Ildevert
@@ -24,22 +23,40 @@ public class PanneauRepertoire extends JPanel {
     private final NavigationListener listener;
 
     /**
-     * Construit le répertoire et affiche ses composants.
+     * Contrôleur fournissant les contacts.
+     */
+    private final Controleur controleur;
+
+    /**
+     * Message rappelant le filtre actif (masqué quand il n'y en a pas).
+     */
+    private final JLabel lblFiltre = new JLabel();
+
+    /**
+     * Conteneur des lignes de contacts, reconstruit à chaque affichage.
+     */
+    private final JPanel panelContacts = new JPanel(new GridBagLayout());
+
+    /**
+     * Construit le répertoire et affiche tous les contacts.
      *
      * @param listener l'écouteur à notifier lors des clics sur les contacts
+     * @param controleur le contrôleur fournissant les contacts
      */
-    public PanneauRepertoire(NavigationListener listener) {
+    public PanneauRepertoire(NavigationListener listener, Controleur controleur) {
         this.listener = listener;
+        this.controleur = controleur;
 
         setLayout(new GridBagLayout());
         setBackground(Style.FOND_CONTENU);
 
         construire();
+        afficherContacts(null);
     }
 
     /**
-     * Construit le contenu du panneau : barre de recherche et de tri en haut, liste
-     * des contacts en dessous.
+     * Construit la structure du panneau : barre de recherche et de tri en haut, rappel du
+     * filtre, puis conteneur de la liste des contacts.
      */
     private void construire() {
         GridBagConstraints gbc = new GridBagConstraints();
@@ -62,22 +79,31 @@ public class PanneauRepertoire extends JPanel {
 
         add(panelHaut, gbc);
 
+        // Rappel du filtre actif
+        lblFiltre.setFont(Style.POLICE_TITRE);
+        lblFiltre.setVisible(false);
+        gbc.gridy = 1;
+        add(lblFiltre, gbc);
+
         // Liste des contacts
-        gbc.gridy = 1;		/*ligne du dessous par rapport au panneau haut*/
+        panelContacts.setBackground(Style.FOND_CONTENU);
+        gbc.gridy = 2;		/*ligne du dessous*/
         gbc.weightx = 1.0;	/*occupe toute largeur possible*/
         gbc.weighty = 1.0;	/*occupe toute hauteur possible*/
         gbc.fill = GridBagConstraints.BOTH;
-        add(new JScrollPane(creerListeContacts()), gbc);
+        add(new JScrollPane(panelContacts), gbc);
     }
 
     /**
-     * Crée le conteneur listant les contacts du répertoire.
+     * Reconstruit la liste des contacts à partir des données actuelles.
      *
-     * @return le panneau contenant une {@link LigneContact} par contact
+     * @param filtre l'étiquette que les contacts doivent avoir (<code>null</code> pour tous les contacts)
      */
-    private JPanel creerListeContacts() {
-        JPanel panelContactsList = new JPanel(new GridBagLayout());
-        panelContactsList.setBackground(Style.FOND_CONTENU);
+    public void afficherContacts(EtiquetteVue filtre) {
+        lblFiltre.setText(filtre == null ? "" : "Contacts avec l'étiquette « " + filtre.getNom() + " »");
+        lblFiltre.setVisible(filtre != null);
+
+        panelContacts.removeAll();
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -86,16 +112,19 @@ public class PanneauRepertoire extends JPanel {
 
         int ligne = 0;
 
-        for (DonneesTest.ContactTest contact : DonneesTest.contacts()) {
+        for (ContactVue contact : controleur.getContacts(filtre)) {
             gbc.gridy = ligne++;
-            panelContactsList.add(new LigneContact(contact.getNom(), contact.getEmail(), contact.getEtiquettes(), listener), gbc);
+            panelContacts.add(new LigneContact(contact, listener), gbc);
         }
 
         // Ressort
         gbc.gridy = ligne;
         gbc.weighty = 1.0;
-        panelContactsList.add(Style.ressort(), gbc);
+        panelContacts.add(Style.ressort(), gbc);
 
-        return panelContactsList;
+        panelContacts.revalidate();
+        panelContacts.repaint();
+        revalidate();
+        repaint();
     }
 }

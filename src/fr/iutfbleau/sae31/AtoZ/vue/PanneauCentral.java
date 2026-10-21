@@ -1,7 +1,10 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.CardLayout;
-import javax.swing.JPanel;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
+import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
+import java.awt.*;
+import javax.swing.*;
 
 /**
  * La classe <code>PanneauCentral</code> est le panneau central de la fenêtre principale.
@@ -43,14 +46,15 @@ public class PanneauCentral extends JPanel{
      * Construit le panneau central et affiche par défaut la vue répertoire.
      *
      * @param listener l'écouteur à notifier lors des clics sur les contacts
+     * @param controleur le contrôleur fournissant les données
      */
-	public PanneauCentral(NavigationListener listener) {
+	public PanneauCentral(NavigationListener listener, Controleur controleur) {
         setLayout(cartes);
         setBackground(Style.FOND_CONTENU);
         setBorder(Style.BORDURE_CONTENU);
 
-        panneauRepertoire = new PanneauRepertoire(listener);
-        panneauListeDiffusion = new PanneauListeDiffusion();
+        panneauRepertoire = new PanneauRepertoire(listener, controleur);
+        panneauListeDiffusion = new PanneauListeDiffusion(controleur);
 
         add(panneauRepertoire, CARTE_REPERTOIRE);
         add(panneauListeDiffusion, CARTE_LISTE_DIFFUSION);
@@ -60,21 +64,41 @@ public class PanneauCentral extends JPanel{
     }
 
     /**
-     * Affiche la vue répertoire. Le répertoire n'est pas reconstruit : la recherche
-     * saisie est conservée d'un affichage à l'autre.
+     * Affiche la vue répertoire telle qu'elle est (même filtre, même recherche).
      */
 	public void afficherRepertoire() {
         cartes.show(this, CARTE_REPERTOIRE);
     }
 
     /**
+     * Affiche la vue répertoire avec un filtre.
+     *
+     * @param filtre l'étiquette que les contacts doivent avoir (<code>null</code> pour tous les contacts)
+     */
+    public void afficherRepertoire(EtiquetteVue filtre) {
+        panneauRepertoire.afficherContacts(filtre);
+        cartes.show(this, CARTE_REPERTOIRE);
+    }
+
+    /**
      * Affiche la page dédiée à une liste de diffusion.
      *
-     * @param nomListe le nom de la liste de diffusion à afficher
-     *                 (<code>null</code> pour afficher le message d'accueil des listes)
+     * @param liste la liste de diffusion à afficher
+     *              (<code>null</code> pour afficher le message d'accueil des listes)
      */
-    public void afficherListeDiffusion(String nomListe) {
-        panneauListeDiffusion.afficher(nomListe);
+    public void afficherListeDiffusion(ListeDiffusionVue liste) {
+        panneauListeDiffusion.afficher(liste);
         cartes.show(this, CARTE_LISTE_DIFFUSION);
+    }
+
+    /**
+     * Recharge les deux vues à partir des données actuelles, sans changer la vue affichée.
+     *
+     * @param filtre l'étiquette qui filtre le répertoire (<code>null</code> pour aucun filtre)
+     * @param liste la liste de diffusion affichée (<code>null</code> pour le message d'accueil)
+     */
+    public void actualiser(EtiquetteVue filtre, ListeDiffusionVue liste) {
+        panneauRepertoire.afficherContacts(filtre);
+        panneauListeDiffusion.afficher(liste);
     }
 }

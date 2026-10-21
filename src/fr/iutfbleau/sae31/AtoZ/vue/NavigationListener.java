@@ -1,11 +1,14 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.util.List;
+import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
 
 /**
  * L'interface <code>NavigationListener</code> définit le contrat de navigation de
  * l'application. Elle permet aux panneaux de signaler à la fenêtre principale
- * qu'un contact, une étiquette ou une liste de diffusion vient d'être sélectionné.
+ * ce que l'utilisateur vient de sélectionner : un contact, une étiquette, une liste
+ * de diffusion, ou l'un des boutons généraux du menu de gauche.
  *
  * @version 1.0
  * @author Nkouka Ildevert
@@ -13,25 +16,38 @@ import java.util.List;
 public interface NavigationListener {
 
     /**
+     * Appelée lorsque l'utilisateur clique sur le bouton "Tous les contacts".
+     */
+    void clicTousLesContacts();
+
+    /**
+     * Appelée lorsque l'utilisateur déplie le menu des étiquettes.
+     */
+    void clicMenuEtiquettes();
+
+    /**
+     * Appelée lorsque l'utilisateur déplie le menu des listes de diffusion.
+     */
+    void clicMenuListesDiffusion();
+
+    /**
      * Appelée lorsque l'utilisateur clique sur un contact.
      *
-     * @param nom le nom du contact sélectionné
-     * @param email l'adresse email du contact sélectionné
-     * @param etiquettes les étiquettes associées au contact
+     * @param contact le contact sélectionné
      */
-    void clicContact(String nom, String email, List<String> etiquettes);
+    void clicContact(ContactVue contact);
 
     /**
      * Appelée lorsque l'utilisateur clique sur une étiquette.
      *
-     * @param nomEtiquette le libellé de l'étiquette sélectionnée
+     * @param etiquette l'étiquette sélectionnée
      */
-    void clicContactEtiquette(String nomEtiquette);
+    void clicEtiquette(EtiquetteVue etiquette);
 
     /**
      * Appelée lorsque l'utilisateur clique sur une liste de diffusion.
      *
-     * @param nomListe le nom de la liste de diffusion sélectionnée
+     * @param liste la liste de diffusion sélectionnée
      */
-    void clicListeDiffusion(String nomListe);
+    void clicListeDiffusion(ListeDiffusionVue liste);
 }

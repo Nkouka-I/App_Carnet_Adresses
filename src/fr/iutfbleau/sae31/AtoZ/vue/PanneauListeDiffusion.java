@@ -1,11 +1,10 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
+import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
+import java.awt.*;
+import javax.swing.*;
 
 /**
  * La classe <code>PanneauListeDiffusion</code> est la vue dédiée à une liste de
@@ -18,9 +17,18 @@ import javax.swing.JScrollPane;
 public class PanneauListeDiffusion extends JPanel {
 
     /**
-     * Construit un panneau vide, prêt à afficher une liste de diffusion.
+     * Contrôleur fournissant les contacts d'une liste.
      */
-    public PanneauListeDiffusion() {
+    private final Controleur controleur;
+
+    /**
+     * Construit un panneau vide, prêt à afficher une liste de diffusion.
+     *
+     * @param controleur le contrôleur fournissant les contacts
+     */
+    public PanneauListeDiffusion(Controleur controleur) {
+        this.controleur = controleur;
+
         setLayout(new GridBagLayout());
         setBackground(Style.FOND_CONTENU);
         setBorder(Style.BORDURE_CONTENU);
@@ -29,16 +37,16 @@ public class PanneauListeDiffusion extends JPanel {
     /**
      * Affiche la page d'une liste de diffusion. Le contenu précédent du panneau est effacé.
      *
-     * @param nomListe le nom de la liste de diffusion à afficher
-     *                 (<code>null</code> pour afficher le message d'accueil des listes)
+     * @param liste la liste de diffusion à afficher
+     *              (<code>null</code> pour afficher le message d'accueil des listes)
      */
-    public void afficher(String nomListe) {
+    public void afficher(ListeDiffusionVue liste) {
         removeAll(); // Efface tout
 
-        if (nomListe == null) {
+        if (liste == null) {
             afficherAccueil();
         } else {
-            afficherDetails(nomListe);
+            afficherDetails(liste);
         }
 
         // Rafraîchit l'affichage
@@ -77,13 +85,13 @@ public class PanneauListeDiffusion extends JPanel {
     /**
      * Affiche la page d'une liste précise : titre, contacts et bouton "Copier tout".
      *
-     * @param nomListe le nom de la liste de diffusion à afficher
+     * @param liste la liste de diffusion à afficher
      */
-    private void afficherDetails(String nomListe) {
+    private void afficherDetails(ListeDiffusionVue liste) {
         GridBagConstraints gbc = creerContraintes();
 
         // Titre de la liste spécifique
-        JLabel lblTitre = new JLabel("Liste : " + nomListe);
+        JLabel lblTitre = new JLabel("Liste : " + liste.getNom());
         lblTitre.setFont(Style.POLICE_TITRE);
         gbc.gridy = 0;
         add(lblTitre, gbc);
@@ -93,7 +101,7 @@ public class PanneauListeDiffusion extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        add(new JScrollPane(creerListeContacts()), gbc);
+        add(new JScrollPane(creerListeContacts(liste)), gbc);
 
         // Bouton "[ Copier tout ]" en bas à droite
         gbc.gridy = 2;
@@ -107,9 +115,10 @@ public class PanneauListeDiffusion extends JPanel {
     /**
      * Crée le conteneur listant les contacts de la liste de diffusion.
      *
+     * @param liste la liste de diffusion dont on affiche les contacts
      * @return le panneau contenant une {@link LigneListeDiffusion} par contact
      */
-    private JPanel creerListeContacts() {
+    private JPanel creerListeContacts(ListeDiffusionVue liste) {
         JPanel panelContactsList = new JPanel(new GridBagLayout());
         panelContactsList.setBackground(Style.FOND_CONTENU);
 
@@ -120,7 +129,7 @@ public class PanneauListeDiffusion extends JPanel {
 
         int ligne = 0;
 
-        for (DonneesTest.ContactTest contact : DonneesTest.contacts()) {
+        for (ContactVue contact : controleur.getContactsDe(liste)) {
             gbc.gridy = ligne++;
             panelContactsList.add(new LigneListeDiffusion(contact.getNom(), contact.getEmail()), gbc);
         }

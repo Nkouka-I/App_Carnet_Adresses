@@ -1,16 +1,12 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-
-import javax.swing.JTextField;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.Dimension;
+import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
+import javax.swing.*;
+import java.awt.*;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * La classe <code>FenetreFormulaireContact</code> est le formulaire de création et de
@@ -33,9 +29,9 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
     private JTextField txtEmail;
 
     /**
-     * Cases à cocher correspondant à chacune des étiquettes disponibles.
+     * Case à cocher de chacune des étiquettes disponibles, dans l'ordre d'affichage.
      */
-    private List<JCheckBox> listeCheckBoxEtiquettes;
+    private final Map<EtiquetteVue, JCheckBox> casesEtiquettes = new LinkedHashMap<>();
 
     /**
      * Construit le formulaire et pré-remplit ses champs.
@@ -48,7 +44,7 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
      * @param etiquettesDuContact les étiquettes à cocher au départ
      */
     public FenetreFormulaireContact(Frame parent, String titre, String nomInitial, String emailInitial,
-                                  List<String> toutesLesEtiquettes, List<String> etiquettesDuContact) {
+                                  List<EtiquetteVue> toutesLesEtiquettes, List<EtiquetteVue> etiquettesDuContact) {
         super(parent, titre, 400, 360);
 
         // Nom
@@ -65,15 +61,12 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
         ajouter(new JLabel("Étiquettes :"));
 
         JPanel panelEtiquettes = new JPanel(new GridLayout(0, 2, 5, 5));
-        listeCheckBoxEtiquettes = new ArrayList<>();
 
         if (toutesLesEtiquettes != null) {
-            for (String etiquette : toutesLesEtiquettes) {
-                JCheckBox cb = new JCheckBox(etiquette);
-                if (etiquettesDuContact != null && etiquettesDuContact.contains(etiquette)) {
-                    cb.setSelected(true);
-                }
-                listeCheckBoxEtiquettes.add(cb);
+            for (EtiquetteVue etiquette : toutesLesEtiquettes) {
+                JCheckBox cb = new JCheckBox(etiquette.getNom());
+                cb.setSelected(etiquettesDuContact != null && etiquettesDuContact.contains(etiquette));
+                casesEtiquettes.put(etiquette, cb);
                 panelEtiquettes.add(cb);
             }
         }
@@ -145,13 +138,13 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
     /**
      * Renvoie la liste des étiquettes cochées dans le formulaire.
      *
-     * @return les libellés des étiquettes sélectionnées
+     * @return les étiquettes sélectionnées
      */
-    public List<String> getEtiquettesSelectionnees() {
-        List<String> selection = new ArrayList<>();
-        for (JCheckBox cb : listeCheckBoxEtiquettes) {
-            if (cb.isSelected()) {
-                selection.add(cb.getText());
+    public List<EtiquetteVue> getEtiquettesSelectionnees() {
+        List<EtiquetteVue> selection = new ArrayList<>();
+        for (Map.Entry<EtiquetteVue, JCheckBox> entree : casesEtiquettes.entrySet()) {
+            if (entree.getValue().isSelected()) {
+                selection.add(entree.getKey());
             }
         }
         return selection;
