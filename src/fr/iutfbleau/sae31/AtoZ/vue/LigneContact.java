@@ -56,7 +56,9 @@ public class LigneContact extends JPanel {
         add(new JLabel(contact.getEmail()), gbc);
 
         gbc.gridx = 3; gbc.weightx = 0.1; gbc.fill = GridBagConstraints.NONE;
-        add(new JButton("Copier"), gbc);
+        JButton btnCopier = new JButton("Copier");
+        PressePapiers.brancher(btnCopier, contact::getEmail);
+        add(btnCopier, gbc);
 
         if (!contact.getEtiquettes().isEmpty()) {
             String etiquettes = contact.getEtiquettes().stream()
