@@ -4,6 +4,7 @@ import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
 import java.awt.*;
+import java.util.stream.Collectors;
 import javax.swing.*;
 
 /**
@@ -109,7 +110,7 @@ public class PanneauListeDiffusion extends JPanel {
         gbc.weighty = 0.0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.EAST;
-        add(creerBoutonCopierTout(), gbc);
+        add(creerBoutonCopierTout(liste), gbc);
     }
 
     /**
@@ -143,18 +144,19 @@ public class PanneauListeDiffusion extends JPanel {
     }
 
     /**
-     * Crée le bouton qui copie les adresses de toute la liste.
+     * Crée le bouton qui copie les adresses de tous les contacts de la liste, séparées
+     * par des virgules. Les contacts sont relus au moment du clic.
      *
+     * @param liste la liste de diffusion dont on copie les adresses
      * @return le bouton "[ Copier tout ]"
      */
-    private JButton creerBoutonCopierTout() {
+    private JButton creerBoutonCopierTout(ListeDiffusionVue liste) {
         JButton btnCopierTout = new JButton("[ Copier tout ]");
         Style.styliserBoutonPrincipal(btnCopierTout);
 
-        btnCopierTout.addActionListener(e -> {
-            // TODO: Copier toutes les adresses séparées par des virgules dans le presse-papier
-            System.out.println("Toutes les adresses de la liste ont été copiées !");
-        });
+        PressePapiers.brancher(btnCopierTout, () -> controleur.getContactsDe(liste).stream()
+            .map(ContactVue::getEmail)
+            .collect(Collectors.joining(", ")));
 
         return btnCopierTout;
     }

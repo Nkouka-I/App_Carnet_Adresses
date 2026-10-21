@@ -1,11 +1,7 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JButton;
+import java.awt.*;
+import javax.swing.*;
 
 /**
  * La classe <code>LigneListeDiffusion</code> représente graphiquement une ligne de contact
@@ -50,10 +46,7 @@ public class LigneListeDiffusion extends JPanel {
         gbc.fill = GridBagConstraints.NONE;
         JButton btnCopierContact = new JButton("Copier");
 
-        btnCopierContact.addActionListener(e -> {
-            // TODO: Gérer la copie de l'email individuel dans le presse-papier
-            System.out.println("Email copié : " + email);
-        });
+        PressePapiers.brancher(btnCopierContact, () -> email);
 
         add(btnCopierContact, gbc);
     }
