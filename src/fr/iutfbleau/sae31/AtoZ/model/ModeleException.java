@@ -3,38 +3,47 @@ package fr.iutfbleau.sae31.AtoZ.model;
 import java.sql.SQLException;
 
 /**
- * Erreur remontée par le modèle (donnée invalide ou problème d'accès à la base).
- * Son message est destiné à être affiché tel quel à l'utilisateur.
+ * La classe <code>ModeleException</code> est utilisée pour signaler une erreur du modèle :
+ * donnée invalide ou problème d'accès à la base de données. Son message est destiné à être
+ * affiché tel quel à l'utilisateur.
+ *
+ * @version 1.0
+ * @author Tiago Alves--Le Du 
  */
 public class ModeleException extends Exception {
 
+    /**
+     * Numéro de version de la classe, nécessaire car <code>Exception</code> est sérialisable.
+     */
     private static final long serialVersionUID = 1L;
 
     /**
-     * Crée une erreur avec un message lisible.
+     * Constructeur d'une erreur avec un message lisible.
      *
-     * @param message message destiné à l'utilisateur
+     * @param message le message destiné à l'utilisateur
      */
     public ModeleException(String message) {
         super(message);
     }
 
     /**
-     * Crée une erreur avec un message lisible et sa cause technique.
+     * Constructeur d'une erreur avec un message lisible et sa cause technique.
      *
-     * @param message message destiné à l'utilisateur
-     * @param cause   exception d'origine
+     * @param message le message destiné à l'utilisateur
+     * @param cause l'exception d'origine
      */
     public ModeleException(String message, Throwable cause) {
         super(message, cause);
     }
 
     /**
-     * Traduit une {@link SQLException} en message compréhensible.
+     * Traduit une erreur SQL en une erreur du modèle dont le message est compréhensible, selon le
+     * code d'état SQL : valeur déjà existante ou encore utilisée, valeur trop longue ou invalide,
+     * connexion impossible ou erreur d'accès quelconque.
      *
-     * @param action action en cours (ex. « Création du contact »)
-     * @param e      exception SQL d'origine
-     * @return l'exception du modèle correspondante
+     * @param action l'action en cours (par exemple « Création du contact »)
+     * @param e l'exception SQL d'origine
+     * @return l'erreur du modèle correspondante
      */
     public static ModeleException depuis(String action, SQLException e) {
         String etat = e.getSQLState();

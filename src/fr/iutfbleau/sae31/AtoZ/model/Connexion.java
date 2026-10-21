@@ -9,7 +9,7 @@ import java.sql.SQLException;
  * du projet.
  *
  * @version 1.1
- * @author Ildevert , Tiago
+ * @author Ildevert Nkouka , Tiago Alves--Le Du
  */
 public class Connexion{
 

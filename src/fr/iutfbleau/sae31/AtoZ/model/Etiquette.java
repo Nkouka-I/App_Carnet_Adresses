@@ -5,7 +5,7 @@ package fr.iutfbleau.sae31.AtoZ.model;
  * associer à un contact, par exemple « client » ou « 2023 ».
  *
  * @version 1.0
- * @author Tiago
+ * @author Tiago Alves--Le Du
  */
 public class Etiquette{
     /**
@@ -42,7 +42,7 @@ public class Etiquette{
      * @param libelle le libellé de l'étiquette
      * @throws ModeleException si le libellé est invalide
      */
-    public Etiquette(int id , String libelle){
+    public Etiquette(int id , String libelle) throws ModeleException{
         this.id = id;
         setLibelle(libelle);
     }
@@ -62,7 +62,7 @@ public class Etiquette{
      *
      * @param id le nouvel identifiant
      */
-    public setId(int id){
+    public void setId(int id){
         this.id = id;
     }
 
@@ -83,11 +83,11 @@ public class Etiquette{
      * @param libelle le nouveau libellé
      * @throws ModeleException si le libellé ne respecte pas ces règles
      */
-    public String setLibelle(String libelle){
+    public void setLibelle(String libelle) throws ModeleException{
         if (libelle == null || libelle.trim().isEmpty()){
             throw new ModeleException("Le libéllé de l'étiquette ne doit pas etre vide");
         }
-        if (libelle.length > LIBELLE_MAX){
+        if (libelle.length() > LIBELLE_MAX){
             throw new ModeleException("La taille du libelle ne doit pas dépasser"+ LIBELLE_MAX +"caractères");
         }
         this.libelle = libelle.trim();

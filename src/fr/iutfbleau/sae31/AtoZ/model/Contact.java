@@ -3,6 +3,8 @@ package fr.iutfbleau.sae31.AtoZ.model;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 
 /**
@@ -14,7 +16,7 @@ import java.util.List;
  * (il vaut 0 tant que le contact n'est pas enregistré).
  *
  * @version 1.0
- * @author Tiago
+ * @author Tiago Alves--Le Du
  */
 public class Contact{
     /**
@@ -36,7 +38,7 @@ public class Contact{
     /**
      * Liste des étiquettes associées au contact (zéro, une ou plusieurs).
      */
-    private final ArrayList<Etiquettes> etiquettes = new ArrayList<>();
+    private final ArrayList<Etiquette> Etiquette = new ArrayList<>();
 
     /**
      * Constructeur destiné à la création d'un nouveau contact, pas encore enregistré en base :
@@ -135,7 +137,7 @@ public class Contact{
      * @param email la nouvelle adresse mail
      * @throws ModeleException si l'adresse ne respecte pas ces règles
      */
-    public void setEmail(String email){
+    public void setEmail(String email) throws ModeleException{
         if (email == null || email.isEmpty()){
             throw new ModeleException("L'adresse mail ne doit pas etre vide");
 
@@ -164,8 +166,8 @@ public class Contact{
      *
      * @return la liste (non modifiable) des étiquettes du contact
      */
-    public List<Etiquette> getEtiquettes() {
-        return Collections.unmodifiableList(etiquettes);
+    public List<Etiquette> getEtiquette() {
+        return Collections.unmodifiableList(Etiquette);
     }
  
     /**
@@ -175,12 +177,12 @@ public class Contact{
      * @param e l'étiquette à ajouter
      */
     public void ajouterEtiquette(Etiquette e) {
-        for (Etiquette existante : etiquettes) {
+        for (Etiquette existante : Etiquette) {
             if (existante.getId() == e.getId() && e.getId() != 0) {
                 return;
             }
         }
-        etiquettes.add(e);
+        Etiquette.add(e);
     }
  
     /**
@@ -189,7 +191,7 @@ public class Contact{
      * @param e l'étiquette à retirer
      */
     public void retirerEtiquette(Etiquette e) {
-        etiquettes.removeIf(x -> x.getId() == e.getId());
+        Etiquette.removeIf(x -> x.getId() == e.getId());
     }
  
     /**
@@ -198,8 +200,8 @@ public class Contact{
      *
      * @param nouvelles les nouvelles étiquettes du contact
      */
-    public void setEtiquettes(List<Etiquette> nouvelles) {
-        etiquettes.clear();
+    public void setEtiquette(List<Etiquette> nouvelles) {
+        Etiquette.clear();
         for (Etiquette e : nouvelles) {
             ajouterEtiquette(e);
         }

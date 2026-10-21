@@ -4,17 +4,25 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Petites aides pour la gestion des transactions JDBC.
+ * La classe <code>Transactions</code> regroupe de petites méthodes utilisées par les classes
+ * d'accès aux données pour gérer les transactions JDBC.
+ *
+ * @version 1.0
+ * @author Tiago Alves--Le Du
  */
 final class Transactions {
 
+    /**
+     * Constructeur privé : la classe ne contient que des méthodes statiques et n'est pas
+     * destinée à être instanciée.
+     */
     private Transactions() {
     }
 
     /**
      * Annule la transaction en cours, sans propager d'erreur.
      *
-     * @param cx connexion concernée
+     * @param cx la connexion concernée
      */
     static void annuler(Connection cx) {
         try {
@@ -25,10 +33,10 @@ final class Transactions {
     }
 
     /**
-     * Rétablit le mode de validation automatique d'origine.
+     * Rétablit le mode de validation automatique d'origine de la connexion.
      *
-     * @param cx   connexion concernée
-     * @param auto valeur initiale de l'auto-commit
+     * @param cx la connexion concernée
+     * @param auto la valeur initiale du mode de validation automatique
      */
     static void restaurer(Connection cx, boolean auto) {
         try {
