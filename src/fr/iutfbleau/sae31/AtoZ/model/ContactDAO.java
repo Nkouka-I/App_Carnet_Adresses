@@ -13,13 +13,37 @@ import java.util.Map;
 
 import fr.iutfbleau.sae31.AtoZ.model.ModeleException;
 
+/**
+ * La classe <code>ContactDAO</code> est utilisée pour accéder aux contacts dans la base de
+ * données : elle regroupe les requêtes SQL sur les tables <code>Contact</code> et
+ * <code>Contact_etiquette</code> (opérations CRUD).
+ *
+ * @version 1.0
+ * @author Tiago Alves--Le Du
+ */
 public class ContactDAO {
+    /**
+     * Connexion à la base de données utilisée pour toutes les requêtes.
+     */
     private final Connection cx;
 
+    /**
+     * Constructeur d'un accès aux contacts.
+     *
+     * @param cx la connexion ouverte vers la base de données
+     */
     public ContactDAO(Connection cx){
         this.cx = cx;
     }
 
+    /**
+     * Enregistre un nouveau contact avec ses étiquettes et renseigne son identifiant. L'opération
+     * est faite dans une transaction : si une requête échoue, rien n'est enregistré. Les étiquettes
+     * du contact doivent déjà être enregistrées.
+     *
+     * @param c le contact à enregistrer
+     * @throws ModeleException en cas d'erreur d'accès à la base de données
+     */
     public void creer(Contact c) throws ModeleException{
         boolean auto = true;
         try {
@@ -48,6 +72,13 @@ public class ContactDAO {
 
     }
 
+    /**
+     * Met à jour le nom, l'adresse mail et les étiquettes d'un contact existant, dans une
+     * transaction.
+     *
+     * @param c le contact à modifier
+     * @throws ModeleException en cas d'erreur d'accès ou si le contact n'existe plus
+     */
     public void modifier(Contact c) throws ModeleException {
         boolean auto = true;
         try {
@@ -80,10 +111,11 @@ public class ContactDAO {
         }
     }
     /**
-     * Supprime un contact (ses liens avec les étiquettes disparaissent avec lui).
+     * Supprime un contact. Ses liens avec les étiquettes disparaissent avec lui (suppression
+     * en cascade).
      *
-     * @param id identifiant du contact
-     * @throws ModeleException en cas d'erreur d'accès
+     * @param id l'identifiant du contact
+     * @throws ModeleException en cas d'erreur d'accès à la base de données
      */
     public void supprimer(int id) throws ModeleException {
         try (PreparedStatement ps = cx.prepareStatement("DELETE FROM Contact WHERE id = ?")) {
@@ -97,7 +129,7 @@ public class ContactDAO {
     /**
      * Enregistre les liens entre un contact et ses étiquettes.
      *
-     * @param c contact dont l'identifiant est connu
+     * @param c le contact, dont l'identifiant est connu
      * @throws SQLException en cas d'erreur SQL
      */
     private void insererLiaisons(Contact c) throws SQLException {
@@ -115,9 +147,9 @@ public class ContactDAO {
     /**
      * Renseigne les étiquettes des contacts donnés, avec une seule requête.
      *
-     * @param contacts contacts déjà lus en base
-     * @throws SQLException    en cas d'erreur SQL
-     * @throws ModeleException si une étiquette en base est invalide
+     * @param contacts les contacts déjà lus en base de données
+     * @throws SQLException en cas d'erreur SQL
+     * @throws ModeleException si une étiquette lue en base est invalide
      */
     void chargerEtiquettes(List<Contact> contacts) throws SQLException, ModeleException {
         Map<Integer, Contact> parId = new HashMap<>();

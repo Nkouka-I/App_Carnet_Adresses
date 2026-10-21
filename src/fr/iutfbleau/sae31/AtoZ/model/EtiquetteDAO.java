@@ -9,16 +9,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Accès à la table {@code Etiquette} (opérations CRUD).
+ * La classe <code>EtiquetteDAO</code> est utilisée pour accéder aux étiquettes dans la base de
+ * données : elle regroupe les requêtes SQL sur la table <code>Etiquette</code> (opérations CRUD).
+ *
+ * @version 1.0
+ * @author Tiago Alves--Le Du
  */
 public class EtiquetteDAO {
 
+    /**
+     * Connexion à la base de données utilisée pour toutes les requêtes.
+     */
     private final Connection cx;
 
     /**
-     * Crée un accès aux étiquettes.
+     * Constructeur d'un accès aux étiquettes.
      *
-     * @param cx connexion ouverte vers la base
+     * @param cx la connexion ouverte vers la base de données
      */
     public EtiquetteDAO(Connection cx) {
         this.cx = cx;
@@ -27,8 +34,8 @@ public class EtiquetteDAO {
     /**
      * Enregistre une nouvelle étiquette et renseigne son identifiant.
      *
-     * @param e étiquette à créer
-     * @throws ModeleException en cas d'erreur (ex. libellé déjà existant)
+     * @param e l'étiquette à enregistrer
+     * @throws ModeleException en cas d'erreur d'accès ou si le libellé existe déjà
      */
     public void creer(Etiquette e) throws ModeleException {
         try (PreparedStatement ps = cx.prepareStatement(
@@ -45,10 +52,10 @@ public class EtiquetteDAO {
     }
 
     /**
-     * Retourne toutes les étiquettes, triées par libellé.
+     * Renvoie toutes les étiquettes, triées par libellé.
      *
-     * @return les étiquettes
-     * @throws ModeleException en cas d'erreur d'accès
+     * @return la liste des étiquettes
+     * @throws ModeleException en cas d'erreur d'accès à la base de données
      */
     public List<Etiquette> trouverToutes() throws ModeleException {
         List<Etiquette> resultat = new ArrayList<>();
@@ -67,8 +74,8 @@ public class EtiquetteDAO {
     /**
      * Met à jour le libellé d'une étiquette existante.
      *
-     * @param e étiquette à modifier
-     * @throws ModeleException en cas d'erreur ou si l'étiquette n'existe plus
+     * @param e l'étiquette à modifier
+     * @throws ModeleException en cas d'erreur d'accès ou si l'étiquette n'existe plus
      */
     public void modifier(Etiquette e) throws ModeleException {
         try (PreparedStatement ps = cx.prepareStatement(
@@ -84,12 +91,12 @@ public class EtiquetteDAO {
     }
 
     /**
-     * Supprime une étiquette. Elle disparaît des contacts qui l'avaient et des critères
-     * des listes de diffusion qui l'utilisaient (suppression en cascade) : une liste peut
-     * donc se retrouver sans aucun critère.
+     * Supprime une étiquette. Elle disparaît des contacts qui l'avaient et des critères des listes
+     * de diffusion qui l'utilisaient (suppression en cascade) : une liste peut donc se retrouver
+     * sans aucun critère.
      *
-     * @param id identifiant de l'étiquette
-     * @throws ModeleException en cas d'erreur d'accès
+     * @param id l'identifiant de l'étiquette
+     * @throws ModeleException en cas d'erreur d'accès à la base de données
      */
     public void supprimer(int id) throws ModeleException {
         try (PreparedStatement ps = cx.prepareStatement("DELETE FROM Etiquette WHERE id = ?")) {

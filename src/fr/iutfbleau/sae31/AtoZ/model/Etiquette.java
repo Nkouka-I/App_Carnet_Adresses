@@ -5,7 +5,7 @@ package fr.iutfbleau.sae31.AtoZ.model;
  * associer à un contact, par exemple « client » ou « 2023 ».
  *
  * @version 1.0
- * @author Tiago
+ * @author Tiago Alves--Le Du
  */
 public class Etiquette{
     /**

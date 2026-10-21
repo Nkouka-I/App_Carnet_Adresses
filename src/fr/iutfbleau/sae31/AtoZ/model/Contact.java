@@ -16,7 +16,7 @@ import java.util.Collections;
  * (il vaut 0 tant que le contact n'est pas enregistré).
  *
  * @version 1.0
- * @author Tiago
+ * @author Tiago Alves--Le Du
  */
 public class Contact{
     /**

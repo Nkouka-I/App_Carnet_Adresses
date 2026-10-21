@@ -11,27 +11,36 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Accès aux tables {@code ListeDiffusion} et {@code Critere} (opérations CRUD),
- * et calcul des membres d'une liste.
+ * La classe <code>ListeDiffusionDAO</code> est utilisée pour accéder aux listes de diffusion dans
+ * la base de données : elle regroupe les requêtes SQL sur les tables <code>ListeDiffusion</code>
+ * et <code>Critere</code> (opérations CRUD), ainsi que le calcul des membres d'une liste.
+ *
+ * @version 1.0
+ * @author Tiago Alves--Le Du
  */
 public class ListeDiffusionDAO {
 
+    /**
+     * Connexion à la base de données utilisée pour toutes les requêtes.
+     */
     private final Connection cx;
 
     /**
-     * Crée un accès aux listes de diffusion.
+     * Constructeur d'un accès aux listes de diffusion.
      *
-     * @param cx connexion ouverte vers la base
+     * @param cx la connexion ouverte vers la base de données
      */
     public ListeDiffusionDAO(Connection cx) {
         this.cx = cx;
     }
 
     /**
-     * Enregistre une nouvelle liste avec ses critères et renseigne son identifiant.
+     * Enregistre une nouvelle liste avec ses critères et renseigne son identifiant. L'opération est
+     * faite dans une transaction. Les étiquettes des critères doivent déjà être enregistrées.
      *
-     * @param l liste à créer (au moins un critère, étiquettes déjà enregistrées)
-     * @throws ModeleException en cas d'erreur (ex. nom déjà pris, aucun critère)
+     * @param l la liste à enregistrer (elle doit avoir au moins un critère)
+     * @throws ModeleException en cas d'erreur d'accès, si le nom est déjà pris ou si la liste n'a
+     * aucun critère
      */
     public void creer(ListeDiffusion l) throws ModeleException {
         verifierCriteres(l);
@@ -61,10 +70,10 @@ public class ListeDiffusionDAO {
     }
 
     /**
-     * Retourne toutes les listes avec leurs critères, triées par nom.
+     * Renvoie toutes les listes de diffusion avec leurs critères, triées par nom.
      *
-     * @return les listes de diffusion
-     * @throws ModeleException en cas d'erreur d'accès
+     * @return la liste des listes de diffusion
+     * @throws ModeleException en cas d'erreur d'accès à la base de données
      */
     public List<ListeDiffusion> trouverToutes() throws ModeleException {
         List<ListeDiffusion> resultat = new ArrayList<>();
@@ -99,10 +108,10 @@ public class ListeDiffusionDAO {
     }
 
     /**
-     * Met à jour le nom et les critères d'une liste existante.
+     * Met à jour le nom et les critères d'une liste existante, dans une transaction.
      *
-     * @param l liste à modifier (au moins un critère)
-     * @throws ModeleException en cas d'erreur ou si la liste n'existe plus
+     * @param l la liste à modifier (elle doit avoir au moins un critère)
+     * @throws ModeleException en cas d'erreur d'accès ou si la liste n'existe plus
      */
     public void modifier(ListeDiffusion l) throws ModeleException {
         verifierCriteres(l);
@@ -137,10 +146,10 @@ public class ListeDiffusionDAO {
     }
 
     /**
-     * Supprime une liste (ses critères disparaissent avec elle).
+     * Supprime une liste. Ses critères disparaissent avec elle (suppression en cascade).
      *
-     * @param id identifiant de la liste
-     * @throws ModeleException en cas d'erreur d'accès
+     * @param id l'identifiant de la liste
+     * @throws ModeleException en cas d'erreur d'accès à la base de données
      */
     public void supprimer(int id) throws ModeleException {
         try (PreparedStatement ps = cx.prepareStatement(
@@ -153,12 +162,12 @@ public class ListeDiffusionDAO {
     }
 
     /**
-     * Calcule les membres d'une liste : les contacts qui ont toutes les étiquettes
+     * Calcule les membres d'une liste : ce sont les contacts qui ont toutes les étiquettes
      * « incluses » et aucune des étiquettes « exclues ».
      *
-     * @param liste liste dont on veut les membres
-     * @return les contacts correspondants, triés par nom
-     * @throws ModeleException en cas d'erreur d'accès
+     * @param liste la liste dont on veut les membres
+     * @return les contacts de la liste, triés par nom
+     * @throws ModeleException en cas d'erreur d'accès à la base de données
      */
     public List<Contact> membres(ListeDiffusion liste) throws ModeleException {
         verifierCriteres(liste);
@@ -192,7 +201,7 @@ public class ListeDiffusionDAO {
     /**
      * Vérifie qu'une liste a au moins un critère.
      *
-     * @param l liste à vérifier
+     * @param l la liste à vérifier
      * @throws ModeleException si la liste n'a aucun critère
      */
     private void verifierCriteres(ListeDiffusion l) throws ModeleException {
@@ -204,7 +213,7 @@ public class ListeDiffusionDAO {
     /**
      * Enregistre les critères d'une liste.
      *
-     * @param l liste dont l'identifiant est connu
+     * @param l la liste, dont l'identifiant est connu
      * @throws SQLException en cas d'erreur SQL
      */
     private void insererCriteres(ListeDiffusion l) throws SQLException {
