@@ -12,3 +12,6 @@ doc/
 
 # Fichiers de configuration
 *.Identifier
+
+# Fichiers de configuration
+*.vscode
