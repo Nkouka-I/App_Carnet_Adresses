@@ -3,6 +3,7 @@ package fr.iutfbleau.sae31.AtoZ.model;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import org.mariadb.jdbc.*;
 
 /**
  * La classe <code>Connexion</code> est utilisée pour ouvrir la connexion à la base de données

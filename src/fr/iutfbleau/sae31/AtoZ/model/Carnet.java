@@ -85,11 +85,14 @@ public class Carnet {
     }
 
     public Contact modeleDe(ContactVue vue) {
+        if (vue == null) {
+            return null;
+        }
         if (vue instanceof Contact) {
             return (Contact) vue;
         }
         for (Contact c : contacts) {
-            if (c.getId() == ((Contact) vue).getNom().hashCode() || (vue != null && c.getNom().equals(vue.getNom()) && c.getEmail().equals(vue.getEmail()))) {
+            if (c.getNom().equals(vue.getNom()) && c.getEmail().equals(vue.getEmail())) {
                 return c;
             }
         }
