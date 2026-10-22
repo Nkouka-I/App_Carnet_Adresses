@@ -45,7 +45,8 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
         
         JList<CritereData> listCriteres = new JList<>(modelCriteres);
         JScrollPane scrollPane = new JScrollPane(listCriteres);
-        scrollPane.setPreferredSize(new Dimension(400, 200)); 
+        scrollPane.setPreferredSize(new Dimension(400, 200));
+        scrollPane.setMinimumSize(new Dimension(400, 200)); 
         ajouter(scrollPane);
 
         JComboBox<EtiquetteVue> comboEtiquettes = new JComboBox<>(toutesLesEtiquettes != null ? toutesLesEtiquettes.toArray(new EtiquetteVue[0]) : new EtiquetteVue[0]);

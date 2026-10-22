@@ -55,6 +55,7 @@ public class FenetreFormulaireEtiquette extends FenetreDialogueAbstraite {
         
         JScrollPane scrollPane = new JScrollPane(panelContacts);
         scrollPane.setPreferredSize(new Dimension(320, 180));
+        scrollPane.setMinimumSize(new Dimension(320, 180));
         ajouter(scrollPane);
 
         // Boutons de validation

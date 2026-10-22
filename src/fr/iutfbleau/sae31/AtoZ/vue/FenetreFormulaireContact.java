@@ -53,7 +53,7 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
      */
     public FenetreFormulaireContact(Frame parent, String titre, String nomInitial, String emailInitial,
                                   List<EtiquetteVue> toutesLesEtiquettes, List<EtiquetteVue> etiquettesDuContact) {
-        super(parent, titre, 400, 360);
+        super(parent, titre, 400, 480);
 
         // Nom
         ajouter(new JLabel("Nom :"));
@@ -81,7 +81,8 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
         }
 
         JScrollPane scrollPane = new JScrollPane(panelEtiquettes);
-        scrollPane.setPreferredSize(new Dimension(320, 80));
+        scrollPane.setPreferredSize(new Dimension(320, 200));
+        scrollPane.setMinimumSize(new Dimension(320, 200));
         ajouter(scrollPane);
 
         // Boutons de validation
