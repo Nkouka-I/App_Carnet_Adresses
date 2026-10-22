@@ -58,6 +58,13 @@ public class ControleurNavigation implements NavigationListener {
     }
 
     @Override
+    public void clicContactDansListe(ContactVue contact) {
+        if (vueDelegate != null) {
+            vueDelegate.clicContactDansListe(contact);
+        }
+    }
+
+    @Override
     public void clicEtiquette(EtiquetteVue etiquette) {
         if (vueDelegate != null) {
             vueDelegate.clicEtiquette(etiquette);
