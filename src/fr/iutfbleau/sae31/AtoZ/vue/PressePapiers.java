@@ -4,11 +4,10 @@ import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.util.function.Supplier;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.JButton;
 
 /**
  * La classe <code>PressePapiers</code> regroupe la copie de texte dans le presse-papier
@@ -27,38 +26,48 @@ public final class PressePapiers {
     private static final int DUREE_RETOUR_MS = 1500;
 
     /**
-     * Classe utilitaire
+     * Clé sous laquelle un bouton mémorise son texte d'origine pendant l'affichage de « Copié ! ».
+     */
+    private static final String CLE_LIBELLE = "libelleInitial";
+
+    /**
+     * Classe utilitaire : elle ne s'instancie pas.
      */
     private PressePapiers() { }
 
     /**
-     * Fait copier un texte par un bouton lorsqu'on clique dessus. Le texte est demandé
-     * au moment du clic, donc il est toujours à jour. Si le texte est vide, rien n'est
+     * Copie un texte dans le presse-papier, à appeler quand l'utilisateur clique sur le
+     * bouton. Le bouton affiche « Copié ! » un instant. Si le texte est vide, rien n'est
      * copié et l'utilisateur en est informé.
      *
-     * @param bouton le bouton qui déclenche la copie
-     * @param texte le fournisseur du texte à copier
+     * @param bouton le bouton qui a déclenché la copie
+     * @param texte le texte à copier
      */
-    public static void brancher(JButton bouton, Supplier<String> texte) {
-        final String libelleInitial = bouton.getText();
+    public static void copier(JButton bouton, String texte) {
+        Component parent = SwingUtilities.getWindowAncestor(bouton);
 
-        bouton.addActionListener(e -> {
-            Component parent = SwingUtilities.getWindowAncestor(bouton);
-            String contenu = texte.get();
+        if (texte == null || texte.isEmpty()) {
+            JOptionPane.showMessageDialog(parent, "Il n'y a aucune adresse à copier.",
+                "Rien à copier", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
 
-            if (contenu == null || contenu.isEmpty()) {
-                JOptionPane.showMessageDialog(parent, "Il n'y a aucune adresse à copier.",
-                    "Rien à copier", JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
+        if (!placer(parent, texte)) {
+            return;
+        }
 
-            if (copier(parent, contenu)) {
-                bouton.setText("Copié !");
-                Timer retour = new Timer(DUREE_RETOUR_MS, t -> bouton.setText(libelleInitial));
-                retour.setRepeats(false);
-                retour.start();
-            }
-        });
+        // Le texte d'origine est mémorisé une fois : un second clic rapide ne doit pas le perdre
+        String origine = (String) bouton.getClientProperty(CLE_LIBELLE);
+        if (origine == null) {
+            origine = bouton.getText();
+            bouton.putClientProperty(CLE_LIBELLE, origine);
+        }
+        final String libelle = origine;
+
+        bouton.setText("Copié !");
+        Timer retour = new Timer(DUREE_RETOUR_MS, t -> bouton.setText(libelle));
+        retour.setRepeats(false);
+        retour.start();
     }
 
     /**
@@ -69,12 +78,12 @@ public final class PressePapiers {
      * @param contenu le texte à copier
      * @return <code>true</code> si la copie a réussi
      */
-    public static boolean copier(Component parent, String contenu) {
+    private static boolean placer(Component parent, String contenu) {
         try {
             Clipboard presse = Toolkit.getDefaultToolkit().getSystemClipboard();
             presse.setContents(new StringSelection(contenu), null);
             return true;
-        } catch (Exception ex) { // HeadlessException, IllegalStateException, SecurityException
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(parent,
                 "Impossible d'accéder au presse-papier :\n" + ex.getMessage(),
                 "Copie impossible", JOptionPane.ERROR_MESSAGE);

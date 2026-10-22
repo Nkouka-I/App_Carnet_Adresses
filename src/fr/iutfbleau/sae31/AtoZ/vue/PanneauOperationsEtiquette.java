@@ -66,7 +66,6 @@ public class PanneauOperationsEtiquette extends PanneauOperationsAbstrait {
         ajouterBoutonSuppression(
             "Supprimer l'étiquette",
             "Voulez-vous vraiment supprimer l'étiquette \"" + etiquette.getNom() + "\" ?",
-            "L'étiquette a bien été supprimée !",
             () -> getControleur().supprimerEtiquette(etiquette)
         );
 

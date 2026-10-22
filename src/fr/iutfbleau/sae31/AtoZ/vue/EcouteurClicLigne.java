@@ -1,7 +1,7 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * La classe <code>EcouteurClicLigne</code> gère l'événement de relâchement du clic
@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
  * @version 1.0
  * @author Nkouka Ildevert
  */
-public class EcouteurClicLigne extends MouseAdapter {
+public class EcouteurClicLigne implements MouseListener {
 
     /**
      * La ligne de contact cliquée.
@@ -44,4 +44,36 @@ public class EcouteurClicLigne extends MouseAdapter {
             listener.clicContact(ligneContact.getContact());
         }
     }
+
+    /**
+     * Non utilisé : seul le relâchement du clic est géré.
+     *
+     * @param e l'événement de souris
+     */
+    @Override
+    public void mouseClicked(MouseEvent e) { }
+
+    /**
+     * Non utilisé : seul le relâchement du clic est géré.
+     *
+     * @param e l'événement de souris
+     */
+    @Override
+    public void mousePressed(MouseEvent e) { }
+
+    /**
+     * Non utilisé : seul le relâchement du clic est géré.
+     *
+     * @param e l'événement de souris
+     */
+    @Override
+    public void mouseEntered(MouseEvent e) { }
+
+    /**
+     * Non utilisé : seul le relâchement du clic est géré.
+     *
+     * @param e l'événement de souris
+     */
+    @Override
+    public void mouseExited(MouseEvent e) { }
 }

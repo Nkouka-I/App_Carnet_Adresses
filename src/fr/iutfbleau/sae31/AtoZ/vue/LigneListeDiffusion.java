@@ -1,7 +1,11 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * La classe <code>LigneListeDiffusion</code> représente graphiquement une ligne de contact
@@ -22,7 +26,7 @@ public class LigneListeDiffusion extends JPanel {
     public LigneListeDiffusion(String nom, String email) {
         setLayout(new GridBagLayout());
         setBackground(Style.FOND_LIGNE);
-        setBorder(Style.BORDURE_LIGNE);
+        Style.bordureLigne(this, false);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(0, 5, 0, 5);
@@ -46,7 +50,7 @@ public class LigneListeDiffusion extends JPanel {
         gbc.fill = GridBagConstraints.NONE;
         JButton btnCopierContact = new JButton("Copier");
 
-        PressePapiers.brancher(btnCopierContact, () -> email);
+        btnCopierContact.addActionListener(e -> PressePapiers.copier(btnCopierContact, email));
 
         add(btnCopierContact, gbc);
     }

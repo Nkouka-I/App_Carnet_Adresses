@@ -3,9 +3,12 @@ package fr.iutfbleau.sae31.AtoZ.vue;
 import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
-import java.awt.*;
-import java.util.stream.Collectors;
-import javax.swing.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  * La classe <code>PanneauListeDiffusion</code> est la vue dédiée à une liste de
@@ -32,7 +35,7 @@ public class PanneauListeDiffusion extends JPanel {
 
         setLayout(new GridBagLayout());
         setBackground(Style.FOND_CONTENU);
-        setBorder(Style.BORDURE_CONTENU);
+        Style.bordureContenu(this);
     }
 
     /**
@@ -154,10 +157,25 @@ public class PanneauListeDiffusion extends JPanel {
         JButton btnCopierTout = new JButton("[ Copier tout ]");
         Style.styliserBoutonPrincipal(btnCopierTout);
 
-        PressePapiers.brancher(btnCopierTout, () -> controleur.getContactsDe(liste).stream()
-            .map(ContactVue::getEmail)
-            .collect(Collectors.joining(", ")));
+        btnCopierTout.addActionListener(e -> PressePapiers.copier(btnCopierTout, adressesDe(liste)));
 
         return btnCopierTout;
+    }
+
+    /**
+     * Rassemble les adresses de tous les contacts d'une liste, séparées par des virgules.
+     *
+     * @param liste la liste de diffusion
+     * @return les adresses, par exemple « a@mail.fr, b@mail.fr » (vide si la liste n'a aucun contact)
+     */
+    private String adressesDe(ListeDiffusionVue liste) {
+        StringBuilder adresses = new StringBuilder();
+        for (ContactVue contact : controleur.getContactsDe(liste)) {
+            if (adresses.length() > 0) {
+                adresses.append(", ");
+            }
+            adresses.append(contact.getEmail());
+        }
+        return adresses.toString();
     }
 }

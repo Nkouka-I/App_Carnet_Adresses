@@ -3,8 +3,11 @@ import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * La classe <code>PanneauDroit</code> est le panneau de droite de la fenêtre principale.

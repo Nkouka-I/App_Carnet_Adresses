@@ -61,7 +61,6 @@ public class PanneauOperationsListeDiffusion extends PanneauOperationsAbstrait {
         ajouterBoutonSuppression(
             "Supprimer la liste de diffusion",
             "Voulez-vous vraiment supprimer la liste de diffusion \"" + liste.getNom() + "\" ?",
-            "La liste de diffusion a bien été supprimée !",
             () -> getControleur().supprimerListeDiffusion(liste)
         );
 

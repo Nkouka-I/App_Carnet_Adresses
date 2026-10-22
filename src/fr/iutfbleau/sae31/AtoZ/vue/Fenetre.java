@@ -3,8 +3,9 @@ import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  * La classe <code>Fenetre</code> est la fenêtre principale de l'application AtoZ Carnet.
@@ -56,6 +57,11 @@ public class Fenetre extends JFrame implements NavigationListener{
      * Liste de diffusion sélectionnée (<code>null</code> si aucune).
      */
     private ListeDiffusionVue listeSelectionnee;
+
+    /**
+     * Indique si la page des listes de diffusion est affichée au centre (au lieu du répertoire).
+     */
+    private boolean modeListes = false;
 
     /**
      * Construit la fenêtre principale : configure le titre, la taille, le
@@ -123,8 +129,11 @@ public class Fenetre extends JFrame implements NavigationListener{
     @Override
     public void clicMenuListesDiffusion() {
         deselectionner();
+        modeListes = true;
+
         panneauCentral.afficherListeDiffusion(null);
         panneauDroit.afficherVide();
+        majSelection();
     }
 
     /**
@@ -138,9 +147,11 @@ public class Fenetre extends JFrame implements NavigationListener{
     public void clicContact(ContactVue contact) {
         deselectionner();
         contactSelectionne = contact;
+        modeListes = false;
 
         panneauCentral.afficherRepertoire();
         panneauDroit.afficherOperationsContact(contact);
+        majSelection();
     }
 
     /**
@@ -155,9 +166,11 @@ public class Fenetre extends JFrame implements NavigationListener{
         deselectionner();
         etiquetteSelectionnee = etiquette;
         filtreEtiquette = etiquette;
+        modeListes = false;
 
         panneauCentral.afficherRepertoire(etiquette);
         panneauDroit.afficherOperationsEtiquette(etiquette);
+        majSelection();
     }
 
     /**
@@ -171,9 +184,11 @@ public class Fenetre extends JFrame implements NavigationListener{
     public void clicListeDiffusion(ListeDiffusionVue liste) {
         deselectionner();
         listeSelectionnee = liste;
+        modeListes = true;
 
         panneauCentral.afficherListeDiffusion(liste);
         panneauDroit.afficherOperationsListeDiffusion(liste);
+        majSelection();
     }
 
     /**
@@ -182,9 +197,24 @@ public class Fenetre extends JFrame implements NavigationListener{
     private void afficherTousLesContacts() {
         deselectionner();
         filtreEtiquette = null;
+        modeListes = false;
 
         panneauCentral.afficherRepertoire(null);
         panneauDroit.afficherVide();
+        majSelection();
+    }
+
+    /**
+     * Met en évidence ce qui est sélectionné : le contact dans le répertoire, et dans le menu
+     * de gauche le bouton de la vue affichée (tous les contacts, étiquette ou liste).
+     */
+    private void majSelection() {
+        panneauCentral.selectionnerContact(contactSelectionne);
+        panneauGauche.marquer(
+            !modeListes && filtreEtiquette == null,
+            modeListes ? null : filtreEtiquette,
+            listeSelectionnee
+        );
     }
 
     /**
@@ -215,8 +245,8 @@ public class Fenetre extends JFrame implements NavigationListener{
             listeSelectionnee = null;
         }
 
-        panneauGauche.rafraichir();
         panneauCentral.actualiser(filtreEtiquette, listeSelectionnee);
+        majSelection();
 
         if (contactSelectionne != null) {
             panneauDroit.afficherOperationsContact(contactSelectionne);

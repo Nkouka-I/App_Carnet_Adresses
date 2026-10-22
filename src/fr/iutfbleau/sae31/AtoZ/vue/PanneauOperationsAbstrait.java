@@ -1,8 +1,16 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * La classe <code>PanneauOperationsAbstrait</code> est la base commune des panneaux
@@ -123,16 +131,16 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
     /**
      * Ajoute le bouton de suppression sur la ligne suivante. Un clic ouvre une
      * confirmation ; si l'utilisateur accepte, l'action est exécutée (elle doit demander
-     * la suppression au contrôleur) puis un message de succès est affiché. Le panneau
-     * est ensuite remplacé par la fenêtre principale, prévenue par le contrôleur.
+     * la suppression au contrôleur). Aucun message de succès n'est affiché : la
+     * disparition de l'élément à l'écran suffit. Le panneau est ensuite remplacé par la
+     * fenêtre principale, prévenue par le contrôleur.
      *
      * @param texteBouton le texte affiché sur le bouton
      * @param messageConfirmation le message de la boîte de confirmation
-     * @param messageSucces le message affiché après la suppression
      * @param actionAEffectuer l'action à exécuter en cas de confirmation (peut être <code>null</code>)
      */
     protected void ajouterBoutonSuppression(String texteBouton, String messageConfirmation,
-                                            String messageSucces, Runnable actionAEffectuer) {
+                                            Runnable actionAEffectuer) {
         JButton btnSupprimer = new JButton(texteBouton);
         Style.styliserBoutonDanger(btnSupprimer);
 
@@ -155,14 +163,6 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
                 if (actionAEffectuer != null) {
                     actionAEffectuer.run();
                 }
-
-                // pop-up de confirmation
-                JOptionPane.showMessageDialog(
-                    fenetreParente,
-                    messageSucces,
-                    "Succès",
-                    JOptionPane.INFORMATION_MESSAGE
-                );
             }
         });
 

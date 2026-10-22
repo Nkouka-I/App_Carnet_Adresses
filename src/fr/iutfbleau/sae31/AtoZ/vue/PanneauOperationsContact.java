@@ -40,7 +40,6 @@ public class PanneauOperationsContact extends PanneauOperationsAbstrait {
         ajouterBoutonSuppression(
             "Supprimer le contact",
             "Voulez-vous vraiment supprimer le contact \"" + contact.getNom() + "\" ?",
-            "Le contact a bien été supprimé !",
             () -> getControleur().supprimerContact(contact)
         );
 

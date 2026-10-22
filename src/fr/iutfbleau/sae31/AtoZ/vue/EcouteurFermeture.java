@@ -1,16 +1,15 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 /**
- * La classe <code>EcouteurFermeture</code> intercepte la demande de fermeture
- * de la fenêtre principale pour déclencher une confirmation.
+ * La classe <code>EcouteurFermeture</code> intercepte la demande de fermeture de la
+ * fenêtre principale pour demander une confirmation à l'utilisateur avant de quitter.
  *
  * @version 1.0
  * @author Nkouka Ildevert
  */
-public class EcouteurFermeture extends WindowAdapter {
+public class EcouteurFermeture implements WindowListener {
 
     /**
      * Référence vers la fenêtre principale à contrôler.
@@ -27,7 +26,8 @@ public class EcouteurFermeture extends WindowAdapter {
     }
 
     /**
-     * Déclenché lorsque l'utilisateur tente de fermer la fenêtre.
+     * Déclenché quand l'utilisateur demande la fermeture de la fenêtre : affiche la
+     * confirmation de fermeture.
      *
      * @param e l'événement de fenêtre
      */
@@ -35,4 +35,52 @@ public class EcouteurFermeture extends WindowAdapter {
     public void windowClosing(WindowEvent e) {
         fenetre.confirmerFermeture();
     }
+
+    /**
+     * Non utilisé.
+     *
+     * @param e l'événement de fenêtre
+     */
+    @Override
+    public void windowOpened(WindowEvent e) { }
+
+    /**
+     * Non utilisé.
+     *
+     * @param e l'événement de fenêtre
+     */
+    @Override
+    public void windowClosed(WindowEvent e) { }
+
+    /**
+     * Non utilisé.
+     *
+     * @param e l'événement de fenêtre
+     */
+    @Override
+    public void windowIconified(WindowEvent e) { }
+
+    /**
+     * Non utilisé.
+     *
+     * @param e l'événement de fenêtre
+     */
+    @Override
+    public void windowDeiconified(WindowEvent e) { }
+
+    /**
+     * Non utilisé.
+     *
+     * @param e l'événement de fenêtre
+     */
+    @Override
+    public void windowActivated(WindowEvent e) { }
+
+    /**
+     * Non utilisé.
+     *
+     * @param e l'événement de fenêtre
+     */
+    @Override
+    public void windowDeactivated(WindowEvent e) { }
 }

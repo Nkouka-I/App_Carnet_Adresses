@@ -5,8 +5,9 @@ import java.awt.Font;
 import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
+import javax.swing.UIManager;
 
 /**
  * La classe <code>Style</code> regroupe l'apparence commune de l'application : couleurs,
@@ -49,6 +50,11 @@ public final class Style {
      * Couleur de fond d'une ligne de contact.
      */
     public static final Color FOND_LIGNE = new Color(250, 250, 250);
+
+    /**
+     * Couleur de fond de l'élément sélectionné (ligne de contact, bouton du menu).
+     */
+    public static final Color FOND_SELECTION = new Color(214, 232, 250);
 
     /**
      * Couleur d'un texte discret (messages d'invite).
@@ -102,25 +108,43 @@ public final class Style {
     public static final Insets MARGE_FORMULAIRE = new Insets(6, 10, 6, 10);
 
     /**
-     * Bordure vide entourant le contenu des pages du panneau central.
-     */
-    public static final Border BORDURE_CONTENU = BorderFactory.createEmptyBorder(15, 15, 15, 15);
-
-    /**
-     * Bordure d'une ligne de la liste : un filet en bas et un espace intérieur.
-     */
-    public static final Border BORDURE_LIGNE = BorderFactory.createCompoundBorder(
-        BorderFactory.createMatteBorder(0, 0, 1, 0, COULEUR_SEPARATEUR),
-        BorderFactory.createEmptyBorder(8, 8, 8, 8)
-    );
-
-    /**
      * Constructeur privé : la classe n'est pas instanciable.
      */
     private Style() {
     }
 
     // ------------------------------------------------------------------ Méthodes utilitaires
+
+    /**
+     * Applique la bordure vide qui entoure le contenu des pages du panneau central.
+     *
+     * @param composant le composant à mettre en forme
+     */
+    public static void bordureContenu(JComponent composant) {
+        composant.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+    }
+
+    /**
+     * Applique la bordure d'une ligne de la liste : un filet en bas et un espace intérieur.
+     * Une ligne sélectionnée a en plus une barre de couleur principale à gauche, sans
+     * changer l'encombrement de la ligne.
+     *
+     * @param composant la ligne à mettre en forme
+     * @param selectionnee <code>true</code> si la ligne est sélectionnée
+     */
+    public static void bordureLigne(JComponent composant, boolean selectionnee) {
+        if (selectionnee) {
+            composant.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 4, 1, 0, COULEUR_PRINCIPALE),
+                BorderFactory.createEmptyBorder(8, 4, 8, 8)
+            ));
+        } else {
+            composant.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, COULEUR_SEPARATEUR),
+                BorderFactory.createEmptyBorder(8, 8, 8, 8)
+            ));
+        }
+    }
 
     /**
      * Applique le style d'un bouton principal (fond coloré, texte clair).
@@ -139,6 +163,17 @@ public final class Style {
      */
     public static void styliserBoutonDanger(JButton bouton) {
         bouton.setForeground(COULEUR_DANGER);
+    }
+
+    /**
+     * Met en évidence (gras et fond coloré) ou remet à l'état normal un bouton de menu.
+     *
+     * @param bouton le bouton à mettre en forme
+     * @param actif <code>true</code> si le bouton correspond à l'élément actuellement affiché
+     */
+    public static void marquerBoutonMenu(JButton bouton, boolean actif) {
+        bouton.setFont(bouton.getFont().deriveFont(actif ? Font.BOLD : Font.PLAIN));
+        bouton.setBackground(actif ? FOND_SELECTION : UIManager.getColor("Button.background"));
     }
 
     /**

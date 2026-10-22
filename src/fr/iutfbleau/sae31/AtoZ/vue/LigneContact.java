@@ -2,9 +2,13 @@ package fr.iutfbleau.sae31.AtoZ.vue;
 
 import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
-import java.awt.*;
-import java.util.stream.Collectors;
-import javax.swing.*;
+import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * La classe <code>LigneContact</code> est la ligne graphique représentant un contact
@@ -22,6 +26,11 @@ public class LigneContact extends JPanel {
     private final ContactVue contact;
 
     /**
+     * Indique si la ligne est mise en évidence (contact sélectionné).
+     */
+    private boolean selectionnee = false;
+
+    /**
      * Construit la ligne d'un contact et la rend cliquable.
      *
      * @param contact le contact à afficher
@@ -32,7 +41,7 @@ public class LigneContact extends JPanel {
 
         setLayout(new GridBagLayout());
         setBackground(Style.FOND_LIGNE);
-        setBorder(Style.BORDURE_LIGNE);
+        Style.bordureLigne(this, false);
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addMouseListener(new EcouteurClicLigne(this, listener));
@@ -57,13 +66,17 @@ public class LigneContact extends JPanel {
 
         gbc.gridx = 3; gbc.weightx = 0.1; gbc.fill = GridBagConstraints.NONE;
         JButton btnCopier = new JButton("Copier");
-        PressePapiers.brancher(btnCopier, contact::getEmail);
+        btnCopier.addActionListener(e -> PressePapiers.copier(btnCopier, contact.getEmail()));
         add(btnCopier, gbc);
 
         if (!contact.getEtiquettes().isEmpty()) {
-            String etiquettes = contact.getEtiquettes().stream()
-                .map(EtiquetteVue::getNom)
-                .collect(Collectors.joining(" "));
+            StringBuilder etiquettes = new StringBuilder();
+            for (EtiquetteVue etiquette : contact.getEtiquettes()) {
+                if (etiquettes.length() > 0) {
+                    etiquettes.append(' ');
+                }
+                etiquettes.append(etiquette.getNom());
+            }
 
             gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0; gbc.fill = GridBagConstraints.HORIZONTAL;
             add(new JLabel("[" + etiquettes + "]"), gbc);
@@ -76,4 +89,19 @@ public class LigneContact extends JPanel {
      * @return le contact de la ligne
      */
     public ContactVue getContact() { return contact; }
+
+    /**
+     * Met la ligne en évidence (fond coloré et barre à gauche) ou la remet à l'état normal.
+     *
+     * @param selectionnee <code>true</code> si le contact de la ligne est sélectionné
+     */
+    public void setSelectionnee(boolean selectionnee) {
+        if (this.selectionnee == selectionnee) {
+            return;
+        }
+        this.selectionnee = selectionnee;
+        setBackground(selectionnee ? Style.FOND_SELECTION : Style.FOND_LIGNE);
+        Style.bordureLigne(this, selectionnee);
+        repaint();
+    }
 }

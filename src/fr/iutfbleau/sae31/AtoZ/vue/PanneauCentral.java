@@ -1,10 +1,11 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
+import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.CardLayout;
+import javax.swing.JPanel;
 
 /**
  * La classe <code>PanneauCentral</code> est le panneau central de la fenêtre principale.
@@ -51,7 +52,7 @@ public class PanneauCentral extends JPanel{
 	public PanneauCentral(NavigationListener listener, Controleur controleur) {
         setLayout(cartes);
         setBackground(Style.FOND_CONTENU);
-        setBorder(Style.BORDURE_CONTENU);
+        Style.bordureContenu(this);
 
         panneauRepertoire = new PanneauRepertoire(listener, controleur);
         panneauListeDiffusion = new PanneauListeDiffusion(controleur);
@@ -92,13 +93,22 @@ public class PanneauCentral extends JPanel{
     }
 
     /**
+     * Met un contact en évidence dans le répertoire.
+     *
+     * @param contact le contact à mettre en évidence (<code>null</code> pour ne rien sélectionner)
+     */
+    public void selectionnerContact(ContactVue contact) {
+        panneauRepertoire.selectionnerContact(contact);
+    }
+
+    /**
      * Recharge les deux vues à partir des données actuelles, sans changer la vue affichée.
      *
      * @param filtre l'étiquette qui filtre le répertoire (<code>null</code> pour aucun filtre)
      * @param liste la liste de diffusion affichée (<code>null</code> pour le message d'accueil)
      */
     public void actualiser(EtiquetteVue filtre, ListeDiffusionVue liste) {
-        panneauRepertoire.afficherContacts(filtre);
+        panneauRepertoire.actualiser(filtre);
         panneauListeDiffusion.afficher(liste);
     }
 }

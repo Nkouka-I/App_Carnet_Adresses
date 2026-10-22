@@ -4,12 +4,14 @@ import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import javax.swing.*;
-
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 /**
  * La classe <code>PanneauGauche</code> est le panneau de navigation de gauche de la
  * fenêtre principale. Il propose les boutons de création (contact, étiquette, liste de
@@ -65,6 +67,21 @@ public class PanneauGauche extends JPanel {
      * Indique si la liste des listes de diffusion est actuellement dépliée.
      */
     private boolean listesDiffusionVisibles = false;
+
+    /**
+     * Indique si le répertoire complet est affiché (bouton "Tous les contacts" en évidence).
+     */
+    private boolean tousContactsActif = true;
+
+    /**
+     * Étiquette dont le répertoire est filtré (<code>null</code> si aucune).
+     */
+    private EtiquetteVue etiquetteActive;
+
+    /**
+     * Liste de diffusion affichée (<code>null</code> si aucune).
+     */
+    private ListeDiffusionVue listeActive;
 
     /**
      * L'écouteur de navigation.
@@ -209,19 +226,51 @@ public class PanneauGauche extends JPanel {
     }
 
     /**
-     * Ajoute un bouton par élément, chacun déclenchant l'action donnée avec son élément.
-     *
-     * @param <T> le type des éléments
-     * @param elements les éléments à afficher
-     * @param libelle la fonction qui donne le texte du bouton d'un élément
-     * @param action l'action exécutée au clic, avec l'élément du bouton cliqué
+     * Ajoute un bouton par étiquette. Un clic prévient l'écouteur de navigation ; le bouton
+     * de l'étiquette dont le répertoire est filtré est mis en évidence.
      */
-    private <T> void ajouterBoutons(List<T> elements, Function<T, String> libelle, Consumer<T> action) {
-        for (T element : elements) {
-            JButton btn = new JButton(libelle.apply(element));
-            btn.addActionListener(e -> action.accept(element));
+    private void ajouterBoutonsEtiquettes() {
+        for (EtiquetteVue etiquette : controleur.getEtiquettes()) {
+            JButton btn = new JButton(etiquette.getNom());
+            Style.marquerBoutonMenu(btn, etiquette.equals(etiquetteActive));
+            btn.addActionListener(e -> {
+                if (listener != null) {
+                    listener.clicEtiquette(etiquette);
+                }
+            });
             ajouter(btn);
         }
+    }
+
+    /**
+     * Ajoute un bouton par liste de diffusion. Un clic prévient l'écouteur de navigation ;
+     * le bouton de la liste affichée est mis en évidence.
+     */
+    private void ajouterBoutonsListes() {
+        for (ListeDiffusionVue liste : controleur.getListesDiffusion()) {
+            JButton btn = new JButton(liste.getNom());
+            Style.marquerBoutonMenu(btn, liste.equals(listeActive));
+            btn.addActionListener(e -> {
+                if (listener != null) {
+                    listener.clicListeDiffusion(liste);
+                }
+            });
+            ajouter(btn);
+        }
+    }
+
+    /**
+     * Met en évidence dans le menu ce qui est actuellement affiché, puis reconstruit le panneau.
+     *
+     * @param tousContacts <code>true</code> si le répertoire complet est affiché
+     * @param etiquette l'étiquette qui filtre le répertoire (<code>null</code> si aucune)
+     * @param liste la liste de diffusion affichée (<code>null</code> si aucune)
+     */
+    public void marquer(boolean tousContacts, EtiquetteVue etiquette, ListeDiffusionVue liste) {
+        this.tousContactsActif = tousContacts;
+        this.etiquetteActive = etiquette;
+        this.listeActive = liste;
+        rafraichir();
     }
 
     /**
@@ -234,6 +283,7 @@ public class PanneauGauche extends JPanel {
 
         ajouter(titreApp);
         ajouter(btnNewContact);
+        Style.marquerBoutonMenu(btnTousContacts, tousContactsActif);
         ajouter(btnTousContacts);
 
         // Étiquettes : bouton de création et accordéon
@@ -243,11 +293,7 @@ public class PanneauGauche extends JPanel {
         ajouter(btnEtiquettes);
 
         if (etiquettesVisibles) {
-            ajouterBoutons(controleur.getEtiquettes(), EtiquetteVue::getNom, etiquette -> {
-                if (listener != null) {
-                    listener.clicEtiquette(etiquette);
-                }
-            });
+            ajouterBoutonsEtiquettes();
         }
 
         // Listes de diffusion : bouton de création et accordéon
@@ -257,11 +303,7 @@ public class PanneauGauche extends JPanel {
         ajouter(btnListesDiffusion);
 
         if (listesDiffusionVisibles) {
-            ajouterBoutons(controleur.getListesDiffusion(), ListeDiffusionVue::getNom, liste -> {
-                if (listener != null) {
-                    listener.clicListeDiffusion(liste);
-                }
-            });
+            ajouterBoutonsListes();
         }
 
         // Pousse le contenu vers le haut

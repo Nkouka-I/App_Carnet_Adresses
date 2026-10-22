@@ -208,7 +208,11 @@ public class ControleurTest implements Controleur {
             c.etiquettes.remove(etiquette);
         }
         for (ListeTest l : listes) {
-            l.criteres.removeIf(c -> c.getEtiquette() == etiquette);
+            for (int i = l.criteres.size() - 1; i >= 0; i--) {
+                if (l.criteres.get(i).getEtiquette() == etiquette) {
+                    l.criteres.remove(i);
+                }
+            }
         }
         notifier();
     }

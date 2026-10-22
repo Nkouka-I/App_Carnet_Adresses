@@ -1,10 +1,21 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 import fr.iutfbleau.sae31.AtoZ.controleur.CritereVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -201,5 +212,11 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
      *
      * @return la liste des critères de la liste de diffusion
      */
-    public List<CritereVue> getCriteresList() { return new ArrayList<>(Collections.list(modelCriteres.elements())); }
+    public List<CritereVue> getCriteresList() {
+        List<CritereVue> criteres = new ArrayList<>();
+        for (int i = 0; i < modelCriteres.size(); i++) {
+            criteres.add(modelCriteres.get(i));
+        }
+        return criteres;
+    }
 }
