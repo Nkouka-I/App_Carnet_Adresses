@@ -19,6 +19,9 @@ atoz.jar : ${BDIR}/Main.class
 ${BDIR}/Main.class : ${SDIR}/Main.java ${BDIR}/controleur/CarnetListener.class ${BDIR}/model/Connexion.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/ControleurFormulaireContact.class ${BDIR}/controleur/ControleurFormulaireEtiquette.class ${BDIR}/controleur/ControleurFormulaireListe.class ${BDIR}/controleur/ControleurNavigation.class ${BDIR}/vue/Fenetre.class
 	${JC} ${JCFLAGS} ${SDIR}/Main.java
 
+${BDIR}/vue/ChampRecherche.class : ${SDIR}/vue/ChampRecherche.java
+	${JC} ${JCFLAGS} ${SDIR}/vue/ChampRecherche.java
+
 ${BDIR}/vue/CritereData.class : ${SDIR}/vue/CritereData.java ${BDIR}/controleur/CritereVue.class ${BDIR}/controleur/EtiquetteVue.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/CritereData.java
 
@@ -46,16 +49,19 @@ ${BDIR}/vue/FenetreFormulaireListeDiffusion.class : ${SDIR}/vue/FenetreFormulair
 ${BDIR}/vue/FormulaireListener.class : ${SDIR}/vue/FormulaireListener.java
 	${JC} ${JCFLAGS} ${SDIR}/vue/FormulaireListener.java
 
-${BDIR}/vue/LigneContact.class : ${SDIR}/vue/LigneContact.java ${BDIR}/controleur/ContactVue.class ${BDIR}/vue/EcouteurClicLigne.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/PressePapiers.class ${BDIR}/vue/Style.class
+${BDIR}/vue/LigneContactAbstraite.class : ${SDIR}/vue/LigneContactAbstraite.java ${BDIR}/controleur/ContactVue.class ${BDIR}/vue/EcouteurClicLigne.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/PressePapiers.class ${BDIR}/vue/Style.class
+	${JC} ${JCFLAGS} ${SDIR}/vue/LigneContactAbstraite.java
+
+${BDIR}/vue/LigneContact.class : ${SDIR}/vue/LigneContact.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/LigneContactAbstraite.class ${BDIR}/vue/NavigationListener.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/LigneContact.java
 
-${BDIR}/vue/LigneListeDiffusion.class : ${SDIR}/vue/LigneListeDiffusion.java ${BDIR}/vue/PressePapiers.class ${BDIR}/vue/Style.class
+${BDIR}/vue/LigneListeDiffusion.class : ${SDIR}/vue/LigneListeDiffusion.java ${BDIR}/vue/LigneContactAbstraite.class ${BDIR}/vue/NavigationListener.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/LigneListeDiffusion.java
 
 ${BDIR}/vue/NavigationListener.class : ${SDIR}/vue/NavigationListener.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/controleur/ListeDiffusionVue.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/NavigationListener.java
 
-${BDIR}/vue/PanneauCentral.class : ${SDIR}/vue/PanneauCentral.java ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/PanneauListeDiffusion.class ${BDIR}/vue/PanneauRepertoire.class ${BDIR}/vue/Style.class
+${BDIR}/vue/PanneauCentral.class : ${SDIR}/vue/PanneauCentral.java ${BDIR}/vue/ChampRecherche.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/PanneauListeDiffusion.class ${BDIR}/vue/PanneauRepertoire.class ${BDIR}/vue/Style.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/PanneauCentral.java
 
 ${BDIR}/vue/PanneauDroit.class : ${SDIR}/vue/PanneauDroit.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/PanneauOperationsContact.class ${BDIR}/vue/PanneauOperationsEtiquette.class ${BDIR}/vue/PanneauOperationsListeDiffusion.class ${BDIR}/vue/Style.class
@@ -78,8 +84,8 @@ ${BDIR}/vue/PanneauOperationsEtiquette.class : ${SDIR}/vue/PanneauOperationsEtiq
 
 ${BDIR}/vue/PanneauOperationsListeDiffusion.class : ${SDIR}/vue/PanneauOperationsListeDiffusion.java ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/CritereVue.class ${BDIR}/vue/FenetreDialogueAbstraite.class ${BDIR}/vue/FenetreFormulaireListeDiffusion.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/PanneauOperationsAbstrait.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/PanneauOperationsListeDiffusion.java
-
-${BDIR}/vue/PanneauRepertoire.class : ${SDIR}/vue/PanneauRepertoire.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/LigneContact.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/Style.class
+	
+${BDIR}/vue/PanneauRepertoire.class : ${SDIR}/vue/PanneauRepertoire.java ${BDIR}/vue/OrdreTri.class ${BDIR}/vue/Texte.class ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/LigneContact.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/Style.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/PanneauRepertoire.java
 
 ${BDIR}/vue/PressePapiers.class : ${SDIR}/vue/PressePapiers.java
@@ -150,6 +156,12 @@ ${BDIR}/model/ModeleException.class : ${SDIR}/model/ModeleException.java
 
 ${BDIR}/model/Transactions.class : ${SDIR}/model/Transactions.java
 	${JC} ${JCFLAGS} ${SDIR}/model/Transactions.java
+
+${BDIR}/vue/OrdreTri.class : ${SDIR}/vue/OrdreTri.java
+	${JC} ${JCFLAGS} ${SDIR}/vue/OrdreTri.java
+
+${BDIR}/vue/Texte.class : ${SDIR}/vue/Texte.java
+	${JC} ${JCFLAGS} ${SDIR}/vue/Texte.java
 
 ### REGLES D'AUTRES ACTIONS ###
 
