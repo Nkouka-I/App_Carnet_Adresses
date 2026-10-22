@@ -1,9 +1,11 @@
 package fr.iutfbleau.sae31.AtoZ;
 
 import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
-import fr.iutfbleau.sae31.AtoZ.controleur.ControleurTest;
 import fr.iutfbleau.sae31.AtoZ.vue.Fenetre;
 import javax.swing.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+
 
 /**
  * La classe <code>Main</code> contient le point d'entrée de l'application AtoZ Carnet.
@@ -13,16 +15,10 @@ import javax.swing.*;
  * @version 1.0
  * @author Nkouka Ildevert
  */
+
 public class Main {
 
-    /**
-     * Point d'entrée du programme. Applique le look and feel du système d'exploitation
-     * puis affiche la fenêtre principale.
-     *
-     * @param args les arguments de la ligne de commande (non utilisés)
-     */
     public static void main(String[] args) {
-        // Exécute la création et l'affichage de la fenêtre dans le thread dédié à Swing
         SwingUtilities.invokeLater(() -> {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -34,13 +30,23 @@ public class Main {
         });
     }
 
-    /**
-     * Crée le contrôleur de l'application.
-     *
-     * @return le contrôleur relié au modèle
-     */
     private static Controleur creerControleur() {
-        // TODO: remplacer ControleurTest (données en mémoire) par le contrôleur relié au vrai modèle
-        return new ControleurTest();
+        try {
+            // Remplacez l'URL, l'utilisateur et le mot de passe par vos accès MariaDB
+            String url = "jdbc:mariadb://localhost:3306/sae31"; 
+            String user = "votre_utilisateur";
+            String password = "votre_mot_de_passe";
+
+            Connection cx = DriverManager.getConnection(url, user, password);
+            return new Controleur(cx);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, 
+                "Erreur de connexion à la base de données : " + e.getMessage(), 
+                "Erreur", 
+                JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+            return null;
+        }
     }
 }
