@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import fr.iutfbleau.sae31.AtoZ.controleur.CritereVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
+
 /**
  * La classe <code>ListeDiffusion</code> représente une liste de diffusion : un nom unique et des
  * critères portant sur les étiquettes. Ses membres ne sont pas stockés, ils sont calculés
@@ -12,7 +15,7 @@ import java.util.List;
  * @version 1.0
  * @author Tiago Alves--Le Du
  */
-public class ListeDiffusion {
+public class ListeDiffusion implements ListeDiffusionVue {
 
     /**
      * Longueur maximale du nom d'une liste, exprimée en caractères.
@@ -108,9 +111,18 @@ public class ListeDiffusion {
      *
      * @return la liste (non modifiable) des critères
      */
-    public List<Critere> getCriteres() {
-        return Collections.unmodifiableList(criteres);
+    public List<Critere> getCritere() {
+        return Collections.unmodifiableList(this.criteres);
     }
+    @Override
+    public List<CritereVue> getCriteres(){
+        List<CritereVue> vues = new ArrayList<>();
+        for (Critere c : criteres) {
+            vues.add((CritereVue) (Object) c);
+        }
+        return Collections.unmodifiableList(vues);
+    }
+
 
     /**
      * Ajoute un critère à la liste.

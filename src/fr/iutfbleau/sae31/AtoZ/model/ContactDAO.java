@@ -19,7 +19,7 @@ import fr.iutfbleau.sae31.AtoZ.model.ModeleException;
  * <code>Contact_etiquette</code> (opérations CRUD).
  *
  * @version 1.0
- * @author Tiago Alves--Le Du
+ * @author Tiago
  */
 public class ContactDAO {
     /**
@@ -70,6 +70,27 @@ public class ContactDAO {
             Transactions.restaurer(cx, auto);
         }
 
+    }
+
+    /**
+     * Renvoie tous les contacts avec leurs étiquettes, triés par nom.
+     *
+     * @return la liste des contacts
+     * @throws ModeleException en cas d'erreur d'accès à la base de données
+     */
+    public List<Contact> trouverTous() throws ModeleException {
+        List<Contact> resultat = new ArrayList<>();
+        try (PreparedStatement ps = cx.prepareStatement(
+                "SELECT id, nom, email FROM Contact ORDER BY nom, id");
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resultat.add(new Contact(rs.getInt(1), rs.getString(2), rs.getString(3)));
+            }
+            chargerEtiquettes(resultat);
+        } catch (SQLException e) {
+            throw ModeleException.depuis("Lecture des contacts", e);
+        }
+        return resultat;
     }
 
     /**

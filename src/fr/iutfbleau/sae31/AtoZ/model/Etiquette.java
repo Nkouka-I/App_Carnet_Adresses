@@ -1,5 +1,7 @@
 package fr.iutfbleau.sae31.AtoZ.model;
 
+import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
+
 /**
  * La classe <code>Etiquette</code> représente une étiquette (un qualificatif) que l'on peut
  * associer à un contact, par exemple « client » ou « 2023 ».
@@ -7,7 +9,7 @@ package fr.iutfbleau.sae31.AtoZ.model;
  * @version 1.0
  * @author Tiago Alves--Le Du
  */
-public class Etiquette{
+public class Etiquette implements EtiquetteVue{
     /**
      * Longueur maximale du libellé d'une étiquette, exprimée en caractères.
      */
@@ -54,6 +56,11 @@ public class Etiquette{
      */
     public int getId(){
         return this.id;
+    }
+
+    @Override
+    public String getNom() {
+        return this.libelle; // ou this.libelle selon votre attribut
     }
 
     /**

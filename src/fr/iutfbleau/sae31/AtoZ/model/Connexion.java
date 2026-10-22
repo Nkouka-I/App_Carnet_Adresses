@@ -8,7 +8,7 @@ import java.sql.SQLException;
  * La classe <code>Connexion</code> est utilisée pour ouvrir la connexion à la base de données
  * du projet.
  *
- * @version 1.1
+ * @version 1.2
  * @author Ildevert Nkouka , Tiago Alves--Le Du
  */
 public class Connexion{
@@ -36,7 +36,11 @@ public class Connexion{
      */
     public static Connection getInstance() throws ModeleException {
         try {
+            Class.forName("org.mariadb.jdbc.Driver");
             return DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new ModeleException("Driver MariaDB introuvable dans le classpath (dossier lib/).", e);
         } catch (SQLException e) {
             throw ModeleException.depuis("Connexion", e);
         }

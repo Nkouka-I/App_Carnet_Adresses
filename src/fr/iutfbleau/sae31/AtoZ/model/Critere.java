@@ -1,5 +1,7 @@
 package fr.iutfbleau.sae31.AtoZ.model;
 
+import fr.iutfbleau.sae31.AtoZ.controleur.CritereVue;
+
 /**
  * La classe <code>Critere</code> représente une condition d'une liste de diffusion : un contact
  * doit avoir, ou ne doit pas avoir, une certaine étiquette.
@@ -7,7 +9,7 @@ package fr.iutfbleau.sae31.AtoZ.model;
  * @version 1.0
  * @author Tiago Alves--Le Du
  */
-public class Critere{
+public class Critere implements CritereVue{
     /**
      * Étiquette concernée par le critère.
      */

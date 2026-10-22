@@ -1,143 +1,189 @@
 package fr.iutfbleau.sae31.AtoZ.controleur;
 
+import fr.iutfbleau.sae31.AtoZ.model.Contact;
+import fr.iutfbleau.sae31.AtoZ.model.ContactDAO;
+import fr.iutfbleau.sae31.AtoZ.model.Etiquette;
+import fr.iutfbleau.sae31.AtoZ.model.EtiquetteDAO;
+import fr.iutfbleau.sae31.AtoZ.model.ListeDiffusion;
+import fr.iutfbleau.sae31.AtoZ.model.ListeDiffusionDAO;
+import fr.iutfbleau.sae31.AtoZ.model.ModeleException;
+import fr.iutfbleau.sae31.AtoZ.model.Carnet;
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import javax.swing.JOptionPane;
 
-/**
- * L'interface <code>Controleur</code> définit tout ce que la vue demande au reste de
- * l'application : lire les contacts, les étiquettes et les listes de diffusion, et les
- * créer, modifier ou supprimer. La vue ne connaît que cette interface ; chaque
- * modification est suivie d'un appel aux {@link CarnetListener} enregistrés.
- *
- * @version 1.0
- * @author Nkouka Ildevert
- */
-public interface Controleur {
+public class Controleur {
 
-    /**
-     * Renvoie tous les contacts.
-     *
-     * @return la liste des contacts
-     */
-    List<ContactVue> getContacts();
+    private final EtiquetteDAO etiquetteDAO;
+    private final ContactDAO contactDAO;
+    private final ListeDiffusionDAO listeDAO;
+    private final Carnet carnet;
+    private final List<Runnable> ecouteurs = new ArrayList<>();
+    private Consumer<String> gestionnaireErreurs = message ->
+        JOptionPane.showMessageDialog(null, message, "Erreur", JOptionPane.ERROR_MESSAGE);
 
-    /**
-     * Renvoie les contacts possédant une étiquette.
-     *
-     * @param etiquette l'étiquette recherchée (<code>null</code> pour tous les contacts)
-     * @return la liste des contacts correspondants
-     */
-    List<ContactVue> getContacts(EtiquetteVue etiquette);
+    public Controleur(Connection cx) {
+        etiquetteDAO = new EtiquetteDAO(cx);
+        contactDAO = new ContactDAO(cx);
+        listeDAO = new ListeDiffusionDAO(cx);
+        carnet = new Carnet(etiquetteDAO, contactDAO, listeDAO);
 
-    /**
-     * Renvoie les contacts qui font partie d'une liste de diffusion.
-     *
-     * @param liste la liste de diffusion
-     * @return la liste des contacts qui respectent ses critères
-     */
-    List<ContactVue> getContactsDe(ListeDiffusionVue liste);
+        try {
+            carnet.recharger();
+        } catch (ModeleException e) {
+            signaler(e);
+        }
+    }
 
-    /**
-     * Renvoie toutes les étiquettes.
-     *
-     * @return la liste des étiquettes
-     */
-    List<EtiquetteVue> getEtiquettes();
+    public List<EtiquetteVue> getEtiquettes() { return carnet.getEtiquettes(); }
+    public List<ContactVue> getContacts() { return carnet.getContacts(); }
+    
+    public List<ContactVue> getContacts(EtiquetteVue filtre) {
+        if (filtre == null) { return carnet.getContacts(); }
+        List<ContactVue> resultat = new ArrayList<>();
+        for (ContactVue contact : carnet.getContacts()) {
+            if (contact.getEtiquettes().contains(filtre)) { resultat.add(contact); }
+        }
+        return resultat;
+    }
 
-    /**
-     * Renvoie toutes les listes de diffusion.
-     *
-     * @return la liste des listes de diffusion
-     */
-    List<ListeDiffusionVue> getListesDiffusion();
+    public List<ListeDiffusionVue> getListesDiffusion() { return carnet.getListes(); }
 
-    /**
-     * Renvoie les listes de diffusion dont un critère concerne une étiquette.
-     *
-     * @param etiquette l'étiquette recherchée
-     * @return la liste des listes de diffusion qui l'utilisent
-     */
-    List<ListeDiffusionVue> getListesUtilisant(EtiquetteVue etiquette);
+    public List<ListeDiffusionVue> getListesUtilisant(EtiquetteVue etiquette) {
+        try {
+            return carnet.listesUtilisant(etiquette);
+        } catch (ModeleException e) {
+            signaler(e);
+            return new ArrayList<>();
+        }
+    }
 
-    /**
-     * Crée un contact.
-     *
-     * @param nom le nom du contact
-     * @param email l'adresse email du contact
-     * @param etiquettes les étiquettes du contact
-     * @return le contact créé
-     */
-    ContactVue creerContact(String nom, String email, List<EtiquetteVue> etiquettes);
+    public List<ContactVue> getContactsDe(ListeDiffusionVue liste) {
+        try {
+            return carnet.membres(liste);
+        } catch (ModeleException e) {
+            signaler(e);
+            return new ArrayList<>();
+        }
+    }
 
-    /**
-     * Modifie un contact.
-     *
-     * @param contact le contact à modifier
-     * @param nom le nouveau nom
-     * @param email la nouvelle adresse email
-     * @param etiquettes les nouvelles étiquettes
-     */
-    void modifierContact(ContactVue contact, String nom, String email, List<EtiquetteVue> etiquettes);
+    public ContactVue creerContact(String nom, String email, List<EtiquetteVue> etiquettesDuContact) {
+        try {
+            Contact c = new Contact(nom, email);
+            for (Etiquette e : carnet.modelesDe(etiquettesDuContact)) { c.ajouterEtiquette(e); }
+            contactDAO.creer(c);
+            carnet.recharger();
+            notifier();
+            return carnet.contactDeId(c.getId());
+        } catch (ModeleException e) {
+            signaler(e);
+            return null;
+        }
+    }
 
-    /**
-     * Supprime un contact.
-     *
-     * @param contact le contact à supprimer
-     */
-    void supprimerContact(ContactVue contact);
+    public void modifierContact(ContactVue contact, String nom, String email, List<EtiquetteVue> etiquettesDuContact) {
+        try {
+            Contact c = new Contact(carnet.modeleDe(contact).getId(), nom, email);
+            for (Etiquette e : carnet.modelesDe(etiquettesDuContact)) { c.ajouterEtiquette(e); }
+            contactDAO.modifier(c);
+            carnet.recharger();
+            notifier();
+        } catch (ModeleException e) {
+            signaler(e);
+        }
+    }
 
-    /**
-     * Crée une étiquette.
-     *
-     * @param nom le libellé de l'étiquette
-     * @return l'étiquette créée
-     */
-    EtiquetteVue creerEtiquette(String nom);
+    public void supprimerContact(ContactVue contact) {
+        try {
+            contactDAO.supprimer(carnet.modeleDe(contact).getId());
+            carnet.recharger();
+            notifier();
+        } catch (ModeleException e) {
+            signaler(e);
+        }
+    }
 
-    /**
-     * Renomme une étiquette.
-     *
-     * @param etiquette l'étiquette à renommer
-     * @param nom le nouveau libellé
-     */
-    void modifierEtiquette(EtiquetteVue etiquette, String nom);
+    public EtiquetteVue creerEtiquette(String libelle) {
+        try {
+            Etiquette e = new Etiquette(libelle);
+            etiquetteDAO.creer(e);
+            carnet.recharger();
+            notifier();
+            return carnet.etiquetteDeId(e.getId());
+        } catch (ModeleException e) {
+            signaler(e);
+            return null;
+        }
+    }
 
-    /**
-     * Supprime une étiquette. Elle est aussi retirée des contacts et des critères des
-     * listes de diffusion.
-     *
-     * @param etiquette l'étiquette à supprimer
-     */
-    void supprimerEtiquette(EtiquetteVue etiquette);
+    public void modifierEtiquette(EtiquetteVue etiquette, String libelle) {
+        try {
+            etiquetteDAO.modifier(new Etiquette(carnet.modeleDe(etiquette).getId(), libelle));
+            carnet.recharger();
+            notifier();
+        } catch (ModeleException e) {
+            signaler(e);
+        }
+    }
 
-    /**
-     * Crée une liste de diffusion.
-     *
-     * @param nom le nom de la liste
-     * @param criteres les critères d'appartenance
-     * @return la liste créée
-     */
-    ListeDiffusionVue creerListeDiffusion(String nom, List<CritereVue> criteres);
+    public boolean supprimerEtiquette(EtiquetteVue etiquette) {
+        try {
+            ListeDiffusionVue concernee = carnet.listeAvecSeulCritere(etiquette);
+            if (concernee != null) {
+                signaler("Impossible de supprimer l'étiquette : elle est le seul critère de la liste " + concernee.getNom());
+                return false;
+            }
+            etiquetteDAO.supprimer(carnet.modeleDe(etiquette).getId());
+            carnet.recharger();
+            notifier();
+            return true;
+        } catch (ModeleException e) {
+            signaler(e);
+            return false;
+        }
+    }
 
-    /**
-     * Modifie une liste de diffusion.
-     *
-     * @param liste la liste à modifier
-     * @param nom le nouveau nom
-     * @param criteres les nouveaux critères
-     */
-    void modifierListeDiffusion(ListeDiffusionVue liste, String nom, List<CritereVue> criteres);
+    public ListeDiffusionVue creerListeDiffusion(String nom, List<CritereVue> criteres) {
+        try {
+            ListeDiffusion l = new ListeDiffusion(nom);
+            l.setCriteres(carnet.modelesDeCriteres(criteres));
+            listeDAO.creer(l);
+            carnet.recharger();
+            notifier();
+            return carnet.listeDeId(l.getId());
+        } catch (ModeleException e) {
+            signaler(e);
+            return null;
+        }
+    }
 
-    /**
-     * Supprime une liste de diffusion.
-     *
-     * @param liste la liste à supprimer
-     */
-    void supprimerListeDiffusion(ListeDiffusionVue liste);
+    public void modifierListeDiffusion(ListeDiffusionVue liste, String nom, List<CritereVue> criteres) {
+        try {
+            ListeDiffusion l = new ListeDiffusion(carnet.modeleDe(liste).getId(), nom);
+            l.setCriteres(carnet.modelesDeCriteres(criteres));
+            listeDAO.modifier(l);
+            carnet.recharger();
+            notifier();
+        } catch (ModeleException e) {
+            signaler(e);
+        }
+    }
 
-    /**
-     * Enregistre un écouteur appelé après chaque modification du carnet.
-     *
-     * @param ecouteur l'écouteur à enregistrer
-     */
-    void ajouterEcouteur(CarnetListener ecouteur);
+    public void supprimerListeDiffusion(ListeDiffusionVue liste) {
+        try {
+            listeDAO.supprimer(carnet.modeleDe(liste).getId());
+            carnet.recharger();
+            notifier();
+        } catch (ModeleException e) {
+            signaler(e);
+        }
+    }
+
+    public void ajouterEcouteur(Runnable ecouteur) { ecouteurs.add(ecouteur); }
+    public void setGestionnaireErreurs(Consumer<String> gestionnaire) { this.gestionnaireErreurs = gestionnaire; }
+    private void notifier() { for (Runnable ecouteur : ecouteurs) { ecouteur.run(); } }
+    private void signaler(ModeleException e) { signaler(e.getMessage()); }
+    private void signaler(String message) { gestionnaireErreurs.accept(message); }
 }
