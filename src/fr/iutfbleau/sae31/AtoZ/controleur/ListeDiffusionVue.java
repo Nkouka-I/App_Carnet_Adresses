@@ -23,5 +23,6 @@ public interface ListeDiffusionVue {
      *
      * @return les critères (jamais <code>null</code>)
      */
+
     List<CritereVue> getCriteres();
 }

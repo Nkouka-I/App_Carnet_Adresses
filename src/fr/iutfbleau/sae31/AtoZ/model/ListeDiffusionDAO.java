@@ -173,7 +173,7 @@ public class ListeDiffusionDAO {
         verifierCriteres(liste);
         StringBuilder sql = new StringBuilder(
             "SELECT c.id, c.nom, c.email FROM Contact c WHERE 1 = 1");
-        for (Critere cr : liste.getCriteres()) {
+        for (Critere cr : liste.getCritere()) {
             sql.append(cr.isInclus() ? " AND EXISTS" : " AND NOT EXISTS");
             sql.append(" (SELECT 1 FROM Contact_etiquette ce"
                 + " WHERE ce.contact_id = c.id AND ce.etiquette_id = ?)");
@@ -183,7 +183,7 @@ public class ListeDiffusionDAO {
         List<Contact> resultat = new ArrayList<>();
         try (PreparedStatement ps = cx.prepareStatement(sql.toString())) {
             int i = 1;
-            for (Critere cr : liste.getCriteres()) {
+            for (Critere cr : liste.getCritere()) {
                 ps.setInt(i++, cr.getEtiquette().getId());
             }
             try (ResultSet rs = ps.executeQuery()) {
@@ -219,7 +219,7 @@ public class ListeDiffusionDAO {
     private void insererCriteres(ListeDiffusion l) throws SQLException {
         try (PreparedStatement ps = cx.prepareStatement(
                 "INSERT INTO Critere (liste_id, etiquette_id, inclus) VALUES (?, ?, ?)")) {
-            for (Critere cr : l.getCriteres()) {
+            for (Critere cr : l.getCritere()) {
                 ps.setInt(1, l.getId());
                 ps.setInt(2, cr.getEtiquette().getId());
                 ps.setBoolean(3, cr.isInclus());

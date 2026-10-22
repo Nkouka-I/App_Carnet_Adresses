@@ -1,8 +1,11 @@
 package fr.iutfbleau.sae31.AtoZ.model;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
@@ -18,7 +21,7 @@ import java.util.Collections;
  * @version 1.0
  * @author Tiago Alves--Le Du
  */
-public class Contact{
+public class Contact implements ContactVue{
     /**
      * Taille maximale de l'adresse mail, exprimée en octets (et non en caractères).
      */
@@ -205,6 +208,14 @@ public class Contact{
         for (Etiquette e : nouvelles) {
             ajouterEtiquette(e);
         }
+    }
+    @Override
+    public List<EtiquetteVue> getEtiquettes() {
+        List<EtiquetteVue> vues = new ArrayList<>();
+        for (Etiquette e : Etiquette) { // ou EtiquetteList selon votre attribut
+            vues.add(e);
+        }
+        return Collections.unmodifiableList(vues);
     }
  
     /**

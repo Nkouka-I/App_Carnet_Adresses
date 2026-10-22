@@ -163,7 +163,7 @@ public class Carnet {
         List<ListeDiffusionVue> result = new ArrayList<>();
         if (etiquette != null) {
             for (ListeDiffusion l : listes) {
-                for (Critere c : l.getCriteres()) {
+                for (Critere c : l.getCritere()) {
                     if (c.getEtiquette().getId() == etiquette.getId()) {
                         result.add(l);
                         break;
@@ -178,7 +178,7 @@ public class Carnet {
         Etiquette etiquette = modeleDe(etiquetteVue);
         if (etiquette != null) {
             for (ListeDiffusion l : listes) {
-                List<Critere> criteres = l.getCriteres();
+                List<Critere> criteres = l.getCritere();
                 if (criteres.size() == 1 && criteres.get(0).getEtiquette().getId() == etiquette.getId()) {
                     return l;
                 }
