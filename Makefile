@@ -37,10 +37,10 @@ ${BDIR}/vue/Fenetre.class : ${SDIR}/vue/Fenetre.java ${BDIR}/controleur/ContactV
 ${BDIR}/vue/FenetreDialogueAbstraite.class : ${SDIR}/vue/FenetreDialogueAbstraite.java ${BDIR}/vue/FormulaireListener.class ${BDIR}/vue/Style.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/FenetreDialogueAbstraite.java
 
-${BDIR}/vue/FenetreFormulaireContact.class : ${SDIR}/vue/FenetreFormulaireContact.java ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/FenetreDialogueAbstraite.class
+${BDIR}/vue/FenetreFormulaireContact.class : ${SDIR}/vue/FenetreFormulaireContact.java ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/FenetreDialogueAbstraite.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/FenetreFormulaireContact.java
 
-${BDIR}/vue/FenetreFormulaireEtiquette.class : ${SDIR}/vue/FenetreFormulaireEtiquette.java ${BDIR}/vue/FenetreDialogueAbstraite.class
+${BDIR}/vue/FenetreFormulaireEtiquette.class : ${SDIR}/vue/FenetreFormulaireEtiquette.java ${BDIR}/controleur/Controleur.class ${BDIR}/vue/FenetreDialogueAbstraite.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/FenetreFormulaireEtiquette.java
 
 ${BDIR}/vue/FenetreFormulaireListeDiffusion.class : ${SDIR}/vue/FenetreFormulaireListeDiffusion.java ${BDIR}/vue/CritereData.class ${BDIR}/controleur/CritereVue.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/FenetreDialogueAbstraite.class
@@ -133,7 +133,10 @@ ${BDIR}/model/Connexion.class : ${SDIR}/model/Connexion.java
 ${BDIR}/model/Contact.class : ${SDIR}/model/Contact.java ${BDIR}/controleur/ContactVue.class ${BDIR}/model/Etiquette.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/model/ModeleException.class
 	${JC} ${JCFLAGS} ${SDIR}/model/Contact.java
 
-${BDIR}/model/ContactDAO.class : ${SDIR}/model/ContactDAO.java ${BDIR}/model/Contact.class ${BDIR}/model/Etiquette.class ${BDIR}/model/ModeleException.class ${BDIR}/model/Transactions.class
+${BDIR}/model/ContactEtiquetteDAO.class : ${SDIR}/model/ContactEtiquetteDAO.java ${BDIR}/model/Contact.class ${BDIR}/model/Etiquette.class ${BDIR}/model/ModeleException.class
+	${JC} ${JCFLAGS} ${SDIR}/model/ContactEtiquetteDAO.java
+
+${BDIR}/model/ContactDAO.class : ${SDIR}/model/ContactDAO.java ${BDIR}/model/ContactEtiquetteDAO.class ${BDIR}/model/Contact.class ${BDIR}/model/Etiquette.class ${BDIR}/model/ModeleException.class ${BDIR}/model/Transactions.class
 	${JC} ${JCFLAGS} ${SDIR}/model/ContactDAO.java
 
 ${BDIR}/model/Critere.class : ${SDIR}/model/Critere.java ${BDIR}/controleur/CritereVue.class ${BDIR}/model/Etiquette.class
@@ -148,7 +151,7 @@ ${BDIR}/model/EtiquetteDAO.class : ${SDIR}/model/EtiquetteDAO.java ${BDIR}/model
 ${BDIR}/model/ListeDiffusion.class : ${SDIR}/model/ListeDiffusion.java ${BDIR}/model/Critere.class ${BDIR}/controleur/CritereVue.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/model/ModeleException.class
 	${JC} ${JCFLAGS} ${SDIR}/model/ListeDiffusion.java
 
-${BDIR}/model/ListeDiffusionDAO.class : ${SDIR}/model/ListeDiffusionDAO.java ${BDIR}/model/Contact.class ${BDIR}/model/ContactDAO.class ${BDIR}/model/Critere.class ${BDIR}/model/Etiquette.class ${BDIR}/model/ListeDiffusion.class ${BDIR}/model/ModeleException.class ${BDIR}/model/Transactions.class
+${BDIR}/model/ListeDiffusionDAO.class : ${SDIR}/model/ListeDiffusionDAO.java ${BDIR}/model/Contact.class ${BDIR}/model/ContactDAO.class ${BDIR}/model/ContactEtiquetteDAO.class ${BDIR}/model/Critere.class ${BDIR}/model/Etiquette.class ${BDIR}/model/ListeDiffusion.class ${BDIR}/model/ModeleException.class ${BDIR}/model/Transactions.class
 	${JC} ${JCFLAGS} ${SDIR}/model/ListeDiffusionDAO.java
 
 ${BDIR}/model/ModeleException.class : ${SDIR}/model/ModeleException.java

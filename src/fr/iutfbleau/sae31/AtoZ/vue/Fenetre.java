@@ -135,18 +135,12 @@ public class Fenetre extends JFrame implements NavigationListener {
     }
 
     private void actualiser() {
-        if (filtreEtiquette != null && !controleur.getEtiquettes().contains(filtreEtiquette)) {
-            filtreEtiquette = null;
-        }
-        if (etiquetteSelectionnee != null && !controleur.getEtiquettes().contains(etiquetteSelectionnee)) {
-            etiquetteSelectionnee = null;
-        }
-        if (contactSelectionne != null && !controleur.getContacts().contains(contactSelectionne)) {
-            contactSelectionne = null;
-        }
-        if (listeSelectionnee != null && !controleur.getListesDiffusion().contains(listeSelectionnee)) {
-            listeSelectionnee = null;
-        }
+        // Après un rechargement, on retrouve la version à jour de chaque sélection
+        // (null si l'élément a été supprimé)
+        filtreEtiquette = controleur.etiquetteActuelle(filtreEtiquette);
+        etiquetteSelectionnee = controleur.etiquetteActuelle(etiquetteSelectionnee);
+        contactSelectionne = controleur.contactActuel(contactSelectionne);
+        listeSelectionnee = controleur.listeActuelle(listeSelectionnee);
 
         panneauCentral.actualiser(filtreEtiquette, listeSelectionnee);
         majSelection();

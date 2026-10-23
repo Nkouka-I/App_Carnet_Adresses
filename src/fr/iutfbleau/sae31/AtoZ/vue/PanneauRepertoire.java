@@ -212,7 +212,7 @@ public class PanneauRepertoire extends JPanel {
         }
 
         for (LigneContact ligne : lignes) {
-            ligne.setSelectionnee(ligne.getContact().equals(contact));
+            ligne.setSelectionnee(controleur.memeContact(ligne.getContact(), contact));
         }
 
         LigneContact visee = trouverLigne(contact);
@@ -233,7 +233,7 @@ public class PanneauRepertoire extends JPanel {
             return null;
         }
         for (LigneContact ligne : lignes) {
-            if (ligne.getContact().equals(contact)) {
+            if (controleur.memeContact(ligne.getContact(), contact)) {
                 return ligne;
             }
         }
@@ -281,7 +281,7 @@ public class PanneauRepertoire extends JPanel {
 
         for (ContactVue contact : affiches) {
             LigneContact lc = new LigneContact(contact, listener);
-            lc.setSelectionnee(contact.equals(contactSelectionne));
+            lc.setSelectionnee(controleur.memeContact(contact, contactSelectionne));
             lignes.add(lc);
             gbc.gridy = ligne++;
             panelContacts.add(lc, gbc);

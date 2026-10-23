@@ -189,4 +189,92 @@ public class Carnet {
         }
         return null;
     }
+
+    /**
+     * Renvoie les contacts qui possèdent une étiquette. Les étiquettes sont comparées par leur
+     * identifiant (celui de la table <code>Contact_etiquette</code>), car les objets sont
+     * recréés à chaque rechargement depuis la base.
+     *
+     * @param vue l'étiquette recherchée
+     * @return les contacts ayant cette étiquette (liste vide si l'étiquette est inconnue)
+     */
+    public List<ContactVue> contactsAvecEtiquette(EtiquetteVue vue) {
+        List<ContactVue> result = new ArrayList<>();
+        Etiquette cible = (vue == null) ? null : modeleDe(vue);
+        if (cible == null) {
+            return result;
+        }
+        for (Contact c : contacts) {
+            for (Etiquette e : c.getEtiquette()) {
+                if (e.getId() == cible.getId()) {
+                    result.add(c);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Indique si deux vues désignent la même étiquette (même identifiant en base).
+     */
+    public boolean memeEtiquette(EtiquetteVue a, EtiquetteVue b) {
+        if (a == null || b == null) {
+            return a == b;
+        }
+        Etiquette ea = modeleDe(a);
+        Etiquette eb = modeleDe(b);
+        return ea != null && eb != null && (ea == eb || (ea.getId() != 0 && ea.getId() == eb.getId()));
+    }
+
+    /**
+     * Indique si deux vues désignent le même contact (même identifiant en base).
+     */
+    public boolean memeContact(ContactVue a, ContactVue b) {
+        if (a == null || b == null) {
+            return a == b;
+        }
+        Contact ca = modeleDe(a);
+        Contact cb = modeleDe(b);
+        return ca != null && cb != null && (ca == cb || (ca.getId() != 0 && ca.getId() == cb.getId()));
+    }
+
+    /**
+     * Indique si deux vues désignent la même liste de diffusion (même identifiant en base).
+     */
+    public boolean memeListe(ListeDiffusionVue a, ListeDiffusionVue b) {
+        if (a == null || b == null) {
+            return a == b;
+        }
+        ListeDiffusion la = modeleDe(a);
+        ListeDiffusion lb = modeleDe(b);
+        return la != null && lb != null && (la == lb || (la.getId() != 0 && la.getId() == lb.getId()));
+    }
+
+    /**
+     * Renvoie la version actuelle (après rechargement) d'une étiquette, ou <code>null</code>
+     * si elle n'existe plus.
+     */
+    public EtiquetteVue etiquetteActuelle(EtiquetteVue vue) {
+        Etiquette e = (vue == null) ? null : modeleDe(vue);
+        return (e == null) ? null : etiquetteDeId(e.getId());
+    }
+
+    /**
+     * Renvoie la version actuelle (après rechargement) d'un contact, ou <code>null</code>
+     * s'il n'existe plus.
+     */
+    public ContactVue contactActuel(ContactVue vue) {
+        Contact c = modeleDe(vue);
+        return (c == null) ? null : contactDeId(c.getId());
+    }
+
+    /**
+     * Renvoie la version actuelle (après rechargement) d'une liste, ou <code>null</code>
+     * si elle n'existe plus.
+     */
+    public ListeDiffusionVue listeActuelle(ListeDiffusionVue vue) {
+        ListeDiffusion l = (vue == null) ? null : modeleDe(vue);
+        return (l == null) ? null : listeDeId(l.getId());
+    }
 }

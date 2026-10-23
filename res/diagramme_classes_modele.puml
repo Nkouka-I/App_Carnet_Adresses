@@ -71,7 +71,14 @@ package "carnet.modele" {
     +trouverTous() : List<Contact>
     +modifier(c : Contact) : void
     +supprimer(id : int) : void
-    ~chargerEtiquettes(contacts : List<Contact>) : void
+  }
+
+  class ContactEtiquetteDAO <<dao>> {
+    -cx : Connection
+    ~ContactEtiquetteDAO(cx : Connection)
+    ~inserer(c : Contact) : void
+    ~supprimerDuContact(contactId : int) : void
+    ~charger(contacts : List<Contact>) : void
   }
 
   class EtiquetteDAO <<dao>> {
@@ -121,6 +128,9 @@ ContactDAO ..> Contact
 EtiquetteDAO ..> Etiquette
 ListeDiffusionDAO ..> ListeDiffusion
 ListeDiffusionDAO ..> ContactDAO
+ContactDAO ..> ContactEtiquetteDAO
+ListeDiffusionDAO ..> ContactEtiquetteDAO
+ContactEtiquetteDAO ..> Contact
 ContactDAO ..> Transactions
 ListeDiffusionDAO ..> Transactions
 

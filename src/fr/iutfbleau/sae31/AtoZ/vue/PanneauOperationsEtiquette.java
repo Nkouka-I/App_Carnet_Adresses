@@ -47,6 +47,7 @@ public class PanneauOperationsEtiquette extends PanneauOperationsAbstrait {
 
     private void modifier() {
         FenetreFormulaireEtiquette form = new FenetreFormulaireEtiquette(
+            getControleur(),
             getFenetreParente(),
             "Modifier l'étiquette",
             etiquette.getNom(),
@@ -61,14 +62,14 @@ public class PanneauOperationsEtiquette extends PanneauOperationsAbstrait {
             List<ContactVue> nouveaux = f.getContactsSelectionnes();
 
             for (ContactVue c : getControleur().getContacts()) {
-                boolean avait = anciens.contains(c);
-                boolean aura = nouveaux.contains(c);
+                boolean avait = getControleur().contientContact(anciens, c);
+                boolean aura = getControleur().contientContact(nouveaux, c);
                 if (avait != aura) {
                     List<EtiquetteVue> etiqs = new ArrayList<>(c.getEtiquettes());
                     if (aura) {
                         etiqs.add(etiquette);
                     } else {
-                        etiqs.remove(etiquette);
+                        etiqs.removeIf(x -> getControleur().memeEtiquette(x, etiquette));
                     }
                     getControleur().modifierContact(c, c.getNom(), c.getEmail(), etiqs);
                 }

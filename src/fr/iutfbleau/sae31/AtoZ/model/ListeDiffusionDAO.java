@@ -191,7 +191,7 @@ public class ListeDiffusionDAO {
                     resultat.add(new Contact(rs.getInt(1), rs.getString(2), rs.getString(3)));
                 }
             }
-            new ContactDAO(cx).chargerEtiquettes(resultat);
+            new ContactEtiquetteDAO(cx).charger(resultat);
         } catch (SQLException e) {
             throw ModeleException.depuis("Calcul des membres de la liste", e);
         }

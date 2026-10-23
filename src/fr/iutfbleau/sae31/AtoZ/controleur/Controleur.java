@@ -42,12 +42,28 @@ public class Controleur {
     
     public List<ContactVue> getContacts(EtiquetteVue filtre) {
         if (filtre == null) { return carnet.getContacts(); }
-        List<ContactVue> resultat = new ArrayList<>();
-        for (ContactVue contact : carnet.getContacts()) {
-            if (contact.getEtiquettes().contains(filtre)) { resultat.add(contact); }
-        }
-        return resultat;
+        return carnet.contactsAvecEtiquette(filtre);
     }
+
+    // --- Comparaisons par identifiant (les objets sont recréés à chaque rechargement) ---
+    public boolean memeEtiquette(EtiquetteVue a, EtiquetteVue b) { return carnet.memeEtiquette(a, b); }
+    public boolean memeContact(ContactVue a, ContactVue b) { return carnet.memeContact(a, b); }
+    public boolean memeListe(ListeDiffusionVue a, ListeDiffusionVue b) { return carnet.memeListe(a, b); }
+
+    public boolean contientEtiquette(List<EtiquetteVue> liste, EtiquetteVue e) {
+        if (liste != null) { for (EtiquetteVue x : liste) { if (carnet.memeEtiquette(x, e)) { return true; } } }
+        return false;
+    }
+
+    public boolean contientContact(List<ContactVue> liste, ContactVue c) {
+        if (liste != null) { for (ContactVue x : liste) { if (carnet.memeContact(x, c)) { return true; } } }
+        return false;
+    }
+
+    // --- Version actuelle d'un objet après rechargement (null s'il n'existe plus) ---
+    public EtiquetteVue etiquetteActuelle(EtiquetteVue e) { return carnet.etiquetteActuelle(e); }
+    public ContactVue contactActuel(ContactVue c) { return carnet.contactActuel(c); }
+    public ListeDiffusionVue listeActuelle(ListeDiffusionVue l) { return carnet.listeActuelle(l); }
 
     public List<ListeDiffusionVue> getListesDiffusion() { return carnet.getListes(); }
 

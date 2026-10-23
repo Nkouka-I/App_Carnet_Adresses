@@ -1,6 +1,7 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
 import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -29,7 +30,7 @@ public class FenetreFormulaireEtiquette extends FenetreDialogueAbstraite {
     private final List<ContactVue> contactsProposes = new ArrayList<>();
     private final List<JCheckBox> casesContacts = new ArrayList<>();
 
-    public FenetreFormulaireEtiquette(Frame parent, String titre, String libelleInitial, 
+    public FenetreFormulaireEtiquette(Controleur controleur, Frame parent, String titre, String libelleInitial, 
                                       List<ContactVue> tousLesContacts, List<ContactVue> contactsDeLEtiquette) {
         super(parent, titre, 400, 420); // Fenêtre agrandie pour faire de la place à la liste
 
@@ -46,7 +47,7 @@ public class FenetreFormulaireEtiquette extends FenetreDialogueAbstraite {
         if (tousLesContacts != null) {
             for (ContactVue contact : tousLesContacts) {
                 JCheckBox cb = new JCheckBox(contact.getNom() + " (" + contact.getEmail() + ")");
-                cb.setSelected(contactsDeLEtiquette != null && contactsDeLEtiquette.contains(contact));
+                cb.setSelected(controleur.contientContact(contactsDeLEtiquette, contact));
                 contactsProposes.add(contact);
                 casesContacts.add(cb);
                 panelContacts.add(cb);
