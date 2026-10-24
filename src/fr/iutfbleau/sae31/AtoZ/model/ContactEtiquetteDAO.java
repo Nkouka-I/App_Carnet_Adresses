@@ -9,16 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * La classe <code>ContactEtiquetteDAO</code> gère la table de liaison
- * <code>Contact_etiquette</code>, qui permet d'associer plusieurs étiquettes à un contact
- * (et une même étiquette à plusieurs contacts).
- * <p>
- * Ses méthodes ne gèrent pas elles-mêmes les transactions : elles sont appelées par
- * {@link ContactDAO} (création et modification d'un contact) ou par
- * {@link ListeDiffusionDAO} (lecture des membres d'une liste), qui s'en occupent.
+ * La classe <code>ContactEtiquetteDAO</code> gère la table de liaison <code>Contact_etiquette</code>,
+ * qui permet d'associer plusieurs étiquettes à un contact (et une même étiquette à plusieurs
+ * contacts). Ses méthodes ne gèrent pas les transactions : celles-ci sont gérées par
+ * <code>ContactDAO</code> et <code>ListeDiffusionDAO</code>, qui les appellent.
  *
  * @version 1.0
- * @author Tiago
+ * @author Tiago Alves--Le DU
  */
 class ContactEtiquetteDAO {
 
@@ -94,4 +91,5 @@ class ContactEtiquetteDAO {
             }
         }
     }
+
 }

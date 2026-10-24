@@ -122,7 +122,7 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
     private boolean critereAcceptable(EtiquetteVue etiquette, boolean inclus, int indexIgnore) {
         for (int i = 0; i < modelCriteres.size(); i++) {
             CritereData c = modelCriteres.get(i);
-            if (i != indexIgnore && c.getEtiquette() == etiquette) {
+            if (i != indexIgnore && c.getEtiquette().equals(etiquette)) {
                 if (c.isInclus() == inclus) {
                     afficherErreur("Critère en double", "Un critère identique existe déjà pour cette étiquette.");
                 } else {
