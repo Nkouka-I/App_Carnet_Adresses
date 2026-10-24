@@ -44,20 +44,17 @@ public class FenetreFormulaireEtiquette extends FenetreDialogueAbstraite {
      */
     private final List<JCheckBox> casesContacts = new ArrayList<>();
 
-<<<<<<< HEAD
     /**
      * Construit le formulaire et pré-remplit ses champs.
      *
+     * @param controleur le contrôleur, utilisé pour comparer les contacts par identifiant
      * @param parent la fenêtre parente
      * @param titre le titre de la boîte de dialogue
      * @param libelleInitial le libellé à afficher au départ (vide pour une création)
      * @param tousLesContacts tous les contacts proposés à la sélection
      * @param contactsDeLEtiquette les contacts à cocher au départ
      */
-    public FenetreFormulaireEtiquette(Frame parent, String titre, String libelleInitial,
-=======
-    public FenetreFormulaireEtiquette(Controleur controleur, Frame parent, String titre, String libelleInitial, 
->>>>>>> modelfix
+    public FenetreFormulaireEtiquette(Controleur controleur, Frame parent, String titre, String libelleInitial,
                                       List<ContactVue> tousLesContacts, List<ContactVue> contactsDeLEtiquette) {
         super(parent, titre, 400, 420); // Fenêtre agrandie pour faire de la place à la liste
 

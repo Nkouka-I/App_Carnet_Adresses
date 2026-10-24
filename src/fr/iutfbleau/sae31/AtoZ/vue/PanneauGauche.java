@@ -177,11 +177,7 @@ public class PanneauGauche extends JPanel {
      */
     private void creerEtiquette() {
         FenetreFormulaireEtiquette form = new FenetreFormulaireEtiquette(
-<<<<<<< HEAD
-            FenetreDialogueAbstraite.fenetreDe(this), "Créer une nouvelle étiquette", "",
-=======
-            controleur, FenetreDialogueAbstraite.fenetreDe(this), "Créer une nouvelle étiquette", "", 
->>>>>>> modelfix
+            controleur, FenetreDialogueAbstraite.fenetreDe(this), "Créer une nouvelle étiquette", "",
             controleur.getContacts(), List.of()
         );
 
@@ -324,8 +320,9 @@ public class PanneauGauche extends JPanel {
 
     /**
      * Ajoute l'étiquette aux contacts voulus qui ne l'ont pas, et la retire aux autres.
-     * Seuls les contacts dont la situation change sont modifiés ; ils sont reconnus par
-     * <code>equals</code>, car le contrôleur recharge ses objets après chaque modification.
+     * Seuls les contacts dont la situation change sont modifiés ; ils sont reconnus
+     * par identifiant (méthodes <code>meme...</code> et <code>contient...</code> du contrôleur),
+     * car le contrôleur recharge ses objets après chaque modification.
      *
      * @param etiquette l'étiquette concernée
      * @param voulus les contacts qui doivent la posséder
@@ -333,14 +330,17 @@ public class PanneauGauche extends JPanel {
     private void appliquerContacts(EtiquetteVue etiquette, List<ContactVue> voulus) {
         List<ContactVue> tous = new ArrayList<>(controleur.getContacts());
         for (ContactVue contact : tous) {
-            boolean doitLAvoir = voulus.contains(contact);
-            boolean laPossede = contact.getEtiquettes().contains(etiquette);
+            boolean doitLAvoir = controleur.contientContact(voulus, contact);
+            boolean laPossede = controleur.contientEtiquette(contact.getEtiquettes(), etiquette);
             if (doitLAvoir != laPossede) {
-                List<EtiquetteVue> nouvelles = new ArrayList<>(contact.getEtiquettes());
+                List<EtiquetteVue> nouvelles = new ArrayList<>();
+                for (EtiquetteVue e : contact.getEtiquettes()) {
+                    if (!controleur.memeEtiquette(e, etiquette)) {
+                        nouvelles.add(e);
+                    }
+                }
                 if (doitLAvoir) {
                     nouvelles.add(etiquette);
-                } else {
-                    nouvelles.remove(etiquette);
                 }
                 controleur.modifierContact(contact, contact.getNom(), contact.getEmail(), nouvelles);
             }

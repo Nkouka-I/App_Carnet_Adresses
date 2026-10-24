@@ -81,37 +81,18 @@ public class PanneauOperationsEtiquette extends PanneauOperationsAbstrait {
         );
 
         FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
-<<<<<<< HEAD
             appliquerContacts(etiquette, f.getContactsSelectionnes());
             if (!etiquette.getNom().equals(f.getLibelleSaisi())) {
                 getControleur().modifierEtiquette(etiquette, f.getLibelleSaisi());
-=======
-            getControleur().modifierEtiquette(etiquette, f.getLibelleSaisi());
-            
-            List<ContactVue> anciens = getControleur().getContacts(etiquette);
-            List<ContactVue> nouveaux = f.getContactsSelectionnes();
-
-            for (ContactVue c : getControleur().getContacts()) {
-                boolean avait = getControleur().contientContact(anciens, c);
-                boolean aura = getControleur().contientContact(nouveaux, c);
-                if (avait != aura) {
-                    List<EtiquetteVue> etiqs = new ArrayList<>(c.getEtiquettes());
-                    if (aura) {
-                        etiqs.add(etiquette);
-                    } else {
-                        etiqs.removeIf(x -> getControleur().memeEtiquette(x, etiquette));
-                    }
-                    getControleur().modifierContact(c, c.getNom(), c.getEmail(), etiqs);
-                }
->>>>>>> modelfix
             }
         });
     }
 
     /**
      * Ajoute l'étiquette aux contacts voulus qui ne l'ont pas, et la retire aux autres.
-     * Seuls les contacts dont la situation change sont modifiés ; ils sont reconnus par
-     * <code>equals</code>, car le contrôleur recharge ses objets après chaque modification.
+     * Seuls les contacts dont la situation change sont modifiés ; ils sont reconnus
+     * par identifiant (méthodes <code>meme...</code> et <code>contient...</code> du contrôleur),
+     * car le contrôleur recharge ses objets après chaque modification.
      *
      * @param etiquette l'étiquette concernée
      * @param voulus les contacts qui doivent la posséder
@@ -119,14 +100,17 @@ public class PanneauOperationsEtiquette extends PanneauOperationsAbstrait {
     private void appliquerContacts(EtiquetteVue etiquette, List<ContactVue> voulus) {
         List<ContactVue> tous = new ArrayList<>(getControleur().getContacts());
         for (ContactVue contact : tous) {
-            boolean doitLAvoir = voulus.contains(contact);
-            boolean laPossede = contact.getEtiquettes().contains(etiquette);
+            boolean doitLAvoir = getControleur().contientContact(voulus, contact);
+            boolean laPossede = getControleur().contientEtiquette(contact.getEtiquettes(), etiquette);
             if (doitLAvoir != laPossede) {
-                List<EtiquetteVue> nouvelles = new ArrayList<>(contact.getEtiquettes());
+                List<EtiquetteVue> nouvelles = new ArrayList<>();
+                for (EtiquetteVue e : contact.getEtiquettes()) {
+                    if (!getControleur().memeEtiquette(e, etiquette)) {
+                        nouvelles.add(e);
+                    }
+                }
                 if (doitLAvoir) {
                     nouvelles.add(etiquette);
-                } else {
-                    nouvelles.remove(etiquette);
                 }
                 getControleur().modifierContact(contact, contact.getNom(), contact.getEmail(), nouvelles);
             }
