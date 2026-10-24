@@ -7,7 +7,7 @@ import java.util.List;
  * d'une liste de diffusion. La classe du modèle représentant une liste doit l'implémenter.
  *
  * @version 1.0
- * @author Nkouka Ildevert
+ * @author Ildevert Nkouka
  */
 public interface ListeDiffusionVue {
 

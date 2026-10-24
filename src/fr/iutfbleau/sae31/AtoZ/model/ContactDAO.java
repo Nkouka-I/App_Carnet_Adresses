@@ -6,9 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 import fr.iutfbleau.sae31.AtoZ.model.ModeleException;
@@ -28,12 +26,18 @@ public class ContactDAO {
     private final Connection cx;
 
     /**
+     * Accès à la table de liaison <code>Contact_etiquette</code> (étiquettes des contacts).
+     */
+    private final ContactEtiquetteDAO liaisons;
+
+    /**
      * Constructeur d'un accès aux contacts.
      *
      * @param cx la connexion ouverte vers la base de données
      */
     public ContactDAO(Connection cx){
         this.cx = cx;
+        this.liaisons = new ContactEtiquetteDAO(cx);
     }
 
     /**
@@ -60,7 +64,7 @@ public class ContactDAO {
                 }
                 
             }
-            insererLiaisons(c);
+            liaisons.inserer(c);
             cx.commit();
         }catch (SQLException e){
             Transactions.annuler(cx);
@@ -86,7 +90,7 @@ public class ContactDAO {
             while (rs.next()) {
                 resultat.add(new Contact(rs.getInt(1), rs.getString(2), rs.getString(3)));
             }
-            chargerEtiquettes(resultat);
+            liaisons.charger(resultat);
         } catch (SQLException e) {
             throw ModeleException.depuis("Lecture des contacts", e);
         }
@@ -114,12 +118,8 @@ public class ContactDAO {
                     throw new ModeleException("Ce contact n'existe plus.");
                 }
             }
-            try (PreparedStatement ps = cx.prepareStatement(
-                    "DELETE FROM Contact_etiquette WHERE contact_id = ?")) {
-                ps.setInt(1, c.getId());
-                ps.executeUpdate();
-            }
-            insererLiaisons(c);
+            liaisons.supprimerDuContact(c.getId());
+            liaisons.inserer(c);
             cx.commit();
         } catch (ModeleException e) {
             Transactions.annuler(cx);
@@ -146,53 +146,4 @@ public class ContactDAO {
             throw ModeleException.depuis("Suppression du contact", e);
         }
     }
- 
-    /**
-     * Enregistre les liens entre un contact et ses étiquettes.
-     *
-     * @param c le contact, dont l'identifiant est connu
-     * @throws SQLException en cas d'erreur SQL
-     */
-    private void insererLiaisons(Contact c) throws SQLException {
-        try (PreparedStatement ps = cx.prepareStatement(
-                "INSERT INTO Contact_etiquette (contact_id, etiquette_id) VALUES (?, ?)")) {
-            for (Etiquette e : c.getEtiquette()) {
-                ps.setInt(1, c.getId());
-                ps.setInt(2, e.getId());
-                ps.addBatch();
-            }
-            ps.executeBatch();
-        }
-    }
- 
-    /**
-     * Renseigne les étiquettes des contacts donnés, avec une seule requête.
-     *
-     * @param contacts les contacts déjà lus en base de données
-     * @throws SQLException en cas d'erreur SQL
-     * @throws ModeleException si une étiquette lue en base est invalide
-     */
-    void chargerEtiquettes(List<Contact> contacts) throws SQLException, ModeleException {
-        Map<Integer, Contact> parId = new HashMap<>();
-        for (Contact c : contacts) {
-            parId.put(c.getId(), c);
-        }
-        try (PreparedStatement ps = cx.prepareStatement(
-                "SELECT ce.contact_id, e.id, e.libelle "
-                + "FROM Contact_etiquette ce JOIN Etiquette e ON e.id = ce.etiquette_id "
-                + "ORDER BY e.libelle");
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Contact c = parId.get(rs.getInt(1));
-                if (c != null) {
-                    c.ajouterEtiquette(new Etiquette(rs.getInt(2), rs.getString(3)));
-                }
-            }
-        }
-    }
-
-
-
-
-                
 }

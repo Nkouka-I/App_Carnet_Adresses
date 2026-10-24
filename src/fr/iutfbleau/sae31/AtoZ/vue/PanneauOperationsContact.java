@@ -52,6 +52,7 @@ public class PanneauOperationsContact extends PanneauOperationsAbstrait {
      */
     private void modifier() {
         FenetreFormulaireContact form = new FenetreFormulaireContact(
+            getControleur(),
             getFenetreParente(),
             "Modifier le contact",
             contact.getNom(),

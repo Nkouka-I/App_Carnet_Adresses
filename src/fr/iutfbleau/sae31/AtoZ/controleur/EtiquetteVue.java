@@ -6,7 +6,7 @@ package fr.iutfbleau.sae31.AtoZ.controleur;
  * identifie les étiquettes par leur identité (<code>equals</code>), jamais par leur nom.
  *
  * @version 1.0
- * @author Nkouka Ildevert
+ * @author Ildevert Nkouka
  */
 public interface EtiquetteVue {
 
