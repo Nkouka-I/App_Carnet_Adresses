@@ -11,20 +11,39 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * La classe <code>LigneContactAbstraite</code> regroupe le comportement et l'affichage 
- * commun à toutes les lignes représentant un contact dans l'application (nom, email, 
+ * La classe <code>LigneContactAbstraite</code> regroupe le comportement et l'affichage
+ * commun à toutes les lignes représentant un contact dans l'application (nom, email,
  * bouton de copie, surbrillance de sélection et clic de souris).
  *
- * @version 1.2
+ * @version 1.3
  * @author Nkouka Ildevert
  */
 public abstract class LigneContactAbstraite extends JPanel {
 
+    /**
+     * Contact représenté par la ligne.
+     */
     private final ContactVue contact;
+
+    /**
+     * Indique si la ligne est mise en évidence (contact sélectionné).
+     */
     private boolean selectionnee = false;
+
+    /**
+     * Contraintes de placement, réutilisables par les classes filles pour ajouter des éléments.
+     */
     protected final GridBagConstraints gbc;
 
-    public LigneContactAbstraite(ContactVue contact, NavigationListener listener) {
+    /**
+     * Construit la ligne d'un contact : nom, adresse mail et bouton "Copier". La ligne
+     * entière est cliquable si un écouteur est fourni.
+     *
+     * @param contact le contact à afficher
+     * @param listener l'écouteur à notifier lors d'un clic sur la ligne (peut être <code>null</code>)
+     * @param dansListe <code>true</code> si la ligne est affichée dans une liste de diffusion
+     */
+    public LigneContactAbstraite(ContactVue contact, NavigationListener listener, boolean dansListe) {
         this.contact = contact;
 
         setLayout(new GridBagLayout());
@@ -34,7 +53,7 @@ public abstract class LigneContactAbstraite extends JPanel {
         // Rend la ligne entière cliquable
         if (listener != null) {
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            addMouseListener(new EcouteurClicLigne(this, listener));
+            addMouseListener(new EcouteurClicLigne(this, listener, dansListe));
         }
 
         gbc = new GridBagConstraints();
@@ -42,30 +61,40 @@ public abstract class LigneContactAbstraite extends JPanel {
         gbc.gridy = 0;
 
         // Nom du contact
-        gbc.gridx = 0; 
-        gbc.weightx = 0.3; 
+        gbc.gridx = 0;
+        gbc.weightx = 0.3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(new JLabel(contact.getNom()), gbc);
 
         // Adresse email
-        gbc.gridx = 1; 
-        gbc.weightx = 0.4; 
+        gbc.gridx = 1;
+        gbc.weightx = 0.4;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(new JLabel(contact.getEmail()), gbc);
 
         // Bouton Copier
-        gbc.gridx = 2; 
-        gbc.weightx = 0.1; 
+        gbc.gridx = 2;
+        gbc.weightx = 0.1;
         gbc.fill = GridBagConstraints.NONE;
         JButton btnCopier = new JButton("Copier");
         btnCopier.addActionListener(e -> PressePapiers.copier(btnCopier, contact.getEmail()));
         add(btnCopier, gbc);
     }
 
-    public ContactVue getContact() { 
-        return contact; 
+    /**
+     * Renvoie le contact représenté par la ligne.
+     *
+     * @return le contact de la ligne
+     */
+    public ContactVue getContact() {
+        return contact;
     }
 
+    /**
+     * Met la ligne en évidence (fond coloré et barre à gauche) ou la remet à l'état normal.
+     *
+     * @param selectionnee <code>true</code> si le contact de la ligne est sélectionné
+     */
     public void setSelectionnee(boolean selectionnee) {
         if (this.selectionnee == selectionnee) {
             return;

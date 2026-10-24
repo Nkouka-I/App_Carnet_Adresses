@@ -1,20 +1,20 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
 /**
- * L'interface <code>FormulaireListener</code> définit le contrat d'un écouteur de
- * validation de formulaire. Elle est appelée uniquement lorsque l'utilisateur a
- * validé le formulaire (et non lorsqu'il l'a annulé).
+ * L'interface <code>FormulaireListener</code> définit l'action à effectuer lorsqu'un
+ * formulaire a été validé par l'utilisateur. Elle reçoit le formulaire pour en lire les
+ * valeurs saisies.
  *
+ * @param <T> le type du formulaire
  * @version 1.0
  * @author Nkouka Ildevert
- * @param <T> le type de formulaire écouté
  */
-public interface FormulaireListener<T extends FenetreDialogueAbstraite> {
+public interface FormulaireListener<T> {
 
     /**
-     * Appelée après la validation d'un formulaire, afin de récupérer les valeurs saisies.
+     * Appelée lorsque l'utilisateur valide le formulaire.
      *
-     * @param formulaire le formulaire qui vient d'être validé
+     * @param formulaire le formulaire validé
      */
     void onValider(T formulaire);
 }

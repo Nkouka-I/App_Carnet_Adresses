@@ -4,10 +4,10 @@ import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.JButton;
 
 /**
  * La classe <code>PressePapiers</code> regroupe la copie de texte dans le presse-papier

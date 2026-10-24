@@ -1,7 +1,7 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

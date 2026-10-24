@@ -10,13 +10,19 @@ import javax.swing.JLabel;
  * La classe <code>LigneContact</code> représente un contact dans le répertoire principal.
  * En plus des informations de base, elle ajoute une ligne affichant les étiquettes.
  *
- * @version 1.2
+ * @version 1.3
  * @author Nkouka Ildevert
  */
 public class LigneContact extends LigneContactAbstraite {
 
+    /**
+     * Construit la ligne d'un contact du répertoire.
+     *
+     * @param contact le contact à afficher
+     * @param listener l'écouteur à notifier lors d'un clic sur la ligne (peut être <code>null</code>)
+     */
     public LigneContact(ContactVue contact, NavigationListener listener) {
-        super(contact, listener);
+        super(contact, listener, false);
 
         // Ajout spécifique des étiquettes sur la deuxième ligne
         if (!contact.getEtiquettes().isEmpty()) {
@@ -28,9 +34,9 @@ public class LigneContact extends LigneContactAbstraite {
                 etiquettes.append(etiquette.getNom());
             }
 
-            gbc.gridx = 0; 
-            gbc.gridy = 1; 
-            gbc.weightx = 0; 
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.weightx = 0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             add(new JLabel("[" + etiquettes + "]"), gbc);
         }
