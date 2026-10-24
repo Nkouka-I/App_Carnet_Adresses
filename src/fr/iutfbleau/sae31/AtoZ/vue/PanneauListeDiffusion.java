@@ -168,7 +168,7 @@ public class PanneauListeDiffusion extends JPanel {
      */
     public void selectionnerContact(ContactVue contact) {
         for (LigneListeDiffusion ligne : lignes) {
-            ligne.setSelectionnee(ligne.getContact().equals(contact));
+            ligne.setSelectionnee(controleur.memeContact(ligne.getContact(), contact));
         }
     }
 

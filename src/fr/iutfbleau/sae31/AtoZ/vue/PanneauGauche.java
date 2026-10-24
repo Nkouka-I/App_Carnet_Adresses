@@ -160,7 +160,7 @@ public class PanneauGauche extends JPanel {
      */
     private void creerContact() {
         FenetreFormulaireContact form = new FenetreFormulaireContact(
-            FenetreDialogueAbstraite.fenetreDe(this), "Créer un nouveau contact", "", "", controleur.getEtiquettes(), List.of()
+            controleur, FenetreDialogueAbstraite.fenetreDe(this), "Créer un nouveau contact", "", "", controleur.getEtiquettes(), List.of()
         );
 
         FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
@@ -177,7 +177,11 @@ public class PanneauGauche extends JPanel {
      */
     private void creerEtiquette() {
         FenetreFormulaireEtiquette form = new FenetreFormulaireEtiquette(
+<<<<<<< HEAD
             FenetreDialogueAbstraite.fenetreDe(this), "Créer une nouvelle étiquette", "",
+=======
+            controleur, FenetreDialogueAbstraite.fenetreDe(this), "Créer une nouvelle étiquette", "", 
+>>>>>>> modelfix
             controleur.getContacts(), List.of()
         );
 
@@ -239,7 +243,7 @@ public class PanneauGauche extends JPanel {
     private void ajouterBoutonsEtiquettes() {
         for (EtiquetteVue etiquette : controleur.getEtiquettes()) {
             JButton btn = new JButton(etiquette.getNom());
-            Style.marquerBoutonMenu(btn, etiquette.equals(etiquetteActive));
+            Style.marquerBoutonMenu(btn, controleur.memeEtiquette(etiquette, etiquetteActive));
             btn.addActionListener(e -> {
                 if (listener != null) {
                     listener.clicEtiquette(etiquette);
@@ -256,7 +260,7 @@ public class PanneauGauche extends JPanel {
     private void ajouterBoutonsListes() {
         for (ListeDiffusionVue liste : controleur.getListesDiffusion()) {
             JButton btn = new JButton(liste.getNom());
-            Style.marquerBoutonMenu(btn, liste.equals(listeActive));
+            Style.marquerBoutonMenu(btn, controleur.memeListe(liste, listeActive));
             btn.addActionListener(e -> {
                 if (listener != null) {
                     listener.clicListeDiffusion(liste);

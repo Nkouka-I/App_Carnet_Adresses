@@ -1,4 +1,5 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -44,6 +45,7 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
     /**
      * Construit le formulaire et pré-remplit ses champs.
      *
+     * @param controleur le contrôleur (sert à comparer les étiquettes)
      * @param parent la fenêtre parente
      * @param titre le titre de la boîte de dialogue
      * @param nomInitial le nom à afficher au départ (vide pour une création)
@@ -51,7 +53,7 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
      * @param toutesLesEtiquettes toutes les étiquettes proposées à la sélection
      * @param etiquettesDuContact les étiquettes à cocher au départ
      */
-    public FenetreFormulaireContact(Frame parent, String titre, String nomInitial, String emailInitial,
+    public FenetreFormulaireContact(Controleur controleur, Frame parent, String titre, String nomInitial, String emailInitial,
                                   List<EtiquetteVue> toutesLesEtiquettes, List<EtiquetteVue> etiquettesDuContact) {
         super(parent, titre, 400, 480);
 
@@ -73,7 +75,7 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
         if (toutesLesEtiquettes != null) {
             for (EtiquetteVue etiquette : toutesLesEtiquettes) {
                 JCheckBox cb = new JCheckBox(etiquette.getNom());
-                cb.setSelected(etiquettesDuContact != null && etiquettesDuContact.contains(etiquette));
+                cb.setSelected(controleur.contientEtiquette(etiquettesDuContact, etiquette));
                 etiquettesProposees.add(etiquette);
                 casesEtiquettes.add(cb);
                 panelEtiquettes.add(cb);

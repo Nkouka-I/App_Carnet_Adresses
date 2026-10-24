@@ -1,0 +1,143 @@
+@startuml
+title Diagramme de classes du package carnet.modele
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam ArrowColor #555555
+skinparam class {
+  BackgroundColor<<metier>> #EEEDFE
+  BorderColor<<metier>> #534AB7
+  BackgroundColor<<dao>> #E1F5EE
+  BorderColor<<dao>> #0F6E56
+  BackgroundColor<<technique>> #F1EFE8
+  BorderColor<<technique>> #5F5E5A
+}
+
+package "carnet.modele" {
+
+  ' ---------- Objets métier ----------
+  class Contact <<metier>> {
+    +{static} EMAIL_OCTETS_MAX : int
+    -id : int
+    -nom : String
+    -email : String
+    -etiquettes : List<Etiquette>
+    +Contact(nom : String, email : String)
+    +Contact(id : int, nom : String, email : String)
+    +setNom(nom : String) : void
+    +setEmail(email : String) : void
+    +getEtiquettes() : List<Etiquette>
+    +ajouterEtiquette(e : Etiquette) : void
+    +retirerEtiquette(e : Etiquette) : void
+    +setEtiquettes(nouvelles : List<Etiquette>) : void
+  }
+
+  class Etiquette <<metier>> {
+    +{static} LIBELLE_MAX : int
+    -id : int
+    -libelle : String
+    +Etiquette(libelle : String)
+    +Etiquette(id : int, libelle : String)
+    +setLibelle(libelle : String) : void
+  }
+
+  class Critere <<metier>> {
+    -etiquette : Etiquette
+    -inclus : boolean
+    +Critere(etiquette : Etiquette, inclus : boolean)
+    +getEtiquette() : Etiquette
+    +isInclus() : boolean
+  }
+
+  class ListeDiffusion <<metier>> {
+    +{static} NOM_MAX : int
+    -id : int
+    -nom : String
+    -criteres : List<Critere>
+    +ListeDiffusion(nom : String)
+    +ListeDiffusion(id : int, nom : String)
+    +setNom(nom : String) : void
+    +getCriteres() : List<Critere>
+    +ajouterCritere(c : Critere) : void
+    +setCriteres(nouveaux : List<Critere>) : void
+  }
+
+  ' ---------- DAO ----------
+  class ContactDAO <<dao>> {
+    -cx : Connection
+    +ContactDAO(cx : Connection)
+    +creer(c : Contact) : void
+    +trouverTous() : List<Contact>
+    +modifier(c : Contact) : void
+    +supprimer(id : int) : void
+  }
+
+  class ContactEtiquetteDAO <<dao>> {
+    -cx : Connection
+    ~ContactEtiquetteDAO(cx : Connection)
+    ~inserer(c : Contact) : void
+    ~supprimerDuContact(contactId : int) : void
+    ~charger(contacts : List<Contact>) : void
+  }
+
+  class EtiquetteDAO <<dao>> {
+    -cx : Connection
+    +EtiquetteDAO(cx : Connection)
+    +creer(e : Etiquette) : void
+    +trouverToutes() : List<Etiquette>
+    +modifier(e : Etiquette) : void
+    +supprimer(id : int) : void
+  }
+
+  class ListeDiffusionDAO <<dao>> {
+    -cx : Connection
+    +ListeDiffusionDAO(cx : Connection)
+    +creer(l : ListeDiffusion) : void
+    +trouverToutes() : List<ListeDiffusion>
+    +modifier(l : ListeDiffusion) : void
+    +supprimer(id : int) : void
+    +membres(liste : ListeDiffusion) : List<Contact>
+  }
+
+  ' ---------- Classes techniques ----------
+  class Connexion <<technique>> {
+    +{static} ouvrir(url : String, utilisateur : String, motDePasse : String) : Connection
+  }
+
+  class Transactions <<technique>> {
+    ~{static} annuler(cx : Connection) : void
+    ~{static} restaurer(cx : Connection, auto : boolean) : void
+  }
+
+  class ModeleException <<technique>> {
+    +ModeleException(message : String)
+    +ModeleException(message : String, cause : Throwable)
+    +{static} depuis(action : String, e : SQLException) : ModeleException
+  }
+}
+
+class Exception
+
+' ---------- Relations ----------
+Contact "*" --> "*" Etiquette : possède
+ListeDiffusion "1" *-- "1..*" Critere : composée de
+Critere "*" --> "1" Etiquette : porte sur
+
+ContactDAO ..> Contact
+EtiquetteDAO ..> Etiquette
+ListeDiffusionDAO ..> ListeDiffusion
+ListeDiffusionDAO ..> ContactDAO
+ContactDAO ..> ContactEtiquetteDAO
+ListeDiffusionDAO ..> ContactEtiquetteDAO
+ContactEtiquetteDAO ..> Contact
+ContactDAO ..> Transactions
+ListeDiffusionDAO ..> Transactions
+
+ContactDAO ..> ModeleException
+EtiquetteDAO ..> ModeleException
+ListeDiffusionDAO ..> ModeleException
+Connexion ..> ModeleException
+ModeleException --|> Exception
+
+@enduml
