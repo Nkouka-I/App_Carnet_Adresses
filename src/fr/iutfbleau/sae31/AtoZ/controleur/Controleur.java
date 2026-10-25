@@ -13,7 +13,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import javax.swing.JOptionPane;
 
 /**
  * La classe <code>Controleur</code> fait le lien entre la vue et le modèle : elle fournit à la
@@ -54,10 +53,21 @@ public class Controleur {
     private final List<Runnable> ecouteurs = new ArrayList<>();
 
     /**
-     * L'action qui affiche un message d'erreur (une boîte de dialogue par défaut).
+     * Les erreurs signalées avant qu'un gestionnaire d'erreurs ne soit installé (par exemple
+     * une erreur de chargement dans le constructeur). Elles sont transmises au gestionnaire
+     * dès qu'il est installé.
      */
-    private Consumer<String> gestionnaireErreurs = message ->
-        JOptionPane.showMessageDialog(null, message, "Erreur", JOptionPane.ERROR_MESSAGE);
+    private final List<String> erreursEnAttente = new ArrayList<>();
+
+    /**
+     * L'action qui affiche un message d'erreur. Le contrôleur ne connaît pas l'interface
+     * graphique : c'est la vue qui installe son gestionnaire. En attendant, les messages sont
+     * gardés en attente.
+     */
+    private Consumer<String> gestionnaireErreurs = message -> {
+        System.err.println("Erreur : " + message);
+        erreursEnAttente.add(message);
+    };
 
     /**
      * Constructeur du contrôleur, qui charge le carnet depuis la base de données (une erreur
@@ -450,11 +460,19 @@ public class Controleur {
     public void ajouterEcouteur(Runnable ecouteur) { ecouteurs.add(ecouteur); }
 
     /**
-     * Remplace la façon d'afficher les messages d'erreur (une boîte de dialogue par défaut).
+     * Installe la façon d'afficher les messages d'erreur (c'est la vue qui s'en charge). Les
+     * erreurs déjà signalées et restées en attente lui sont transmises aussitôt.
      *
      * @param gestionnaire l'action qui reçoit le message d'erreur à afficher
      */
-    public void setGestionnaireErreurs(Consumer<String> gestionnaire) { this.gestionnaireErreurs = gestionnaire; }
+    public void setGestionnaireErreurs(Consumer<String> gestionnaire) {
+        this.gestionnaireErreurs = gestionnaire;
+        List<String> attente = new ArrayList<>(erreursEnAttente);
+        erreursEnAttente.clear();
+        for (String message : attente) {
+            gestionnaire.accept(message);
+        }
+    }
 
     /**
      * Prévient tous les écouteurs que le carnet a été modifié.

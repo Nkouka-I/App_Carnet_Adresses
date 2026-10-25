@@ -98,7 +98,8 @@ public class Fenetre extends JFrame implements NavigationListener {
         panneauDroit = new PanneauDroit(controleur);
         add(ZoneDefilante.autour(panneauDroit, Style.LARGEUR_PANNEAU_DROIT, 0, -1), BorderLayout.EAST);
 
-        controleur.ajouterEcouteur(this::actualiser);
+        controleur.setGestionnaireErreurs(message ->
+    JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.ERROR_MESSAGE));
     }
 
     /**
