@@ -17,7 +17,7 @@ import fr.iutfbleau.sae31.AtoZ.model.ModeleException;
  * <code>Contact_etiquette</code> (opérations CRUD).
  *
  * @version 1.0
- * @author Tiago
+ * @author Tiago Alves--Le Du
  */
 public class ContactDAO {
     /**
@@ -89,6 +89,40 @@ public class ContactDAO {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 resultat.add(new Contact(rs.getInt(1), rs.getString(2), rs.getString(3)));
+            }
+            liaisons.charger(resultat);
+        } catch (SQLException e) {
+            throw ModeleException.depuis("Lecture des contacts", e);
+        }
+        return resultat;
+    }
+
+    /**
+     * Renvoie les contacts avec leurs étiquettes, triés par la base de données. Si une étiquette
+     * est donnée, seuls les contacts qui la possèdent (d'après la table
+     * <code>Contact_etiquette</code>) sont renvoyés.
+     *
+     * @param filtre l'étiquette que les contacts doivent avoir (<code>null</code> pour tous les contacts)
+     * @param ordre l'ordre de tri
+     * @return la liste des contacts triés
+     * @throws ModeleException en cas d'erreur d'accès à la base de données
+     */
+    public List<Contact> trouverTries(Etiquette filtre, OrdreTri ordre) throws ModeleException {
+        String sql = "SELECT c.id, c.nom, c.email FROM Contact c";
+        if (filtre != null) {
+            sql += " WHERE c.id IN (SELECT ce.contact_id FROM Contact_etiquette ce WHERE ce.etiquette_id = ?)";
+        }
+        sql += " ORDER BY " + ordre.getClauseSql() + ", c.id";
+
+        List<Contact> resultat = new ArrayList<>();
+        try (PreparedStatement ps = cx.prepareStatement(sql)) {
+            if (filtre != null) {
+                ps.setInt(1, filtre.getId());
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    resultat.add(new Contact(rs.getInt(1), rs.getString(2), rs.getString(3)));
+                }
             }
             liaisons.charger(resultat);
         } catch (SQLException e) {

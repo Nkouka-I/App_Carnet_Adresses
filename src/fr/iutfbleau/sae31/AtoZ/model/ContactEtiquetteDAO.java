@@ -15,7 +15,7 @@ import java.util.Map;
  * <code>ContactDAO</code> et <code>ListeDiffusionDAO</code>, qui les appellent.
  *
  * @version 1.0
- * @author Tiago Alves--Le DU
+ * @author Tiago Alves--Le Dus
  */
 class ContactEtiquetteDAO {
 

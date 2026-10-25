@@ -15,111 +15,34 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-/**
- * La classe <code>PanneauGauche</code> est le panneau de navigation de gauche de la
- * fenêtre principale. Il propose les boutons de création (contact, étiquette, liste de
- * diffusion) ainsi que deux menus déroulants (accordéons) listant les étiquettes et
- * les listes de diffusion du carnet. Le bouton de ce qui est actuellement affiché est
- * mis en évidence.
- *
- * @version 1.2
- * @author Nkouka Ildevert
- */
 public class PanneauGauche extends JPanel {
 
-    /**
-     * Bouton de création d'un nouveau contact.
-     */
     private final JButton btnNewContact;
-
-    /**
-     * Bouton de création d'une nouvelle étiquette.
-     */
     private final JButton btnNewEtiquette;
-
-    /**
-     * Bouton de création d'une nouvelle liste de diffusion.
-     */
     private final JButton btnNewListesDiffusion;
-
-    /**
-     * Titre de l'application affiché en haut du panneau.
-     */
     private final JLabel titreApp;
-
-    /**
-     * Bouton pour afficher tous les contacts.
-     */
     private final JButton btnTousContacts;
-
-    /**
-     * Bouton qui déplie ou replie la liste des étiquettes.
-     */
     private final JButton btnEtiquettes;
-
-    /**
-     * Bouton qui déplie ou replie la liste des listes de diffusion.
-     */
     private final JButton btnListesDiffusion;
 
-    /**
-     * Indique si la liste des étiquettes est actuellement dépliée.
-     */
     private boolean etiquettesVisibles = false;
-
-    /**
-     * Indique si la liste des listes de diffusion est actuellement dépliée.
-     */
     private boolean listesDiffusionVisibles = false;
-
-    /**
-     * Indique si le répertoire complet est affiché (bouton "Tous les contacts" en évidence).
-     */
     private boolean tousContactsActif = true;
 
-    /**
-     * Étiquette dont le répertoire est filtré (<code>null</code> si aucune).
-     */
     private EtiquetteVue etiquetteActive;
-
-    /**
-     * Liste de diffusion affichée (<code>null</code> si aucune).
-     */
     private ListeDiffusionVue listeActive;
 
-    /**
-     * L'écouteur de navigation.
-     */
     private final NavigationListener listener;
-
-    /**
-     * Contrôleur fournissant les étiquettes et les listes, et créant les éléments.
-     */
     private final Controleur controleur;
-
-    /**
-     * Contraintes de placement pour la grille de disposition.
-     */
     private final GridBagConstraints gbc;
-
-    /**
-     * Compteur interne pour placer automatiquement chaque composant sur la ligne suivante.
-     */
     private int ligne = 0;
 
-    /**
-     * Construit le panneau de gauche, initialise ses composants et configure
-     * une seule fois les écouteurs pour éviter toute fuite ou accumulation.
-     *
-     * @param listener l'écouteur à notifier lors d'un clic sur une navigation
-     * @param controleur le contrôleur fournissant les données
-     */
     public PanneauGauche(NavigationListener listener, Controleur controleur) {
         this.listener = listener;
         this.controleur = controleur;
 
         setLayout(new GridBagLayout());
-        setPreferredSize(new Dimension(Style.LARGEUR_PANNEAU_GAUCHE, 0));
+        setPreferredSize(new Dimension(Style.LARGEUR_PANNEAU_GAUCHE, 0)); 
         setBackground(Style.FOND_PANNEAU_LATERAL);
 
         gbc = new GridBagConstraints();
@@ -154,10 +77,6 @@ public class PanneauGauche extends JPanel {
         rafraichir();
     }
 
-    /**
-     * Ouvre le formulaire de création d'un contact, le crée s'il est validé, puis le
-     * sélectionne.
-     */
     private void creerContact() {
         FenetreFormulaireContact form = new FenetreFormulaireContact(
             controleur, FenetreDialogueAbstraite.fenetreDe(this), "Créer un nouveau contact", "", "", controleur.getEtiquettes(), List.of()
@@ -171,27 +90,23 @@ public class PanneauGauche extends JPanel {
         });
     }
 
-    /**
-     * Ouvre le formulaire de création d'une étiquette et la crée, avec les contacts
-     * cochés, s'il est validé.
-     */
     private void creerEtiquette() {
         FenetreFormulaireEtiquette form = new FenetreFormulaireEtiquette(
-            controleur, FenetreDialogueAbstraite.fenetreDe(this), "Créer une nouvelle étiquette", "",
+            controleur, FenetreDialogueAbstraite.fenetreDe(this), "Créer une nouvelle étiquette", "", 
             controleur.getContacts(), List.of()
         );
 
         FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
-            EtiquetteVue creee = controleur.creerEtiquette(f.getLibelleSaisi());
-            if (creee != null) {
-                appliquerContacts(creee, f.getContactsSelectionnes());
+            EtiquetteVue nouvelleEtiq = controleur.creerEtiquette(f.getLibelleSaisi());
+            
+            for (ContactVue c : f.getContactsSelectionnes()) {
+                List<EtiquetteVue> etiqs = new ArrayList<>(c.getEtiquettes());
+                etiqs.add(nouvelleEtiq);
+                controleur.modifierContact(c, c.getNom(), c.getEmail(), etiqs);
             }
         });
     }
 
-    /**
-     * Ouvre le formulaire de création d'une liste de diffusion et la crée s'il est validé.
-     */
     private void creerListeDiffusion() {
         FenetreFormulaireListeDiffusion form = new FenetreFormulaireListeDiffusion(
             FenetreDialogueAbstraite.fenetreDe(this), "Créer une liste de diffusion", "", controleur.getEtiquettes(), List.of()
@@ -200,9 +115,6 @@ public class PanneauGauche extends JPanel {
         FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> controleur.creerListeDiffusion(f.getNomListeSaisi(), f.getCriteresList()));
     }
 
-    /**
-     * Déplie ou replie la liste des étiquettes. Au dépliage, le listener est notifié.
-     */
     private void basculerEtiquettes() {
         etiquettesVisibles = !etiquettesVisibles;
         if (etiquettesVisibles && listener != null) {
@@ -211,9 +123,6 @@ public class PanneauGauche extends JPanel {
         rafraichir();
     }
 
-    /**
-     * Déplie ou replie la liste des listes de diffusion. Au dépliage, le listener est notifié.
-     */
     private void basculerListesDiffusion() {
         listesDiffusionVisibles = !listesDiffusionVisibles;
         if (listesDiffusionVisibles && listener != null) {
@@ -222,20 +131,11 @@ public class PanneauGauche extends JPanel {
         rafraichir();
     }
 
-    /**
-     * Ajoute un composant sur la ligne suivante.
-     *
-     * @param comp le composant à ajouter
-     */
     private void ajouter(Component comp) {
         gbc.gridy = ligne++;
         add(comp, gbc);
     }
 
-    /**
-     * Ajoute un bouton par étiquette. Un clic prévient l'écouteur de navigation ; le bouton
-     * de l'étiquette dont le répertoire est filtré est mis en évidence.
-     */
     private void ajouterBoutonsEtiquettes() {
         for (EtiquetteVue etiquette : controleur.getEtiquettes()) {
             JButton btn = new JButton(etiquette.getNom());
@@ -249,10 +149,6 @@ public class PanneauGauche extends JPanel {
         }
     }
 
-    /**
-     * Ajoute un bouton par liste de diffusion. Un clic prévient l'écouteur de navigation ;
-     * le bouton de la liste affichée est mis en évidence.
-     */
     private void ajouterBoutonsListes() {
         for (ListeDiffusionVue liste : controleur.getListesDiffusion()) {
             JButton btn = new JButton(liste.getNom());
@@ -266,13 +162,6 @@ public class PanneauGauche extends JPanel {
         }
     }
 
-    /**
-     * Met en évidence dans le menu ce qui est actuellement affiché, puis reconstruit le panneau.
-     *
-     * @param tousContacts <code>true</code> si le répertoire complet est affiché
-     * @param etiquette l'étiquette qui filtre le répertoire (<code>null</code> si aucune)
-     * @param liste la liste de diffusion affichée (<code>null</code> si aucune)
-     */
     public void marquer(boolean tousContacts, EtiquetteVue etiquette, ListeDiffusionVue liste) {
         this.tousContactsActif = tousContacts;
         this.etiquetteActive = etiquette;
@@ -280,10 +169,6 @@ public class PanneauGauche extends JPanel {
         rafraichir();
     }
 
-    /**
-     * Reconstruit entièrement le contenu visuel du panneau selon l'état des accordéons
-     * et les données actuelles du carnet.
-     */
     public void rafraichir() {
         removeAll();
         ligne = 0;
@@ -293,7 +178,6 @@ public class PanneauGauche extends JPanel {
         Style.marquerBoutonMenu(btnTousContacts, tousContactsActif);
         ajouter(btnTousContacts);
 
-        // Étiquettes : bouton de création et accordéon
         ajouter(btnNewEtiquette);
         btnEtiquettes.setText(etiquettesVisibles ? "▼ Étiquettes :" : "▶ Étiquettes :");
         ajouter(btnEtiquettes);
@@ -301,7 +185,6 @@ public class PanneauGauche extends JPanel {
             ajouterBoutonsEtiquettes();
         }
 
-        // Listes de diffusion : bouton de création et accordéon
         ajouter(btnNewListesDiffusion);
         btnListesDiffusion.setText(listesDiffusionVisibles ? "▼ Listes de Diffusion :" : "▶ Listes de Diffusion :");
         ajouter(btnListesDiffusion);
@@ -309,41 +192,11 @@ public class PanneauGauche extends JPanel {
             ajouterBoutonsListes();
         }
 
-        // Pousse le contenu vers le haut
         gbc.weighty = 1.0;
         ajouter(Style.ressort());
         gbc.weighty = 0.0;
 
         revalidate();
         repaint();
-    }
-
-    /**
-     * Ajoute l'étiquette aux contacts voulus qui ne l'ont pas, et la retire aux autres.
-     * Seuls les contacts dont la situation change sont modifiés ; ils sont reconnus
-     * par identifiant (méthodes <code>meme...</code> et <code>contient...</code> du contrôleur),
-     * car le contrôleur recharge ses objets après chaque modification.
-     *
-     * @param etiquette l'étiquette concernée
-     * @param voulus les contacts qui doivent la posséder
-     */
-    private void appliquerContacts(EtiquetteVue etiquette, List<ContactVue> voulus) {
-        List<ContactVue> tous = new ArrayList<>(controleur.getContacts());
-        for (ContactVue contact : tous) {
-            boolean doitLAvoir = controleur.contientContact(voulus, contact);
-            boolean laPossede = controleur.contientEtiquette(contact.getEtiquettes(), etiquette);
-            if (doitLAvoir != laPossede) {
-                List<EtiquetteVue> nouvelles = new ArrayList<>();
-                for (EtiquetteVue e : contact.getEtiquettes()) {
-                    if (!controleur.memeEtiquette(e, etiquette)) {
-                        nouvelles.add(e);
-                    }
-                }
-                if (doitLAvoir) {
-                    nouvelles.add(etiquette);
-                }
-                controleur.modifierContact(contact, contact.getNom(), contact.getEmail(), nouvelles);
-            }
-        }
     }
 }

@@ -85,7 +85,7 @@ ${BDIR}/vue/PanneauOperationsEtiquette.class : ${SDIR}/vue/PanneauOperationsEtiq
 ${BDIR}/vue/PanneauOperationsListeDiffusion.class : ${SDIR}/vue/PanneauOperationsListeDiffusion.java ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/CritereVue.class ${BDIR}/vue/FenetreDialogueAbstraite.class ${BDIR}/vue/FenetreFormulaireListeDiffusion.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/PanneauOperationsAbstrait.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/PanneauOperationsListeDiffusion.java
 	
-${BDIR}/vue/PanneauRepertoire.class : ${SDIR}/vue/PanneauRepertoire.java ${BDIR}/vue/OrdreTri.class ${BDIR}/vue/Texte.class ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/LigneContact.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/Style.class
+${BDIR}/vue/PanneauRepertoire.class : ${SDIR}/vue/PanneauRepertoire.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/LigneContact.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/Style.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/PanneauRepertoire.java
 
 ${BDIR}/vue/PressePapiers.class : ${SDIR}/vue/PressePapiers.java
@@ -100,7 +100,7 @@ ${BDIR}/controleur/CarnetListener.class : ${SDIR}/controleur/CarnetListener.java
 ${BDIR}/controleur/ContactVue.class : ${SDIR}/controleur/ContactVue.java ${BDIR}/controleur/EtiquetteVue.class
 	${JC} ${JCFLAGS} ${SDIR}/controleur/ContactVue.java
 
-${BDIR}/controleur/Controleur.class : ${SDIR}/controleur/Controleur.java ${BDIR}/model/Carnet.class ${BDIR}/model/Contact.class ${BDIR}/model/ContactDAO.class ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/CritereVue.class ${BDIR}/model/Etiquette.class ${BDIR}/model/EtiquetteDAO.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/model/ListeDiffusion.class ${BDIR}/model/ListeDiffusionDAO.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/model/ModeleException.class
+${BDIR}/controleur/Controleur.class : ${SDIR}/controleur/Controleur.java ${BDIR}/model/OrdreTri.class ${BDIR}/model/Carnet.class ${BDIR}/model/Contact.class ${BDIR}/model/ContactDAO.class ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/CritereVue.class ${BDIR}/model/Etiquette.class ${BDIR}/model/EtiquetteDAO.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/model/ListeDiffusion.class ${BDIR}/model/ListeDiffusionDAO.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/model/ModeleException.class
 	${JC} ${JCFLAGS} ${SDIR}/controleur/Controleur.java
 
 ${BDIR}/controleur/ControleurFormulaireContact.class : ${SDIR}/controleur/ControleurFormulaireContact.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/vue/FenetreFormulaireContact.class ${BDIR}/vue/FormulaireListener.class
@@ -124,7 +124,7 @@ ${BDIR}/controleur/EtiquetteVue.class : ${SDIR}/controleur/EtiquetteVue.java
 ${BDIR}/controleur/ListeDiffusionVue.class : ${SDIR}/controleur/ListeDiffusionVue.java ${BDIR}/controleur/CritereVue.class
 	${JC} ${JCFLAGS} ${SDIR}/controleur/ListeDiffusionVue.java
 
-${BDIR}/model/Carnet.class : ${SDIR}/model/Carnet.java ${BDIR}/model/Contact.class ${BDIR}/model/ContactDAO.class ${BDIR}/controleur/ContactVue.class ${BDIR}/model/Critere.class ${BDIR}/controleur/CritereVue.class ${BDIR}/model/Etiquette.class ${BDIR}/model/EtiquetteDAO.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/model/ListeDiffusion.class ${BDIR}/model/ListeDiffusionDAO.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/model/ModeleException.class
+${BDIR}/model/Carnet.class : ${SDIR}/model/Carnet.java ${BDIR}/model/OrdreTri.class ${BDIR}/model/Texte.class ${BDIR}/model/Contact.class ${BDIR}/model/ContactDAO.class ${BDIR}/controleur/ContactVue.class ${BDIR}/model/Critere.class ${BDIR}/controleur/CritereVue.class ${BDIR}/model/Etiquette.class ${BDIR}/model/EtiquetteDAO.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/model/ListeDiffusion.class ${BDIR}/model/ListeDiffusionDAO.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/model/ModeleException.class
 	${JC} ${JCFLAGS} ${SDIR}/model/Carnet.java
 
 ${BDIR}/model/Connexion.class : ${SDIR}/model/Connexion.java
@@ -136,7 +136,7 @@ ${BDIR}/model/Contact.class : ${SDIR}/model/Contact.java ${BDIR}/controleur/Cont
 ${BDIR}/model/ContactEtiquetteDAO.class : ${SDIR}/model/ContactEtiquetteDAO.java ${BDIR}/model/Contact.class ${BDIR}/model/Etiquette.class ${BDIR}/model/ModeleException.class
 	${JC} ${JCFLAGS} ${SDIR}/model/ContactEtiquetteDAO.java
 
-${BDIR}/model/ContactDAO.class : ${SDIR}/model/ContactDAO.java ${BDIR}/model/ContactEtiquetteDAO.class ${BDIR}/model/Contact.class ${BDIR}/model/Etiquette.class ${BDIR}/model/ModeleException.class ${BDIR}/model/Transactions.class
+${BDIR}/model/ContactDAO.class : ${SDIR}/model/ContactDAO.java ${BDIR}/model/OrdreTri.class ${BDIR}/model/ContactEtiquetteDAO.class ${BDIR}/model/Contact.class ${BDIR}/model/Etiquette.class ${BDIR}/model/ModeleException.class ${BDIR}/model/Transactions.class
 	${JC} ${JCFLAGS} ${SDIR}/model/ContactDAO.java
 
 ${BDIR}/model/Critere.class : ${SDIR}/model/Critere.java ${BDIR}/controleur/CritereVue.class ${BDIR}/model/Etiquette.class
@@ -160,11 +160,11 @@ ${BDIR}/model/ModeleException.class : ${SDIR}/model/ModeleException.java
 ${BDIR}/model/Transactions.class : ${SDIR}/model/Transactions.java
 	${JC} ${JCFLAGS} ${SDIR}/model/Transactions.java
 
-${BDIR}/vue/OrdreTri.class : ${SDIR}/vue/OrdreTri.java
-	${JC} ${JCFLAGS} ${SDIR}/vue/OrdreTri.java
+${BDIR}/model/Texte.class : ${SDIR}/model/Texte.java
+	${JC} ${JCFLAGS} ${SDIR}/model/Texte.java
 
-${BDIR}/vue/Texte.class : ${SDIR}/vue/Texte.java
-	${JC} ${JCFLAGS} ${SDIR}/vue/Texte.java
+${BDIR}/model/OrdreTri.class : ${SDIR}/model/OrdreTri.java
+	${JC} ${JCFLAGS} ${SDIR}/model/OrdreTri.java
 
 ### REGLES D'AUTRES ACTIONS ###
 
