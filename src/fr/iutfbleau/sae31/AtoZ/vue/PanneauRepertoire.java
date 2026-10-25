@@ -136,7 +136,7 @@ public class PanneauRepertoire extends JPanel {
         panelHaut.add(txtRecherche, gbcHaut);
 
         btnEffacer.setToolTipText("Effacer la recherche");
-        btnEffacer.setMargin(new Insets(2, 6, 2, 6));
+        StyleBouton.styliserBoutonCompact(btnEffacer);
         btnEffacer.setEnabled(false);
         btnEffacer.addActionListener(e -> {
             txtRecherche.setText("");

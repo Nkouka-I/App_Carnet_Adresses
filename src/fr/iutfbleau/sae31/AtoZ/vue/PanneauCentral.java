@@ -61,6 +61,9 @@ public class PanneauCentral extends JPanel {
         add(panneauRepertoire, CARTE_REPERTOIRE);
         add(panneauListeDiffusion, CARTE_LISTE_DIFFUSION);
 
+        // Met en forme les champs, listes déroulantes et boutons des deux vues
+        StyleComposant.moderniser(this);
+
         // Par défaut, on charge la vue répertoire
         afficherRepertoire();
     }

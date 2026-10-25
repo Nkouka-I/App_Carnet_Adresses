@@ -64,19 +64,24 @@ public abstract class LigneContactAbstraite extends JPanel {
         gbc.gridx = 0;
         gbc.weightx = 0.3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(new JLabel(contact.getNom()), gbc);
+        JLabel lblNom = new JLabel(contact.getNom());
+        lblNom.setFont(Style.POLICE_GRAS);
+        add(lblNom, gbc);
 
         // Adresse email
         gbc.gridx = 1;
         gbc.weightx = 0.4;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(new JLabel(contact.getEmail()), gbc);
+        JLabel lblEmail = new JLabel(contact.getEmail());
+        lblEmail.setForeground(Style.TEXTE_DISCRET);
+        add(lblEmail, gbc);
 
         // Bouton Copier
         gbc.gridx = 2;
         gbc.weightx = 0.1;
         gbc.fill = GridBagConstraints.NONE;
         JButton btnCopier = new JButton("Copier");
+        StyleBouton.styliserBoutonCompact(btnCopier);
         btnCopier.addActionListener(e -> PressePapiers.copier(btnCopier, contact.getEmail()));
         add(btnCopier, gbc);
     }

@@ -1,9 +1,8 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
+import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.ListeDiffusionVue;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
@@ -36,7 +35,6 @@ public class PanneauDroit extends JPanel{
         this.controleur = controleur;
 
         setLayout(new GridBagLayout());
-        setPreferredSize(new Dimension(Style.LARGEUR_PANNEAU_DROIT, 0)); // Limité à une largeur fixe
         setBackground(Style.FOND_PANNEAU_LATERAL);
 
         afficherVide();
@@ -56,6 +54,8 @@ public class PanneauDroit extends JPanel{
 
         JLabel lblInfo = new JLabel("<html><center>Sélectionnez un élément<br>pour afficher ses détails</center></html>");
         lblInfo.setForeground(Style.TEXTE_DISCRET);
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
         add(lblInfo, gbc);
 
         revalidate();
@@ -74,6 +74,8 @@ public class PanneauDroit extends JPanel{
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.NORTH;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(contenu, gbc);
 

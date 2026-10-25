@@ -1,23 +1,28 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
+
 import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 /**
  * La classe <code>FenetreFormulaireContact</code> est le formulaire de création et de
  * modification d'un contact. Il permet de saisir un nom, une adresse email et de
  * cocher les étiquettes associées au contact.
  *
- * @version 1.0
+ * @version 1.1
  * @author Nkouka Ildevert
  */
 public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
@@ -33,6 +38,17 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
     private JTextField txtEmail;
 
     /**
+     * Contrôleur, utilisé pour comparer les étiquettes par identifiant et pour créer une
+     * étiquette depuis ce formulaire.
+     */
+    private final Controleur controleur;
+
+    /**
+     * Panneau qui contient les cases à cocher des étiquettes.
+     */
+    private final JPanel panelEtiquettes = new JPanel(new GridLayout(0, 2, 5, 5));
+
+    /**
      * Étiquettes proposées, dans l'ordre d'affichage.
      */
     private final List<EtiquetteVue> etiquettesProposees = new ArrayList<>();
@@ -45,7 +61,7 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
     /**
      * Construit le formulaire et pré-remplit ses champs.
      *
-     * @param controleur le contrôleur (sert à comparer les étiquettes)
+     * @param controleur le contrôleur, utilisé pour comparer les étiquettes et en créer de nouvelles
      * @param parent la fenêtre parente
      * @param titre le titre de la boîte de dialogue
      * @param nomInitial le nom à afficher au départ (vide pour une création)
@@ -55,7 +71,9 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
      */
     public FenetreFormulaireContact(Controleur controleur, Frame parent, String titre, String nomInitial, String emailInitial,
                                   List<EtiquetteVue> toutesLesEtiquettes, List<EtiquetteVue> etiquettesDuContact) {
-        super(parent, titre, 400, 480);
+        super(parent, titre, 420, 440);
+        this.controleur = controleur;
+        panelEtiquettes.setBackground(Style.FOND_BLANC);
 
         // Nom
         ajouter(new JLabel("Nom :"));
@@ -68,27 +86,67 @@ public class FenetreFormulaireContact extends FenetreDialogueAbstraite {
         ajouter(txtEmail);
 
         // Étiquettes à cocher
-        ajouter(new JLabel("Étiquettes :"));
-
-        JPanel panelEtiquettes = new JPanel(new GridLayout(0, 2, 5, 5));
+        JPanel enteteEtiquettes = new JPanel(new BorderLayout());
+        enteteEtiquettes.setOpaque(false);
+        enteteEtiquettes.add(new JLabel("Étiquettes :"), BorderLayout.WEST);
+        JButton btnNouvelleEtiquette = new JButton("+ Étiquette");
+        StyleBouton.styliserBoutonCompact(btnNouvelleEtiquette);
+        btnNouvelleEtiquette.addActionListener(e -> creerEtiquette());
+        enteteEtiquettes.add(btnNouvelleEtiquette, BorderLayout.EAST);
+        ajouter(enteteEtiquettes);
 
         if (toutesLesEtiquettes != null) {
             for (EtiquetteVue etiquette : toutesLesEtiquettes) {
-                JCheckBox cb = new JCheckBox(etiquette.getNom());
-                cb.setSelected(controleur.contientEtiquette(etiquettesDuContact, etiquette));
-                etiquettesProposees.add(etiquette);
-                casesEtiquettes.add(cb);
-                panelEtiquettes.add(cb);
+                ajouterEtiquetteProposee(etiquette,
+                    controleur.contientEtiquette(etiquettesDuContact, etiquette));
             }
         }
 
         JScrollPane scrollPane = new JScrollPane(panelEtiquettes);
-        scrollPane.setPreferredSize(new Dimension(320, 200));
-        scrollPane.setMinimumSize(new Dimension(320, 200));
+        scrollPane.setPreferredSize(new Dimension(340, 150));
         ajouter(scrollPane);
 
         // Boutons de validation
         ajouterBoutonsValidation();
+    }
+
+    /**
+     * Ajoute une case à cocher pour une étiquette.
+     *
+     * @param etiquette l'étiquette proposée
+     * @param cochee <code>true</code> si la case doit être cochée au départ
+     */
+    private void ajouterEtiquetteProposee(EtiquetteVue etiquette, boolean cochee) {
+        JCheckBox cb = new JCheckBox(etiquette.getNom());
+        StyleComposant.styliserCase(cb);
+        cb.setSelected(cochee);
+        etiquettesProposees.add(etiquette);
+        casesEtiquettes.add(cb);
+        panelEtiquettes.add(cb);
+    }
+
+    /**
+     * Ouvre le formulaire de création d'une étiquette. Si elle est validée, l'étiquette est
+     * créée par le contrôleur, ajoutée à la liste proposée et cochée pour ce contact.
+     */
+    private void creerEtiquette() {
+        Frame fenetre = (getOwner() instanceof Frame) ? (Frame) getOwner() : null;
+        FenetreFormulaireEtiquette form = new FenetreFormulaireEtiquette(
+            controleur, fenetre, "Créer une nouvelle étiquette", "", null, null
+        );
+
+        FenetreDialogueAbstraite.ouvrirFormulaire(form, f -> {
+            EtiquetteVue creee = controleur.creerEtiquette(f.getLibelleSaisi());
+            if (creee != null) {
+                ajouterEtiquetteProposee(creee, true);
+                panelEtiquettes.revalidate();
+                panelEtiquettes.repaint();
+
+                // La nouvelle case est ajoutée en bas de la liste : on fait défiler la zone jusqu'à elle
+                JCheckBox nouvelle = casesEtiquettes.get(casesEtiquettes.size() - 1);
+                SwingUtilities.invokeLater(() -> panelEtiquettes.scrollRectToVisible(nouvelle.getBounds()));
+            }
+        });
     }
 
     /**

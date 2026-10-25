@@ -16,10 +16,10 @@ JVMFLAGS = -cp "bin:${DRIVER}"
 atoz.jar : ${BDIR}/Main.class
 	jar cvfe atoz.jar ${PACKAGE}.Main -C bin .
 
-${BDIR}/Main.class : ${SDIR}/Main.java ${BDIR}/controleur/CarnetListener.class ${BDIR}/model/Connexion.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/ControleurFormulaireContact.class ${BDIR}/controleur/ControleurFormulaireEtiquette.class ${BDIR}/controleur/ControleurFormulaireListe.class ${BDIR}/controleur/ControleurNavigation.class ${BDIR}/vue/Fenetre.class
+${BDIR}/Main.class : ${SDIR}/Main.java ${BDIR}/controleur/CarnetListener.class ${BDIR}/model/Connexion.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/ControleurFormulaireContact.class ${BDIR}/controleur/ControleurFormulaireEtiquette.class ${BDIR}/controleur/ControleurFormulaireListe.class ${BDIR}/controleur/ControleurNavigation.class ${BDIR}/vue/Fenetre.class ${BDIR}/vue/StyleComposant.class
 	${JC} ${JCFLAGS} ${SDIR}/Main.java
 
-${BDIR}/vue/ChampRecherche.class : ${SDIR}/vue/ChampRecherche.java
+${BDIR}/vue/ChampRecherche.class : ${SDIR}/vue/ChampRecherche.java ${BDIR}/vue/Style.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/ChampRecherche.java
 
 ${BDIR}/vue/CritereData.class : ${SDIR}/vue/CritereData.java ${BDIR}/controleur/CritereVue.class ${BDIR}/controleur/EtiquetteVue.class
@@ -31,28 +31,28 @@ ${BDIR}/vue/EcouteurClicLigne.class : ${SDIR}/vue/EcouteurClicLigne.java ${BDIR}
 ${BDIR}/vue/EcouteurFermeture.class : ${SDIR}/vue/EcouteurFermeture.java
 	${JC} ${JCFLAGS} ${SDIR}/vue/EcouteurFermeture.java
 
-${BDIR}/vue/Fenetre.class : ${SDIR}/vue/Fenetre.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/vue/EcouteurFermeture.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/PanneauCentral.class ${BDIR}/vue/PanneauDroit.class ${BDIR}/vue/PanneauGauche.class
+${BDIR}/vue/Fenetre.class : ${SDIR}/vue/Fenetre.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/vue/EcouteurFermeture.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/PanneauCentral.class ${BDIR}/vue/PanneauDroit.class ${BDIR}/vue/PanneauGauche.class ${BDIR}/vue/Style.class ${BDIR}/vue/ZoneDefilante.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/Fenetre.java
 
-${BDIR}/vue/FenetreDialogueAbstraite.class : ${SDIR}/vue/FenetreDialogueAbstraite.java ${BDIR}/vue/FormulaireListener.class ${BDIR}/vue/Style.class
+${BDIR}/vue/FenetreDialogueAbstraite.class : ${SDIR}/vue/FenetreDialogueAbstraite.java ${BDIR}/vue/FormulaireListener.class ${BDIR}/vue/Style.class ${BDIR}/vue/StyleBouton.class ${BDIR}/vue/StyleComposant.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/FenetreDialogueAbstraite.java
 
-${BDIR}/vue/FenetreFormulaireContact.class : ${SDIR}/vue/FenetreFormulaireContact.java ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/FenetreDialogueAbstraite.class
+${BDIR}/vue/FenetreFormulaireContact.class : ${SDIR}/vue/FenetreFormulaireContact.java ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/FenetreDialogueAbstraite.class ${BDIR}/vue/Style.class ${BDIR}/vue/StyleBouton.class ${BDIR}/vue/StyleComposant.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/FenetreFormulaireContact.java
 
-${BDIR}/vue/FenetreFormulaireEtiquette.class : ${SDIR}/vue/FenetreFormulaireEtiquette.java ${BDIR}/controleur/Controleur.class ${BDIR}/vue/FenetreDialogueAbstraite.class
+${BDIR}/vue/FenetreFormulaireEtiquette.class : ${SDIR}/vue/FenetreFormulaireEtiquette.java ${BDIR}/controleur/Controleur.class ${BDIR}/vue/FenetreDialogueAbstraite.class ${BDIR}/vue/Style.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/FenetreFormulaireEtiquette.java
 
-${BDIR}/vue/FenetreFormulaireListeDiffusion.class : ${SDIR}/vue/FenetreFormulaireListeDiffusion.java ${BDIR}/vue/CritereData.class ${BDIR}/controleur/CritereVue.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/FenetreDialogueAbstraite.class
+${BDIR}/vue/FenetreFormulaireListeDiffusion.class : ${SDIR}/vue/FenetreFormulaireListeDiffusion.java ${BDIR}/vue/CritereData.class ${BDIR}/controleur/CritereVue.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/FenetreDialogueAbstraite.class ${BDIR}/vue/StyleBouton.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/FenetreFormulaireListeDiffusion.java
 
 ${BDIR}/vue/FormulaireListener.class : ${SDIR}/vue/FormulaireListener.java
 	${JC} ${JCFLAGS} ${SDIR}/vue/FormulaireListener.java
 
-${BDIR}/vue/LigneContactAbstraite.class : ${SDIR}/vue/LigneContactAbstraite.java ${BDIR}/controleur/ContactVue.class ${BDIR}/vue/EcouteurClicLigne.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/PressePapiers.class ${BDIR}/vue/Style.class
+${BDIR}/vue/LigneContactAbstraite.class : ${SDIR}/vue/LigneContactAbstraite.java ${BDIR}/controleur/ContactVue.class ${BDIR}/vue/EcouteurClicLigne.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/PressePapiers.class ${BDIR}/vue/Style.class ${BDIR}/vue/StyleBouton.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/LigneContactAbstraite.java
 
-${BDIR}/vue/LigneContact.class : ${SDIR}/vue/LigneContact.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/LigneContactAbstraite.class ${BDIR}/vue/NavigationListener.class
+${BDIR}/vue/LigneContact.class : ${SDIR}/vue/LigneContact.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/LigneContactAbstraite.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/Style.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/LigneContact.java
 
 ${BDIR}/vue/LigneListeDiffusion.class : ${SDIR}/vue/LigneListeDiffusion.java ${BDIR}/vue/LigneContactAbstraite.class ${BDIR}/vue/NavigationListener.class
@@ -61,19 +61,19 @@ ${BDIR}/vue/LigneListeDiffusion.class : ${SDIR}/vue/LigneListeDiffusion.java ${B
 ${BDIR}/vue/NavigationListener.class : ${SDIR}/vue/NavigationListener.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/controleur/ListeDiffusionVue.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/NavigationListener.java
 
-${BDIR}/vue/PanneauCentral.class : ${SDIR}/vue/PanneauCentral.java ${BDIR}/vue/ChampRecherche.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/PanneauListeDiffusion.class ${BDIR}/vue/PanneauRepertoire.class ${BDIR}/vue/Style.class
+${BDIR}/vue/PanneauCentral.class : ${SDIR}/vue/PanneauCentral.java ${BDIR}/vue/ChampRecherche.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/PanneauListeDiffusion.class ${BDIR}/vue/PanneauRepertoire.class ${BDIR}/vue/Style.class ${BDIR}/vue/StyleComposant.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/PanneauCentral.java
 
 ${BDIR}/vue/PanneauDroit.class : ${SDIR}/vue/PanneauDroit.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/PanneauOperationsContact.class ${BDIR}/vue/PanneauOperationsEtiquette.class ${BDIR}/vue/PanneauOperationsListeDiffusion.class ${BDIR}/vue/Style.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/PanneauDroit.java
 
-${BDIR}/vue/PanneauGauche.class : ${SDIR}/vue/PanneauGauche.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/FenetreDialogueAbstraite.class ${BDIR}/vue/FenetreFormulaireContact.class ${BDIR}/vue/FenetreFormulaireEtiquette.class ${BDIR}/vue/FenetreFormulaireListeDiffusion.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/Style.class
+${BDIR}/vue/PanneauGauche.class : ${SDIR}/vue/PanneauGauche.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/controleur/EtiquetteVue.class ${BDIR}/vue/FenetreDialogueAbstraite.class ${BDIR}/vue/FenetreFormulaireContact.class ${BDIR}/vue/FenetreFormulaireEtiquette.class ${BDIR}/vue/FenetreFormulaireListeDiffusion.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/NavigationListener.class ${BDIR}/vue/Style.class ${BDIR}/vue/StyleBouton.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/PanneauGauche.java
 
-${BDIR}/vue/PanneauListeDiffusion.class : ${SDIR}/vue/PanneauListeDiffusion.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/vue/LigneListeDiffusion.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/PressePapiers.class ${BDIR}/vue/Style.class
+${BDIR}/vue/PanneauListeDiffusion.class : ${SDIR}/vue/PanneauListeDiffusion.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/vue/LigneListeDiffusion.class ${BDIR}/controleur/ListeDiffusionVue.class ${BDIR}/vue/PressePapiers.class ${BDIR}/vue/Style.class ${BDIR}/vue/StyleBouton.class ${BDIR}/vue/StyleComposant.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/PanneauListeDiffusion.java
 
-${BDIR}/vue/PanneauOperationsAbstrait.class : ${SDIR}/vue/PanneauOperationsAbstrait.java ${BDIR}/controleur/Controleur.class ${BDIR}/vue/FenetreDialogueAbstraite.class ${BDIR}/vue/Style.class
+${BDIR}/vue/PanneauOperationsAbstrait.class : ${SDIR}/vue/PanneauOperationsAbstrait.java ${BDIR}/controleur/Controleur.class ${BDIR}/vue/FenetreDialogueAbstraite.class ${BDIR}/vue/Style.class ${BDIR}/vue/StyleBouton.class
 	${JC} ${JCFLAGS} ${SDIR}/vue/PanneauOperationsAbstrait.java
 
 ${BDIR}/vue/PanneauOperationsContact.class : ${SDIR}/vue/PanneauOperationsContact.java ${BDIR}/controleur/ContactVue.class ${BDIR}/controleur/Controleur.class ${BDIR}/vue/FenetreDialogueAbstraite.class ${BDIR}/vue/FenetreFormulaireContact.class ${BDIR}/vue/PanneauOperationsAbstrait.class
@@ -93,6 +93,15 @@ ${BDIR}/vue/PressePapiers.class : ${SDIR}/vue/PressePapiers.java
 
 ${BDIR}/vue/Style.class : ${SDIR}/vue/Style.java
 	${JC} ${JCFLAGS} ${SDIR}/vue/Style.java
+
+${BDIR}/vue/StyleBouton.class : ${SDIR}/vue/StyleBouton.java ${BDIR}/vue/Style.class
+	${JC} ${JCFLAGS} ${SDIR}/vue/StyleBouton.java
+
+${BDIR}/vue/StyleComposant.class : ${SDIR}/vue/StyleComposant.java ${BDIR}/vue/Style.class ${BDIR}/vue/StyleBouton.class
+	${JC} ${JCFLAGS} ${SDIR}/vue/StyleComposant.java
+
+${BDIR}/vue/ZoneDefilante.class : ${SDIR}/vue/ZoneDefilante.java
+	${JC} ${JCFLAGS} ${SDIR}/vue/ZoneDefilante.java
 
 ${BDIR}/controleur/CarnetListener.class : ${SDIR}/controleur/CarnetListener.java
 	${JC} ${JCFLAGS} ${SDIR}/controleur/CarnetListener.java

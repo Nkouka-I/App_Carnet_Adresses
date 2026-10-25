@@ -49,7 +49,7 @@ public class Contact implements ContactVue{
      *
      * @param nom le nom du contact
      * @param email l'adresse mail du contact
-     * @throws ModeleExeption si le nom ou l'adresse mail est invalide
+     * @throws ModeleException si le nom ou l'adresse mail est invalide
      */
     public Contact(String nom , String email) throws ModeleException{
         this(0,nom,email); // Constructeur simplifiéé c'est la BD qui donnera l'id
@@ -62,7 +62,7 @@ public class Contact implements ContactVue{
      * @param id l'identifiant du contact
      * @param nom le nom du contact
      * @param email l'adresse mail du contact
-     * @throws ModeleExeption si le nom ou l'adresse mail est invalide
+     * @throws ModeleException si le nom ou l'adresse mail est invalide
      */
     public Contact(int id , String nom , String email) throws ModeleException{
         this.id = id;
@@ -104,7 +104,7 @@ public class Contact implements ContactVue{
      * de ligne et doit contenir au moins une lettre ou un chiffre.
      *
      * @param nom le nouveau nom
-     * @throws ModeleExeption si le nom ne respecte pas ces règles
+     * @throws ModeleException si le nom ne respecte pas ces règles
      */
     public void setNom(String nom) throws ModeleException{
         if (nom == null || nom.isEmpty()){

@@ -96,7 +96,7 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
         JButton btnModifierCritere = new JButton("Modifier sélectionné");
         
         JButton btnSupprimerCritere = new JButton("Supprimer le critère");
-        Style.styliserBoutonDanger(btnSupprimerCritere);
+        StyleBouton.styliserBoutonDanger(btnSupprimerCritere);
 
         JPanel panelAjoutCritere = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelAjoutCritere.add(comboEtiquettes);
@@ -114,6 +114,7 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
             boolean estInclus = chkInclus.isSelected();
             if (etiquetteChoisie != null && critereAcceptable(etiquetteChoisie, estInclus, -1)) {
                 modelCriteres.addElement(new CritereData(etiquetteChoisie, estInclus));
+                listCriteres.ensureIndexIsVisible(modelCriteres.getSize() - 1);
             }
         });
 
@@ -160,7 +161,7 @@ public class FenetreFormulaireListeDiffusion extends FenetreDialogueAbstraite {
     private boolean critereAcceptable(EtiquetteVue etiquette, boolean inclus, int indexIgnore) {
         for (int i = 0; i < modelCriteres.size(); i++) {
             CritereData c = modelCriteres.get(i);
-            if (i != indexIgnore && c.getEtiquette().equals(etiquette)) {
+            if (i != indexIgnore && c.getEtiquette() == etiquette) {
                 if (c.isInclus() == inclus) {
                     afficherErreur("Critère en double", "Un critère identique existe déjà pour cette étiquette.");
                 } else {

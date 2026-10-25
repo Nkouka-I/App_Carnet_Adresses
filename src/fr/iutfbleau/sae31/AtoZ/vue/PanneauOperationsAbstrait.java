@@ -95,6 +95,7 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
         gbc.insets = new Insets(20, 10, 5, 10);
 
         JButton btnModifier = new JButton(texte);
+        StyleBouton.styliserBoutonPrincipal(btnModifier);
         btnModifier.addActionListener(action);
         add(btnModifier, gbc);
     }
@@ -112,6 +113,7 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
 
         JLabel lblTitre = new JLabel(texte, alignement);
         lblTitre.setFont(Style.POLICE_TITRE);
+        lblTitre.setForeground(Style.TEXTE_PRINCIPAL);
         add(lblTitre, gbc);
     }
 
@@ -142,7 +144,7 @@ public abstract class PanneauOperationsAbstrait extends JPanel {
     protected void ajouterBoutonSuppression(String texteBouton, String messageConfirmation,
                                             Runnable actionAEffectuer) {
         JButton btnSupprimer = new JButton(texteBouton);
-        Style.styliserBoutonDanger(btnSupprimer);
+        StyleBouton.styliserBoutonDanger(btnSupprimer);
 
         btnSupprimer.addActionListener(e -> {
 

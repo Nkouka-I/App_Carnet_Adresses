@@ -29,7 +29,7 @@ public class LigneContact extends LigneContactAbstraite {
             StringBuilder etiquettes = new StringBuilder();
             for (EtiquetteVue etiquette : contact.getEtiquettes()) {
                 if (etiquettes.length() > 0) {
-                    etiquettes.append(' ');
+                    etiquettes.append("  ·  ");
                 }
                 etiquettes.append(etiquette.getNom());
             }
@@ -38,7 +38,9 @@ public class LigneContact extends LigneContactAbstraite {
             gbc.gridy = 1;
             gbc.weightx = 0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
-            add(new JLabel("[" + etiquettes + "]"), gbc);
+            JLabel lblEtiquettes = new JLabel(etiquettes.toString());
+            lblEtiquettes.setForeground(Style.VIOLET_FONCE);
+            add(lblEtiquettes, gbc);
         }
     }
 }

@@ -3,6 +3,7 @@ package fr.iutfbleau.sae31.AtoZ;
 import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
 import fr.iutfbleau.sae31.AtoZ.model.Connexion;
 import fr.iutfbleau.sae31.AtoZ.vue.Fenetre;
+import fr.iutfbleau.sae31.AtoZ.vue.StyleComposant;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -24,18 +25,14 @@ public class Main {
     private Main() { }
 
     /**
-     * Point d'entrée du programme. Applique le look and feel du système d'exploitation
-     * puis affiche la fenêtre principale.
+     * Point d'entrée du programme. Applique style
+     * des composants, puis affiche la fenêtre principale.
      *
      * @param args les arguments de la ligne de commande (non utilisés)
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            StyleComposant.installer();
 
             new Fenetre(creerControleur()).setVisible(true);
         });

@@ -1,16 +1,15 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
-
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import java.awt.Frame;
 import java.awt.Component;
-import java.awt.Window;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Window;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * La classe <code>FenetreDialogueAbstraite</code> est la base commune de tous les
@@ -40,6 +39,16 @@ public abstract class FenetreDialogueAbstraite extends JDialog {
     private int ligne = 0;
 
     /**
+     * Largeur minimale de la boîte de dialogue, en pixels.
+     */
+    private final int largeurMin;
+
+    /**
+     * Hauteur minimale de la boîte de dialogue, en pixels.
+     */
+    private final int hauteurMin;
+
+    /**
      * Construit une boîte de dialogue modale centrée sur sa fenêtre parente.
      *
      * @param parent la fenêtre parente
@@ -51,8 +60,11 @@ public abstract class FenetreDialogueAbstraite extends JDialog {
         super(parent, titre, true); // bloquant
 
         setSize(largeur, hauteur);
+        this.largeurMin = largeur;
+        this.hauteurMin = hauteur;
         setLocationRelativeTo(parent);
         setLayout(new GridBagLayout());
+        getContentPane().setBackground(Style.FOND_CENTRAL);
 
         gbc = new GridBagConstraints();
         gbc.insets = Style.MARGE_FORMULAIRE;
@@ -76,11 +88,13 @@ public abstract class FenetreDialogueAbstraite extends JDialog {
      * "Valider" appelle {@link #validerFormulaire()}.
      */
     protected void ajouterBoutonsValidation() {
-        JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        panelBoutons.setOpaque(false);
 
         JButton btnAnnuler = new JButton("Annuler");
         JButton btnValider = new JButton("Valider");
-        Style.styliserBoutonPrincipal(btnValider);
+        StyleBouton.styliserBoutonSecondaire(btnAnnuler);
+        StyleBouton.styliserBoutonValidation(btnValider);
 
         panelBoutons.add(btnAnnuler);
         panelBoutons.add(btnValider);
@@ -91,6 +105,18 @@ public abstract class FenetreDialogueAbstraite extends JDialog {
 
         // Action de validation gérée par les classes fille
         btnValider.addActionListener(e -> validerFormulaire());
+
+        // Les boutons de validation sont ajoutés en dernier : on met en forme tout le formulaire
+        StyleComposant.moderniser(getContentPane());
+
+        // La boîte s'agrandit si son contenu est trop grand pour la taille demandée
+        // (police plus grosse, par exemple), afin que rien ne soit coupé.
+        // addNotify() crée d'abord la fenêtre native : sans cela, la taille de la barre de
+        // titre et des bordures est inconnue au premier affichage et le contenu est écrasé.
+        addNotify();
+        pack();
+        setSize(Math.max(getWidth(), largeurMin), Math.max(getHeight(), hauteurMin));
+        setLocationRelativeTo(getOwner());
     }
 
     /**
