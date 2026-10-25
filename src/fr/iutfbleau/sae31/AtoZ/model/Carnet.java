@@ -16,7 +16,7 @@ import java.util.List;
  * se font à partir de leur identifiant en base de données.
  *
  * @version 1.0
- * @author Tiago Alves--Le Du
+ * @author Tiago Alves--Le Du , Ildevert Nkouka
  */
 public class Carnet {
 
@@ -419,6 +419,62 @@ public class Carnet {
     public ListeDiffusionVue listeActuelle(ListeDiffusionVue vue) {
         ListeDiffusion l = (vue == null) ? null : modeleDe(vue);
         return (l == null) ? null : listeDeId(l.getId());
+    }
+
+    /**
+     * Garde les contacts qui correspondent à une recherche : chaque mot saisi doit se trouver
+     * dans le nom, l'adresse mail ou une étiquette du contact, sans tenir compte de la casse
+     * ni des accents.
+     *
+     * @param contacts les contacts parmi lesquels chercher
+     * @param recherche le texte saisi (vide pour tout garder)
+     * @return une nouvelle liste modifiable des contacts retenus
+     */
+    public List<ContactVue> rechercher(List<ContactVue> contacts, String recherche) {
+        List<ContactVue> retenus = new ArrayList<>();
+        String[] mots = Texte.sansAccents(recherche).split("\\s+");
+
+        for (ContactVue contact : contacts) {
+            if (recherche.isEmpty()) {
+                retenus.add(contact);
+                continue;
+            }
+
+            StringBuilder texte = new StringBuilder(contact.getNom()).append(' ').append(contact.getEmail());
+            for (EtiquetteVue etiquette : contact.getEtiquettes()) {
+                texte.append(' ').append(etiquette.getNom());
+            }
+            String cible = Texte.sansAccents(texte.toString());
+
+            boolean tousTrouves = true;
+            for (String mot : mots) {
+                if (!cible.contains(mot)) {
+                    tousTrouves = false;
+                    break;
+                }
+            }
+            if (tousTrouves) {
+                retenus.add(contact);
+            }
+        }
+        return retenus;
+    }
+
+    /**
+     * Renvoie les contacts triés par la base de données (requête SQL avec <code>ORDER BY</code>),
+     * éventuellement limités à ceux qui possèdent une étiquette.
+     *
+     * @param filtre l'étiquette que les contacts doivent avoir (<code>null</code> pour tous les contacts)
+     * @param ordre l'ordre de tri
+     * @return les contacts triés (vide si l'étiquette est introuvable)
+     * @throws ModeleException si la lecture de la base de données échoue
+     */
+    public List<ContactVue> contactsTries(EtiquetteVue filtre, OrdreTri ordre) throws ModeleException {
+        Etiquette etiquette = (filtre == null) ? null : modeleDe(filtre);
+        if (filtre != null && etiquette == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<ContactVue>(contactDAO.trouverTries(etiquette, ordre));
     }
 
 }

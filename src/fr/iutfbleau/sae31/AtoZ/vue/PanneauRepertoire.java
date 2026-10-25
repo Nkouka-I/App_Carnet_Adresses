@@ -1,7 +1,7 @@
 package fr.iutfbleau.sae31.AtoZ.vue;
 
-import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.Controleur;
+import fr.iutfbleau.sae31.AtoZ.controleur.ContactVue;
 import fr.iutfbleau.sae31.AtoZ.controleur.EtiquetteVue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -52,7 +52,7 @@ public class PanneauRepertoire extends JPanel {
     /**
      * Liste déroulante du choix de tri.
      */
-    private final JComboBox<OrdreTri> comboTri = new JComboBox<>(OrdreTri.values());
+    private final JComboBox<String> comboTri = new JComboBox<>();
 
     /**
      * Message rappelant le filtre actif (masqué quand il n'y en a pas).
@@ -85,6 +85,11 @@ public class PanneauRepertoire extends JPanel {
     private EtiquetteVue filtre;
 
     /**
+     * Contacts du filtre actif, triés par la base de données (avant application de la recherche).
+     */
+    private List<ContactVue> contactsTries = new ArrayList<>();
+
+    /**
      * Contact mis en évidence (<code>null</code> si aucun).
      */
     private ContactVue contactSelectionne;
@@ -98,6 +103,9 @@ public class PanneauRepertoire extends JPanel {
     public PanneauRepertoire(NavigationListener listener, Controleur controleur) {
         this.listener = listener;
         this.controleur = controleur;
+        for (String libelle : controleur.getOrdresTri()) {
+            comboTri.addItem(libelle);
+        }
 
         setLayout(new GridBagLayout());
         setBackground(Style.FOND_CONTENU);
@@ -143,7 +151,10 @@ public class PanneauRepertoire extends JPanel {
         panelHaut.add(new JLabel("Trier :"), gbcHaut);
 
         comboTri.setToolTipText("Choisissez l'ordre d'affichage des contacts");
-        comboTri.addActionListener(e -> reconstruire(true));
+        comboTri.addActionListener(e -> {
+            chargerContacts();
+            reconstruire(true);
+        });
         gbcHaut.gridx = 3;
         gbcHaut.insets = new Insets(0, 0, 10, 0);
         panelHaut.add(comboTri, gbcHaut);
@@ -183,6 +194,7 @@ public class PanneauRepertoire extends JPanel {
         this.filtre = filtre;
 
         txtRecherche.setText("");
+        chargerContacts();
         reconstruire(true);
     }
 
@@ -194,6 +206,7 @@ public class PanneauRepertoire extends JPanel {
      */
     public void actualiser(EtiquetteVue filtre) {
         this.filtre = filtre;
+        chargerContacts();
         reconstruire(false);
     }
 
@@ -241,18 +254,26 @@ public class PanneauRepertoire extends JPanel {
     }
 
     /**
+     * Demande à la base de données les contacts du filtre actif, dans l'ordre de tri choisi.
+     * Cette requête n'est faite que lorsque le filtre, le tri ou les données changent, pas à
+     * chaque frappe dans la recherche.
+     */
+    private void chargerContacts() {
+        contactsTries = controleur.getContactsTries(filtre, comboTri.getSelectedIndex());
+    }
+
+    /**
      * Reconstruit la liste des contacts à partir des données actuelles, du filtre, de la
      * recherche et du tri.
      *
      * @param remonter <code>true</code> pour remettre la liste en haut
      */
     private void reconstruire(boolean remonter) {
-        List<ContactVue> tous = controleur.getContacts(filtre);
+        List<ContactVue> tous = contactsTries;
         String recherche = txtRecherche.getText().trim();
         btnEffacer.setEnabled(!txtRecherche.getText().isEmpty());
 
-        List<ContactVue> affiches = filtrer(tous, recherche);
-        affiches.sort(((OrdreTri) comboTri.getSelectedItem()).getComparateur());
+        List<ContactVue> affiches = controleur.rechercher(tous, recherche);
 
         lblFiltre.setText(filtre == null ? "" : "Contacts avec l'étiquette « " + filtre.getNom() + " »");
         lblFiltre.setVisible(filtre != null);
@@ -300,45 +321,6 @@ public class PanneauRepertoire extends JPanel {
         if (remonter) {
             SwingUtilities.invokeLater(() -> defilement.getVerticalScrollBar().setValue(0));
         }
-    }
-
-    /**
-     * Garde les contacts qui correspondent à la recherche : chaque mot saisi doit se
-     * trouver dans le nom, l'adresse ou une étiquette du contact, sans tenir compte de la
-     * casse ni des accents.
-     *
-     * @param contacts les contacts à filtrer
-     * @param recherche le texte saisi (vide pour tout garder)
-     * @return une nouvelle liste modifiable des contacts retenus
-     */
-    private List<ContactVue> filtrer(List<ContactVue> contacts, String recherche) {
-        List<ContactVue> retenus = new ArrayList<>();
-        String[] mots = Texte.sansAccents(recherche).split("\\s+");
-
-        for (ContactVue contact : contacts) {
-            if (recherche.isEmpty()) {
-                retenus.add(contact);
-                continue;
-            }
-
-            StringBuilder texte = new StringBuilder(contact.getNom()).append(' ').append(contact.getEmail());
-            for (EtiquetteVue etiquette : contact.getEtiquettes()) {
-                texte.append(' ').append(etiquette.getNom());
-            }
-            String cible = Texte.sansAccents(texte.toString());
-
-            boolean tousTrouves = true;
-            for (String mot : mots) {
-                if (!cible.contains(mot)) {
-                    tousTrouves = false;
-                    break;
-                }
-            }
-            if (tousTrouves) {
-                retenus.add(contact);
-            }
-        }
-        return retenus;
     }
 
     /**

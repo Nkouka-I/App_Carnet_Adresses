@@ -9,7 +9,7 @@ import fr.iutfbleau.sae31.AtoZ.vue.FormulaireListener;
  * les critères (étiquettes incluses ou exclues) saisis par l'utilisateur.
  *
  * @version 1.0
- * @author  Ildevert Nkouka
+ * @author Tiago Alves--Le Du
  */
 public class ControleurFormulaireListe implements FormulaireListener<FenetreFormulaireListeDiffusion> {
 

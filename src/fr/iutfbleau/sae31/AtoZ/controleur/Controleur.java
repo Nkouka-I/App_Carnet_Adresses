@@ -7,6 +7,7 @@ import fr.iutfbleau.sae31.AtoZ.model.EtiquetteDAO;
 import fr.iutfbleau.sae31.AtoZ.model.ListeDiffusion;
 import fr.iutfbleau.sae31.AtoZ.model.ListeDiffusionDAO;
 import fr.iutfbleau.sae31.AtoZ.model.ModeleException;
+import fr.iutfbleau.sae31.AtoZ.model.OrdreTri;
 import fr.iutfbleau.sae31.AtoZ.model.Carnet;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import javax.swing.JOptionPane;
  * <code>meme...</code> et <code>contient...</code> plutôt qu'avec <code>equals</code>.
  *
  * @version 1.0
- * @author Ildevert Nkouka, Tiago Alves--Le Du 
+ * @author Tiago Alves--Le Du, Ildevert Nkouka
  */
 public class Controleur {
 
@@ -100,6 +101,49 @@ public class Controleur {
     public List<ContactVue> getContacts(EtiquetteVue filtre) {
         if (filtre == null) { return carnet.getContacts(); }
         return carnet.contactsAvecEtiquette(filtre);
+    }
+
+    /**
+     * Renvoie les libellés des ordres de tri proposés pour les contacts, dans l'ordre où ils
+     * doivent être affichés.
+     *
+     * @return les libellés des ordres de tri
+     */
+    public List<String> getOrdresTri() {
+        List<String> libelles = new ArrayList<>();
+        for (OrdreTri ordre : OrdreTri.values()) { libelles.add(ordre.toString()); }
+        return libelles;
+    }
+
+    /**
+     * Renvoie les contacts triés par la base de données, éventuellement limités à ceux qui
+     * possèdent une étiquette. En cas d'erreur, celle-ci est signalée et une liste vide est
+     * renvoyée.
+     *
+     * @param filtre l'étiquette que les contacts doivent avoir (<code>null</code> pour tous les contacts)
+     * @param ordre la position de l'ordre de tri choisi dans la liste de <code>getOrdresTri</code>
+     * @return les contacts triés
+     */
+    public List<ContactVue> getContactsTries(EtiquetteVue filtre, int ordre) {
+        OrdreTri[] ordres = OrdreTri.values();
+        OrdreTri choisi = (ordre >= 0 && ordre < ordres.length) ? ordres[ordre] : ordres[0];
+        try {
+            return carnet.contactsTries(filtre, choisi);
+        } catch (ModeleException e) {
+            signaler(e);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Garde les contacts qui correspondent à une recherche, en conservant leur ordre.
+     *
+     * @param contacts les contacts parmi lesquels chercher
+     * @param recherche le texte saisi (vide pour tout garder)
+     * @return une nouvelle liste des contacts retenus
+     */
+    public List<ContactVue> rechercher(List<ContactVue> contacts, String recherche) {
+        return carnet.rechercher(contacts, recherche);
     }
 
     // --- Comparaisons par identifiant (les objets sont recréés à chaque rechargement) ---

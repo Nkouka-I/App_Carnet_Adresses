@@ -1,4 +1,4 @@
-package fr.iutfbleau.sae31.AtoZ.vue;
+package fr.iutfbleau.sae31.AtoZ.model;
 
 /**
  * La classe <code>Texte</code> regroupe un petit outil de comparaison de textes : la mise
@@ -6,7 +6,7 @@ package fr.iutfbleau.sae31.AtoZ.vue;
  * « Chloé », « chloe » et « CHLOÉ » soient considérés comme identiques.
  *
  * @version 1.0
- * @author Nkouka Ildevert
+ * @author Ildevert Nkouka , Tiago Alves--Le Du
  */
 public final class Texte {
 

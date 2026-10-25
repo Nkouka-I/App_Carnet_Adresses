@@ -6,7 +6,7 @@ package fr.iutfbleau.sae31.AtoZ.controleur;
  * de diffusion) a été modifié, afin que l'affichage puisse se mettre à jour.
  *
  * @version 1.0
- * @author Ildevert Nkouka
+ * @author Nkouka Ildevert
  */
 @FunctionalInterface
 public interface CarnetListener {

@@ -9,73 +9,23 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-/**
- * La classe <code>Fenetre</code> est la fenêtre principale de l'application AtoZ Carnet.
- * Elle assemble les trois panneaux de l'interface (gauche, central et droit), mémorise
- * ce qui est sélectionné et met les panneaux à jour, soit quand l'utilisateur navigue,
- * soit quand le carnet est modifié.
- *
- * @version 1.2
- * @author Nkouka Ildevert
- */
 public class Fenetre extends JFrame implements NavigationListener {
 
-    /**
-     * Contrôleur auquel la vue demande les données et les modifications.
-     */
     private final Controleur controleur;
-
-    /**
-     * Panneau central affichant le répertoire de contacts ou une liste de diffusion.
-     */
     private final PanneauCentral panneauCentral;
-
-    /**
-     * Panneau de gauche contenant les boutons de création et le menu de navigation.
-     */
     private final PanneauGauche panneauGauche;
-
-    /**
-     * Panneau de droite affichant les opérations disponibles sur l'élément sélectionné.
-     */
     private final PanneauDroit panneauDroit;
 
-    /**
-     * Étiquette qui filtre le répertoire (<code>null</code> : tous les contacts).
-     */
     private EtiquetteVue filtreEtiquette;
-
-    /**
-     * Contact sélectionné (<code>null</code> si aucun).
-     */
     private ContactVue contactSelectionne;
-
-    /**
-     * Étiquette sélectionnée (<code>null</code> si aucune).
-     */
     private EtiquetteVue etiquetteSelectionnee;
-
-    /**
-     * Liste de diffusion sélectionnée (<code>null</code> si aucune).
-     */
     private ListeDiffusionVue listeSelectionnee;
-
-    /**
-     * Indique si la page des listes de diffusion est affichée au centre (au lieu du répertoire).
-     */
     private boolean modeListes = false;
 
-    /**
-     * Construit la fenêtre principale : configure le titre, la taille, le
-     * comportement de fermeture, place les trois panneaux dans un
-     * <code>BorderLayout</code> et s'abonne aux modifications du carnet.
-     *
-     * @param controleur le contrôleur auquel la vue demande les données
-     */
-    public Fenetre(Controleur controleur) {
+	public Fenetre(Controleur controleur){
         this.controleur = controleur;
 
-        setTitle("AtoZ Carnet");
+	    setTitle("AtoZ Carnet");
         setSize(1150, 700);
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -94,30 +44,18 @@ public class Fenetre extends JFrame implements NavigationListener {
         add(panneauDroit, BorderLayout.EAST);
 
         controleur.ajouterEcouteur(this::actualiser);
-    }
+	}
 
-    /**
-     * Réagit au clic sur "Tous les contacts" : affiche tout le répertoire et vide le
-     * panneau de droite.
-     */
     @Override
     public void clicTousLesContacts() {
         afficherTousLesContacts();
     }
 
-    /**
-     * Réagit au dépliage du menu des étiquettes : affiche tout le répertoire et vide le
-     * panneau de droite.
-     */
     @Override
     public void clicMenuEtiquettes() {
         afficherTousLesContacts();
     }
 
-    /**
-     * Réagit au dépliage du menu des listes de diffusion : affiche la page d'accueil des
-     * listes et vide le panneau de droite.
-     */
     @Override
     public void clicMenuListesDiffusion() {
         deselectionner();
@@ -128,12 +66,6 @@ public class Fenetre extends JFrame implements NavigationListener {
         majSelection();
     }
 
-    /**
-     * Réagit au clic sur un contact du répertoire : affiche le répertoire au centre et les
-     * opérations possibles sur ce contact (modifier, supprimer).
-     *
-     * @param contact le contact sélectionné
-     */
     @Override
     public void clicContact(ContactVue contact) {
         deselectionner();
@@ -145,27 +77,15 @@ public class Fenetre extends JFrame implements NavigationListener {
         majSelection();
     }
 
-    /**
-     * Réagit au clic sur un contact depuis une liste de diffusion : le contact est
-     * sélectionné et ses opérations s'affichent à droite, mais la liste reste affichée
-     * au centre.
-     *
-     * @param contact le contact sélectionné
-     */
+    // NOUVELLE MÉTHODE : On sélectionne le contact mais on ne change pas le panneau central
     @Override
     public void clicContactDansListe(ContactVue contact) {
         contactSelectionne = contact;
-        // modeListes et listeSelectionnee restent inchangés : la liste reste affichée
+        // On laisse intentionnellement modeListes à true et listeSelectionnee intacte
         panneauDroit.afficherOperationsContact(contact);
         majSelection();
     }
 
-    /**
-     * Réagit au clic sur une étiquette : affiche au centre les contacts qui la possèdent
-     * et, à droite, les opérations possibles sur cette étiquette.
-     *
-     * @param etiquette l'étiquette sélectionnée
-     */
     @Override
     public void clicEtiquette(EtiquetteVue etiquette) {
         deselectionner();
@@ -178,12 +98,6 @@ public class Fenetre extends JFrame implements NavigationListener {
         majSelection();
     }
 
-    /**
-     * Réagit au clic sur une liste de diffusion : affiche la page dédiée à la
-     * liste au centre et les opérations possibles sur cette liste à droite.
-     *
-     * @param liste la liste de diffusion sélectionnée
-     */
     @Override
     public void clicListeDiffusion(ListeDiffusionVue liste) {
         deselectionner();
@@ -195,9 +109,6 @@ public class Fenetre extends JFrame implements NavigationListener {
         majSelection();
     }
 
-    /**
-     * Affiche tout le répertoire (sans filtre) et vide le panneau de droite.
-     */
     private void afficherTousLesContacts() {
         deselectionner();
         filtreEtiquette = null;
@@ -208,10 +119,6 @@ public class Fenetre extends JFrame implements NavigationListener {
         majSelection();
     }
 
-    /**
-     * Met en évidence ce qui est sélectionné : le contact au centre, et dans le menu
-     * de gauche le bouton de la vue affichée (tous les contacts, étiquette ou liste).
-     */
     private void majSelection() {
         panneauCentral.selectionnerContact(contactSelectionne);
         panneauGauche.marquer(
@@ -221,20 +128,12 @@ public class Fenetre extends JFrame implements NavigationListener {
         );
     }
 
-    /**
-     * Oublie la sélection courante (le filtre du répertoire n'est pas modifié).
-     */
     private void deselectionner() {
         contactSelectionne = null;
         etiquetteSelectionnee = null;
         listeSelectionnee = null;
     }
 
-    /**
-     * Met toute l'interface à jour après une modification du carnet. Les éléments
-     * sélectionnés qui ont été supprimés sont oubliés, puis chaque panneau est
-     * reconstruit à partir des données actuelles.
-     */
     private void actualiser() {
         // Après un rechargement, on retrouve la version à jour de chaque sélection
         // (null si l'élément a été supprimé)
@@ -257,9 +156,6 @@ public class Fenetre extends JFrame implements NavigationListener {
         }
     }
 
-    /**
-     * Affiche un pop-up de confirmation avant de quitter l'application.
-     */
     protected void confirmerFermeture() {
         int reponse = JOptionPane.showConfirmDialog(
             this,
